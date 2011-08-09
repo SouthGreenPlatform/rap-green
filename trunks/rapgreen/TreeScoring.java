@@ -51,6 +51,19 @@ public class TreeScoring {
 */
 	public boolean[][] ultraParalogy;
 
+/**
+*	PhyloXML relationship buffer
+*/
+	public StringBuffer phyloXMLBuffer;
+
+/**
+*	Global scoring attributs
+*/
+	public static double tDupWeight   = 0.95;
+	public static double iDupWeight   = 0.90;
+	public static double specWeight   = 0.99;
+	public static double lengthWeight = 0.10;
+
 // ********************************************************************************************************************
 // ***     CONSTRUCTORS      ***
 // *****************************
@@ -81,6 +94,8 @@ public class TreeScoring {
 		nbSpeciations= new int[tree.leafVector.size()][tree.leafVector.size()];
 		fitchOrthology= new boolean[tree.leafVector.size()][tree.leafVector.size()];
 		ultraParalogy= new boolean[tree.leafVector.size()][tree.leafVector.size()];
+
+		phyloXMLBuffer= new StringBuffer();
 
 		//Initialize duplication evaluation
 		tree.initializeDuplicationNatures();
@@ -123,7 +138,6 @@ public class TreeScoring {
 					ultraParalogy[i][j]= false;
 					ultraParalogy[j][i]= false;
 				}
-
 			}
 
 		}
@@ -156,6 +170,46 @@ public class TreeScoring {
 						if (fitchOrthology[i][j]) {
 							write.write(leafI.label + "\t" + leafI.subtreeNeighbor(TreeReconciler.kLevel) + "\t" + reduc + "\t" + (nbSpeciations[i][j]+1) + "\t" + nbTopologicalDuplications[i][j] + "\t" + nbIntersectionDuplications[i][j] + "\t" + fitchOrthology[i][j] + "\t" + ultraParalogy[i][j] + "\t" + leafJ.label + "\n");
 							write.flush();
+
+
+							phyloXMLBuffer.append("<sequence_relation id_ref_0=\"");
+							phyloXMLBuffer.append(leafI.label.substring(0,leafI.label.lastIndexOf("_")));
+							phyloXMLBuffer.append("\" id_ref_1=\"");
+							phyloXMLBuffer.append(leafJ.label.substring(0,leafJ.label.lastIndexOf("_")));
+							phyloXMLBuffer.append("\" type=\"orthology\">\n\t<confidence type=\"rap\">");
+
+							//score computing, very prospective
+							double s= 1.0;
+
+							if (reduc>=1.0) {
+								reduc=1.0;
+							}
+
+
+							double prop=1.0/(double)tree.leafVector.size();
+							reduc=reduc*(1.0-lengthWeight);
+							s=s*(1.0-reduc)*(1.0-prop)+prop;
+
+							for (int k=0;k<nbTopologicalDuplications[i][j];k++) {
+								s=s*tDupWeight;
+							}
+							for (int k=0;k<nbIntersectionDuplications[i][j];k++) {
+								s=s*iDupWeight;
+							}
+							for (int k=0;k<nbSpeciations[i][j];k++) {
+								s=s*specWeight;
+							}
+
+
+							s=s*1000.0;
+							int sint= (int)s;
+							s= (double)sint/1000.0;
+
+							phyloXMLBuffer.append(s);
+							phyloXMLBuffer.append("</confidence>\n</sequence_relation>\n");
+
+
+
 						}
 						if (ultraParalogy[i][j]) {
 							write.write(leafI.label + "\t" + leafI.subtreeNeighbor(TreeReconciler.kLevel) + "\t" + reduc + "\t" + nbSpeciations[i][j] + "\t" + nbTopologicalDuplications[i][j] + "\t" + (nbIntersectionDuplications[i][j]+1) + "\t" + fitchOrthology[i][j] + "\t" + ultraParalogy[i][j] + "\t" + leafJ.label + "\n");

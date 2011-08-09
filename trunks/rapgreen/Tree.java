@@ -419,13 +419,17 @@ public class Tree {
 // ********************************************************************************************************************
 /**
 * Specialized phyloXML string conversion method
+* @param buffer	sequence relations
 * @return The string translation.
 */
-	public String toPhyloXMLString() {
+	public String toPhyloXMLString(StringBuffer buffer) {
 		//System.out.println(this);
 		StringBuffer res= new StringBuffer();
 		res.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<phyloxml xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.phyloxml.org http://www.phyloxml.org/1.10/phyloxml.xsd\" xmlns=\"http://www.phyloxml.org\">\n<phylogeny rooted=\"true\">\n");
 		toPhyloXMLString(1,res);
+		if (buffer!=null) {
+			res.append(buffer.toString());
+		}
 		res.append("</phylogeny>\n</phyloxml>");
 		return(res.toString());
 	}
@@ -510,7 +514,9 @@ public class Tree {
 			res.append(block);
 			res.append("\t</taxonomy>\n");
 			res.append(block);
-			res.append("\t<sequence>\n");
+			res.append("\t<sequence id_source=\"");
+			res.append(label.substring(0,label.lastIndexOf("_")));
+			res.append("\">\n");
 			res.append(block);
 			res.append("\t\t<name>");
 			res.append(label.substring(0,label.lastIndexOf("_")));

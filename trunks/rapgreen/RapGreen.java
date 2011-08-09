@@ -3,60 +3,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * NAME:
- * <p>
- * 		- RAP-Green v1.0 -
- * <p>
- * SYNOPSIS:
- * <p>
- * 		rapgreen [command args]
- * <p>
- * OPTIONS:
- * <p>
- * 		-g gene_tree_file :
- *
- * 			The input gene tree file
- * <p>
- * 		-s species_tree_file :
- *
- * 			The input species tree file
- * <p>
- * 		-og gene_tree_file :
- *
- * 			The output tree file (annotated with duplications)
-* <p>
-* 		-phyloxml gene_tree_phyloxml_file :
-*
- * 			The output tree phyloXML file (annotated with duplications)
- * <p>
- * 		-os species_tree_file :
- *
- * 			The output species tree file (limited to gene tree species)
- * <p>
- * 		-or reconciled_tree_file :
- *
- * 			The output reconciled tree file (consensus tree, with reductions and losses)
- * <p>
- * 		-stats gene_tree_file :
- *
- * 			The output scoring statistic file
- * <p>
- * 		-gt gene_threshold :
- *
- * 			The support threshold for gene tree branch collapse (optional, default 80.0)
- * <p>
- * 		-st species_threshold :
- *
- * 			The length threshold for species tree branch collapse (optional, default 10.0)
- * <p>
- * 		-k k-level :
- *
- * 			The k-level of the subtree-neighbor measure (optional, default 2)
- * <p>
- * 		-pt polymorphism_threshold :
- *
- * 			The length depth threshold to deduce to polymorphism, allelism ... (optional, default 0.05)
- * <p>
+ * Entry point of RapGreen program
  * @author Jean-Francois Dufayard
  * @version 1.0
  */
@@ -153,7 +100,15 @@ public class RapGreen {
 					System.out.println(BOLD);
 					System.out.println("-pt" + NORMAL + " "  + UNDERLINE + "polymorphism_threshold\n\t" + NORMAL + "The length depth threshold to deduce to polymorphism, allelism ... (optional, default 0.05)");
 					System.out.println(BOLD);
-					System.out.println("-k" + NORMAL + " "  + UNDERLINE + "k_level\n\t" + NORMAL + "The k-level of the subtree-neighbor measure (optional, default 2)\n\n");
+					System.out.println("-k" + NORMAL + " "  + UNDERLINE + "k_level\n\t" + NORMAL + "The k-level of the subtree-neighbor measure (optional, default 2)");
+					System.out.println(BOLD);
+					System.out.println("-idupw" + NORMAL + " "  + UNDERLINE + "i_duplication_weight\n\t" + NORMAL + "The weight of intersection duplication in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.90)");
+					System.out.println(BOLD);
+					System.out.println("-tdupw" + NORMAL + " "  + UNDERLINE + "t_duplication_weight\n\t" + NORMAL + "The weight of topological duplication in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.95)");
+					System.out.println(BOLD);
+					System.out.println("-specw" + NORMAL + " "  + UNDERLINE + "speciation_weight\n\t" + NORMAL + "The weight of speciation in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.99)");
+					System.out.println(BOLD);
+					System.out.println("-distw" + NORMAL + " "  + UNDERLINE + "distance_weight\n\t" + NORMAL + "The weight of evolutionary distance in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.10)\n\n");
 					System.exit(0);
 				}
 
@@ -191,6 +146,18 @@ public class RapGreen {
 				if (args[i].equalsIgnoreCase("-stats")) {
 					stats= new File(args[i+1]);
 				}
+				if (args[i].equalsIgnoreCase("-idupw")) {
+					TreeScoring.iDupWeight=  (new Double(args[i+1])).doubleValue();
+				}
+				if (args[i].equalsIgnoreCase("-tdupw")) {
+					TreeScoring.tDupWeight=  (new Double(args[i+1])).doubleValue();
+				}
+				if (args[i].equalsIgnoreCase("-specw")) {
+					TreeScoring.specWeight=  (new Double(args[i+1])).doubleValue();
+				}
+				if (args[i].equalsIgnoreCase("-distw")) {
+					TreeScoring.lengthWeight=  (new Double(args[i+1])).doubleValue();
+				}
 				if (args[i].equalsIgnoreCase("-gt")) {
 					TreeReconciler.geneCollapseThreshold= (new Double(args[i+1])).doubleValue();
 				}
@@ -224,13 +191,11 @@ public class RapGreen {
 					TreeWriter geneWriter= new TreeWriter(copyCat);
 					geneWriter.writeTree(outputGene);
 				}
+				Tree copyCat=null;
 				if (outputPhyloXML!=null) {
-					Tree copyCat= new Tree(reconciler.geneTree);
+					copyCat= new Tree(reconciler.geneTree);
 					copyCat.pretreatment();
-					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputPhyloXML));
-					xmlWrite.write(copyCat.toPhyloXMLString() + "\n");
-					xmlWrite.flush();
-					xmlWrite.close();
+
 				}
 				if (outputSpecies!=null) {
 					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputSpecies));
@@ -247,6 +212,13 @@ public class RapGreen {
 
 				TreeScoring score= new TreeScoring(reconciler.geneTree);
 				score.writeScores(stats);
+
+				if (outputPhyloXML!=null) {
+					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputPhyloXML));
+					xmlWrite.write(copyCat.toPhyloXMLString(score.phyloXMLBuffer) + "\n");
+					xmlWrite.flush();
+					xmlWrite.close();
+				}
 			}
 
 		} catch(Exception e) {
