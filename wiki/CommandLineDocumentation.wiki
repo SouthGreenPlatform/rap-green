@@ -7,7 +7,7 @@
 
 = SYNOPSIS: =
 
-        java -jar RapGreen point jar command args
+        java -jar RapGreen.jar command args
 
 = OPTIONS: =
 
