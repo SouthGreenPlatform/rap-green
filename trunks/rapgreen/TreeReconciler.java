@@ -101,6 +101,7 @@ public class TreeReconciler {
 		Vector roots= geneTree.getRootedTrees();
 		int maxCost=-1;
 		double maxMid=-1.0;
+		int maxLoss=-1;
 		for (int i=0;i<roots.size();i++) {
 			if (RapGreen.verbose) {
 				System.out.println("Root " + (i+1) + " on " + roots.size() + " possible roots.");
@@ -116,17 +117,23 @@ public class TreeReconciler {
 			localReconciledTree.pretreatment();
 			//Execute the reconciliation recursive method
 			int localCost=reconciliation(rootedGeneTree,localReconciledTree);
+			int localLoss=localReconciledTree.nbLosses();
+
+
+
 			//System.out.println(localCost);
-			if (maxCost==-1 || localCost<maxCost || (localCost==maxCost && localMid<maxMid)) {
+			if (maxCost==-1 || localCost<maxCost || (localCost==maxCost && localLoss<maxLoss) || (localCost==maxCost && localLoss==maxLoss && localMid<maxMid)) {
 				maxCost=localCost;
 				this.geneTree=rootedGeneTree;
 				maxMid=localMid;
+				maxLoss=localLoss;
 				this.reconciledTree=localReconciledTree;
 			} else {
 				roots.setElementAt(null,i);
 			}
 
 		}
+		//System.out.println(maxLoss);
 		this.speciesTree= speciesTree;
 		//System.out.println(speciesTree.getNewick() + "\n" + geneTree.getNewick() + "\n" + reconciledTree.getNewick() + "\n");
 	}

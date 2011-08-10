@@ -384,6 +384,52 @@ public class Tree {
 		return (jogger.leafVector.size()-1);
 
 	}
+
+// ********************************************************************************************************************
+/**
+* Return the number of losses of tree (LOSS label), reducing the number with internal losses
+* @return The number of losses
+*/
+	public int nbLosses() {
+		int res= nbLossesRecursive();
+		if (res==-1)
+			res=1;
+		return res;
+	}
+
+// ******************************
+/**
+* Recursive version, using -1 tu communicate with public version
+* @return The number of losses, or -1 if it is a full loss tree part.
+*/
+	private int nbLossesRecursive() {
+		int res=0;
+		if (isLeaf()) {
+			if (label.equals("LOSS")) {
+				res=-1;
+			}
+		} else {
+			boolean fullLoss=true;
+			int sum=0;
+			for (int i=0;i<sons.size();i++) {
+				Tree son= (Tree)(sons.elementAt(i));
+				int localRes= son.nbLossesRecursive();
+				if (localRes!=-1) {
+					sum+=localRes;
+					fullLoss=false;
+				} else {
+					sum+=1;
+				}
+			}
+			if (fullLoss) {
+				res=-1;
+			} else {
+				res=sum;
+			}
+		}
+		return res;
+	}
+
 // ********************************************************************************************************************
 /**
 * Standard string conversion method
