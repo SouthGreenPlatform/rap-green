@@ -93,9 +93,10 @@ public class TreeReconciler {
 		//Remove useless parts of the species tree
 		//System.out.println(speciesTree);
 		removeUselessSubtrees(speciesTree,geneTree.leafVector);
-		//System.out.println(speciesTree);
+		//System.out.println(geneTree);
 		//Reinitialize the pretreatment of the species tree
 		speciesTree.pretreatment();
+		//System.out.println("SPECIES:\n" + speciesTree + "\nEND SPECIES TREE");
 
 		//For each possible root
 		Vector roots= geneTree.getRootedTrees();
@@ -167,7 +168,7 @@ public class TreeReconciler {
 * @param tree	The species tree to clean
 * @param vector	The list of allowed taxa
 */
-	public void removeUselessSubtrees(Tree tree, Vector vector) {
+	public void removeUselessSubtrees(Tree tree,Vector vector) {
 		if (!tree.isLeaf()) {
 
 			/*if (tree.label.equals("ORYZA")) {
@@ -188,6 +189,20 @@ public class TreeReconciler {
 			}
 			if (localyUsefull) {
 				tree.sons= null;
+				//search for subspecies inclusion, and replace in gene tree
+				for (int i=0;i<tree.leafVector.size();i++) {
+					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+
+					for (int k=0;k<vector.size();k++) {
+						Tree localLeaf= (Tree)(vector.elementAt(k));
+						if (leaf.label.equals(localLeaf.label.substring(localLeaf.label.lastIndexOf('_')+1,localLeaf.label.length()))) {
+							//System.out.print(tree.label  + " , " + localLeaf.label);
+							localLeaf.label=localLeaf.label.substring(0,localLeaf.label.lastIndexOf('_')) + "_" + tree.label;
+							//System.out.println(" ; " + localLeaf.label);
+						}
+					}
+				}
+
 			} else {
 
 
@@ -254,11 +269,13 @@ public class TreeReconciler {
 			leaf.label=g.label;
 
 		} else if (((Tree)(g.sons.elementAt(0))).maxDepth+((Tree)(g.sons.elementAt(1))).maxDepth<=TreeReconciler.geneDepthThreshold) {
-			//System.out.println(g + "\n*\n" + r);
+			//System.out.println("$$$");
 			//The "polymorphism/sequencing error" case. Stop the reconciliation, just anote the correct labels.
 			for (int i=0;i<g.leafVector.size();i++) {
+				//System.out.println(r + "\n--\n" + g);
 				Tree geneLeaf= (Tree)(g.leafVector.elementAt(i));
 				Tree reconciledLeaf = (Tree)(r.leafHashtable.get(geneLeaf.label.substring(geneLeaf.label.lastIndexOf("_")+1,geneLeaf.label.length())));
+
 				reconciledLeaf.label = geneLeaf.label.substring(0,geneLeaf.label.lastIndexOf("_")) + "_" + reconciledLeaf.label;
 
 			}
@@ -312,6 +329,7 @@ public class TreeReconciler {
 				res++;
 			}
 		}
+
 		return res;
 	}
 
@@ -383,9 +401,9 @@ public class TreeReconciler {
 				//Check the propertie of exclusion in the gene tree sons
 				if (sonExclusion(g)) {
 					int candidatIndex=findReductionCandidat(g,r);
-					if (candidatIndex<0) {
+					if (candidatIndex<-1) {
 						//Candidat founded in reconciled tree
-						candidatIndex=candidatIndex*(-1)-1;
+						candidatIndex=candidatIndex*(-1)-2;
 						Tree removed= (Tree)(r.sons.elementAt(candidatIndex));
 						if (removed.length==-1.0 || removed.length<=speciesCollapseThreshold) {
 							r.sons.removeElementAt(candidatIndex);
@@ -396,7 +414,7 @@ public class TreeReconciler {
 							possible=false;
 						}
 
-					} else {
+					} else if (candidatIndex>-1) {
 						//Candidat founded in gene tree
 						Tree removed= (Tree)(g.sons.elementAt(candidatIndex));
 						double support=0.0;
@@ -406,14 +424,22 @@ public class TreeReconciler {
 
 						}
 						if (support<=geneCollapseThreshold) {
+							try {
 							g.sons.removeElementAt(candidatIndex);
 							for (int i=0;i<removed.sons.size();i++) {
 								g.sons.addElement(removed.sons.elementAt(i));
+							}
+							} catch(Exception e) {
+								System.out.println("pan : " + removed);
+								e.printStackTrace();
+								System.exit(0);
 							}
 						} else {
 							possible=false;
 						}
 
+					} else {
+						possible=false;
 					}
 				} else {
 					possible=false;
@@ -494,7 +520,7 @@ public class TreeReconciler {
 */
 	public int findReductionCandidat(Tree g, Tree r) {
 		//System.out.println("***\n" + g + "\n--\n" + r +"***");
-		int res=0;
+		int res=-1;
 		boolean founded=false;
 		for (int i=0;!founded && i<g.sons.size();i++) {
 			Tree sonG= (Tree)(g.sons.elementAt(i));
@@ -523,6 +549,7 @@ public class TreeReconciler {
 			}
 		}
 		if (!founded) {
+			//System.out.println("foundable in r");
 			for (int i=0;!founded && i<r.sons.size();i++) {
 				Tree sonR= (Tree)(r.sons.elementAt(i));
 				int nbIncluded=0;
@@ -545,9 +572,20 @@ public class TreeReconciler {
 					j++;
 				}
 				if (nbIncluded>=2) {
-					res=i*(-1)-1;
+					res=i*(-1)-2;
 					founded=true;
 				}
+			}
+		} else {
+			//System.out.println("founded in g " + res);
+		}
+		if (res>=0 && !g.isLeaf()) {
+			int candidatIndex=res;
+			Tree remo=(Tree)(g.sons.elementAt(candidatIndex));
+			if (remo.sons==null || remo.sons.size()<1) {
+
+				System.out.println("***\n" + g + "\n--\n" + r +"***");
+				System.out.println(remo);
 			}
 		}
 		return res;
