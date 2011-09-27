@@ -1,4 +1,4 @@
-#labels command,line,documentation
+#labels command,line,documentation,Featured
 #Description of command line arguments
 
 = NAME: =
