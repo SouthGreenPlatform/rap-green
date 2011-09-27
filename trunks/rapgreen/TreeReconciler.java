@@ -109,7 +109,7 @@ public class TreeReconciler {
 			}
 			Tree rootedGeneTree= (Tree)(roots.elementAt(i));
 			rootedGeneTree.pretreatment();
-			//System.out.println(rootedGeneTree);
+			//System.out.println("gene:\n" + rootedGeneTree);
 			double localMid=rootedGeneTree.midpoint();
 			//Refine pretreatment tables with parsed taxa labels for gene tree
 			parseSpecies(rootedGeneTree);
@@ -262,6 +262,7 @@ public class TreeReconciler {
 */
 	public int reconciliation(Tree g, Tree r) {
 		int res=0;
+		//System.out.println(g);
 		if (g.isLeaf()) {
 			//The leaf case, no need to reconcile anything. Just annote the correct label at the right reconciled leaf
 			Tree leaf = (Tree)(r.leafHashtable.get(g.label.substring(g.label.lastIndexOf("_")+1,g.label.length())));

@@ -1147,11 +1147,17 @@ public class Tree {
 					if (transferedSon.length!=-1.0) {
 						this.length=sourceSon.length +transferedSon.length;
 					}
+					if (transferedSon.isLeaf()) {
+						sourceSon.label=transferedSon.label;
+					}
 				} else {
 					Tree transferedSon= (Tree)(sons.elementAt(0));
 					newSons=transferedSon.sons;
 					if (transferedSon.length!=-1.0) {
 						this.length=sourceSon.length + transferedSon.length;
+					}
+					if (transferedSon.isLeaf()) {
+						sourceSon.label=transferedSon.label;
 					}
 				}
 			}
