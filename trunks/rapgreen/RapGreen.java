@@ -108,6 +108,8 @@ public class RapGreen {
 					System.out.println(BOLD);
 					System.out.println("-specw" + NORMAL + " "  + UNDERLINE + "speciation_weight\n\t" + NORMAL + "The weight of speciation in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.99)");
 					System.out.println(BOLD);
+					System.out.println("-ultraw" + NORMAL + " "  + UNDERLINE + "ultraparalogy_weight\n\t" + NORMAL + "The weight of an ultraparalogy node in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.99)");					
+					System.out.println(BOLD);
 					System.out.println("-distw" + NORMAL + " "  + UNDERLINE + "distance_weight\n\t" + NORMAL + "The weight of evolutionary distance in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.10)\n\n");
 					System.exit(0);
 				}
@@ -152,6 +154,9 @@ public class RapGreen {
 				if (args[i].equalsIgnoreCase("-tdupw")) {
 					TreeScoring.tDupWeight=  (new Double(args[i+1])).doubleValue();
 				}
+				if (args[i].equalsIgnoreCase("-ultraw")) {
+					TreeScoring.uParaWeight=  (new Double(args[i+1])).doubleValue();
+				}				
 				if (args[i].equalsIgnoreCase("-specw")) {
 					TreeScoring.specWeight=  (new Double(args[i+1])).doubleValue();
 				}

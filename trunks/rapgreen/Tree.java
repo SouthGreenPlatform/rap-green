@@ -52,6 +52,11 @@ public class Tree {
 * The father of this node. Available only after pretreatment.
 */
 	public Tree father;
+	
+/**
+* True if this node is an ultraparalogy node.
+*/
+	public boolean ultra;	
 
 // ********************************************************************************************************************
 // ***     CONSTRUCTORS     ***
@@ -347,6 +352,26 @@ public class Tree {
 		return res;
 
 	}
+	
+// ********************************************************************************************************************
+/**
+* @param leaf	The leaf to starts from
+* @return		The number of ultraparalogy nodes
+*/
+	public int nbUltra(Tree leaf) {
+		int res=0;
+		while (leaf!=this) {
+			boolean included=false;
+			//System.out.println(leaf.label + " " + leaf.label.startsWith("'T_DUPLICATION"));
+			if (leaf.ultra) {
+				res+=1;
+			}
+			leaf=leaf.father;
+		}
+		if (ultra) res+=1;
+		return res;
+
+	}	
 
 // ********************************************************************************************************************
 /**
@@ -384,7 +409,34 @@ public class Tree {
 		return (jogger.leafVector.size()-1);
 
 	}
-
+	
+// ********************************************************************************************************************
+/**
+* Return the node corresponding to length and label
+* @return The target node
+*/
+	public Tree getNode(double targetLength, String targetLabel) {
+		Tree res=null;
+		if (isLeaf()) {
+			if (targetLength==length && (targetLabel==null || targetLabel.indexOf(label)!=-1 || label.indexOf(targetLabel)!=-1)) {
+				res=this;
+			}
+		} else {
+			if (targetLength==length && (targetLabel==null || targetLabel.indexOf(label)!=-1 || label.indexOf(targetLabel)!=-1)) {
+				res=this;
+			} else {
+				int i=0;
+				while (res==null && i<sons.size()) {
+					Tree son= (Tree)(sons.elementAt(i));
+					res= son.getNode(targetLength,targetLabel);
+					i++;
+					
+				}
+			}
+		}
+		return res;
+	}
+	
 // ********************************************************************************************************************
 /**
 * Return the number of losses of tree (LOSS label), reducing the number with internal losses
@@ -907,17 +959,20 @@ public class Tree {
 	public boolean ultraParalogy() {
 		boolean res= true;
 		if (!isLeaf()) {
+			int i=0;
+			while (i<sons.size()) {
+				Tree son= (Tree)(sons.elementAt(i));
+				boolean localRes=son.ultraParalogy();
+				res= localRes && res;
+				i++;
+			}
 			if (!label.contains("DUPLICATION")) {
 				res= false;
-			} else {
-				int i=0;
-				while (res && i<sons.size()) {
-					Tree son= (Tree)(sons.elementAt(i));
-					res= son.ultraParalogy();
-					i++;
-				}
 			}
+			
 		}
+		ultra=res;
+		//System.out.println("res:" + res);
 		return res;
 	}
 
