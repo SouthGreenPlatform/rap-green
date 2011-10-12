@@ -53,5 +53,8 @@
 *-specw* speciation_weight
         The weight of speciation in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.99)
 
+*-ultraw* ultraparalogy_weight
+        The weight of an ultraparalogy node in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.99)
+
 *-distw* distance_weight
         The weight of evolutionary distance in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.10)
