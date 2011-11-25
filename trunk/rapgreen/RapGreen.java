@@ -216,7 +216,9 @@ public class RapGreen {
 				//System.out.println(reconciler.speciesTree.getNewick() + "\n" + reconciler.geneTree.getNewick() + "\n" + reconciler.reconciledTree.getNewick());
 
 				TreeScoring score= new TreeScoring(reconciler.geneTree);
-				score.writeScores(stats);
+				if (stats!=null) {
+					score.writeScores(stats);
+				}
 
 				if (outputPhyloXML!=null) {
 					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputPhyloXML));
