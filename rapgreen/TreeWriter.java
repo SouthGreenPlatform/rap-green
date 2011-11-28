@@ -63,5 +63,27 @@ public class TreeWriter {
 			treeIndex++;
 		}
 	}
-
+	
+// ******************************
+/**
+* Write unannotated tree, cleaning labels annotated after the reconciliation
+* @param file	The destination file
+*/
+	public void writeSimpleTree(File file) {
+		if (treeIndex<trees.size()) {
+			try {
+				BufferedWriter write= new BufferedWriter(new FileWriter(file));
+				String temp =((Tree)(trees.elementAt(treeIndex))).getNewick();
+				temp= temp.replaceAll("DUPLICATION","");
+				temp= temp.replaceAll("'","");
+				
+				write.write(temp + "\n");
+				write.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			treeIndex++;
+		}
+	}
+	
 }
