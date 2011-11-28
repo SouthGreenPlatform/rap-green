@@ -48,6 +48,11 @@ public class RapGreen {
 	public static File outputPhyloXML=null;
 
 /**
+* Output rerooted simple gene file
+*/
+	public static File outputRerooted=null;	
+
+/**
 * Output stats file
 */
 	public static File stats=null;
@@ -61,7 +66,22 @@ public class RapGreen {
 */
 	public static boolean verbose=false;
 
+/**
+* Tax id inversion mod
+*/
+	public static boolean invert=false;
+	
 
+/**
+* Starting point of the input gene tree directory 
+*/
+	public static int start=0;	
+	
+/**
+* Ending point (exclusive) of the input gene tree directory 
+*/
+	public static int end=-1;		
+	
 // ********************************************************************************************************************
 // ***     MAIN     ***
 // ********************
@@ -82,10 +102,18 @@ public class RapGreen {
 					System.out.println(BOLD);
 					System.out.println("-g" + NORMAL + " " + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The input gene tree file");
 					System.out.println(BOLD);
+					System.out.println("-invert\n\t" + NORMAL + "Activate this option if your taxa identifier is in front of the sequence identifier");
+					System.out.println(BOLD);
+					System.out.println("-start" + NORMAL + " "  + UNDERLINE + "starting_index\n\t" + NORMAL + "The starting index (0 default), if the gene tree input is a directory");
+					System.out.println(BOLD);
+					System.out.println("-end" + NORMAL + " "  + UNDERLINE + "ending_index\n\t" + NORMAL + "The ending exclusive index (directory size default), if the gene tree input is a directory");
+					System.out.println(BOLD);
 					System.out.println("-s" + NORMAL + " "  + UNDERLINE + "species_tree_file\n\t" + NORMAL + "The input species tree file");
 					System.out.println(BOLD);
 					System.out.println("-og" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The output tree file (annotated with duplications)");
 					System.out.println(BOLD);
+					System.out.println("-rerooted" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The simple unannotated rerooted gene tree file");
+					System.out.println(BOLD);					
 					System.out.println("-phyloxml" + NORMAL + " "  + UNDERLINE + "gene_tree_phyloxml_file\n\t" + NORMAL + "The output tree file (annotated with duplications) in phyloXML format");
 					System.out.println(BOLD);
 					System.out.println("-os" + NORMAL + " "  + UNDERLINE + "species_tree_file\n\t" + NORMAL + "The output species tree file (limited to gene tree species)");
@@ -122,6 +150,16 @@ public class RapGreen {
 						geneFiles[0]= new File(args[i+1]);
 					}
 				}
+				if (args[i].equalsIgnoreCase("-start")) {
+					start= (new Integer(args[i+1])).intValue();
+				}
+				if (args[i].equalsIgnoreCase("-end")) {
+					end= (new Integer(args[i+1])).intValue();
+				}
+				if (args[i].equalsIgnoreCase("-invert")) {
+					invert=true;
+					i--;
+				}
 				if (args[i].equalsIgnoreCase("-verbose")) {
 					verbose=true;
 					i--;
@@ -131,6 +169,10 @@ public class RapGreen {
 				}
 				if (args[i].equalsIgnoreCase("-og")) {
 					outputGene= new File(args[i+1]);
+				}
+				if (args[i].equalsIgnoreCase("-rerooted")) {
+					outputRerooted= new File(args[i+1]);
+
 				}
 				if (args[i].equalsIgnoreCase("-phyloxml")) {
 					outputPhyloXML= new File(args[i+1]);
@@ -173,64 +215,109 @@ public class RapGreen {
 					TreeReconciler.geneDepthThreshold= (new Double(args[i+1])).doubleValue();
 				}
 			}
-			for (int i=0;i<geneFiles.length;i++) {
-				TreeReader read= new TreeReader(geneFiles[i],TreeReader.NEWICK);
-				Tree geneTree= read.nextTree();
-
-				SpeciesDictionary dico= new SpeciesDictionary();
-
-				String test= (new BufferedReader(new FileReader(speciesFile))).readLine();
-				if (test.endsWith(";")) {
-					read= new TreeReader(speciesFile,dico,TreeReader.NEWICK);
-				} else {
-					read= new TreeReader(speciesFile,dico,TreeReader.XML);
-				}
-				Tree speciesTree= read.nextTree();
-				//System.out.println(speciesTree);
-				TreeReconciler reconciler= new TreeReconciler(geneTree,speciesTree);
-
-				if (outputGene!=null) {
-					Tree copyCat= new Tree(reconciler.geneTree);
-					copyCat.pretreatment();
-					copyCat.formatLabelsWithTrace();
-					TreeWriter geneWriter= new TreeWriter(copyCat);
-					geneWriter.writeTree(outputGene);
-				}
-				Tree copyCat=null;
-				if (outputPhyloXML!=null) {
-					copyCat= new Tree(reconciler.geneTree);
-					copyCat.pretreatment();
-
-				}
-				if (outputSpecies!=null) {
-					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputSpecies));
-					xmlWrite.write(reconciler.speciesTree.toPhyloXMLString(dico) + "\n");
-					xmlWrite.flush();
-					xmlWrite.close();
-				}
-				if (outputReconciled!=null) {
-					TreeWriter geneWriter= new TreeWriter(reconciler.reconciledTree);
-					geneWriter.writeTree(outputReconciled);
-				}
-
-				//System.out.println(reconciler.speciesTree.getNewick() + "\n" + reconciler.geneTree.getNewick() + "\n" + reconciler.reconciledTree.getNewick());
-
-				TreeScoring score= new TreeScoring(reconciler.geneTree);
-				if (stats!=null) {
-					score.writeScores(stats);
-				}
-
-				if (outputPhyloXML!=null) {
-					BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputPhyloXML));
-					xmlWrite.write(copyCat.toPhyloXMLString(score.phyloXMLBuffer) + "\n");
-					xmlWrite.flush();
-					xmlWrite.close();
-				}
+			if (end==-1) {
+				end = geneFiles.length;
 			}
+			for (int i=start;i<end;i++) {
+				try {
+					TreeReader read= new TreeReader(geneFiles[i],TreeReader.NEWICK);
+					if (geneFiles.length>1) {
+						System.out.println(geneFiles[i].getName() + " " + i + "/" + geneFiles.length);	
+					}
+					Tree geneTree= read.nextTree();
+					
+					if (invert) {
+						geneTree.pretreatment();
+						Vector vect= geneTree.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));	
+							leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
+						}
+						
+					}
+	
+					SpeciesDictionary dico= new SpeciesDictionary();
+	
+					String test= (new BufferedReader(new FileReader(speciesFile))).readLine();
+					if (test.endsWith(";")) {
+						read= new TreeReader(speciesFile,dico,TreeReader.NEWICK);
+					} else {
+						read= new TreeReader(speciesFile,dico,TreeReader.XML);
+					}
+					Tree speciesTree= read.nextTree();
+					//System.out.println(speciesTree);
+					TreeReconciler reconciler= new TreeReconciler(geneTree,speciesTree);
+	
+					if (outputRerooted!=null) {
+						Tree copyCat= new Tree(reconciler.geneTree);
+						if (invert) {
+							copyCat.pretreatment();
+							Vector vect= copyCat.leafVector;
+							for (int x=0;x<vect.size();x++) {
+								Tree leaf= (Tree)(vect.elementAt(x));	
+								leaf.label=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.lastIndexOf("_"));
+							}
+							
+						}					
+						// trying a masse reconciler
+						if (geneFiles.length==1) {
+							TreeWriter geneWriter= new TreeWriter(copyCat);
+							geneWriter.writeSimpleTree(outputRerooted);
+						} else {
+							TreeWriter geneWriter= new TreeWriter(copyCat);
+							geneWriter.writeSimpleTree(new File(outputRerooted.getPath().replace("INPUT",geneFiles[i].getName())));						
+						}
+					}				
+	
+					if (outputGene!=null) {
+						Tree copyCat= new Tree(reconciler.geneTree);
+						copyCat.pretreatment();
+						copyCat.formatLabelsWithTrace();
+						TreeWriter geneWriter= new TreeWriter(copyCat);
+						geneWriter.writeTree(outputGene);
+					}
+					Tree copyCat=null;
+					if (outputPhyloXML!=null) {
+						copyCat= new Tree(reconciler.geneTree);
+						copyCat.pretreatment();
+	
+					}
+					if (outputSpecies!=null) {
+						BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputSpecies));
+						xmlWrite.write(reconciler.speciesTree.toPhyloXMLString(dico) + "\n");
+						xmlWrite.flush();
+						xmlWrite.close();
+					}
+					if (outputReconciled!=null) {
+						TreeWriter geneWriter= new TreeWriter(reconciler.reconciledTree);
+						geneWriter.writeTree(outputReconciled);
+					}
+	
+					//System.out.println(reconciler.speciesTree.getNewick() + "\n" + reconciler.geneTree.getNewick() + "\n" + reconciler.reconciledTree.getNewick());
+	
+					TreeScoring score= new TreeScoring(reconciler.geneTree);
+					if (stats!=null) {
+						score.writeScores(stats);
+					}
+	
+					if (outputPhyloXML!=null) {
+						BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputPhyloXML));
+						xmlWrite.write(copyCat.toPhyloXMLString(score.phyloXMLBuffer) + "\n");
+						xmlWrite.flush();
+						xmlWrite.close();
+					}
+					} catch(Exception e) {
+						System.out.println("Error in this dataset.");
+					}	
+				}
+	
 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		
+		
 	}
 
 
