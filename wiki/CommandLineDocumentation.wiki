@@ -14,11 +14,23 @@
 *-g* gene_tree_file
         The input gene tree file
 
+*-invert*
+        Activate this option if your taxa identifier is in front of the sequence identifier
+
+*-start* starting_index
+        The starting index (0 default), if the gene tree input is a directory
+
+*-end* ending_index
+        The ending exclusive index (directory size default), if the gene tree input is a directory
+
 *-s* species_tree_file
         The input species tree file
 
 *-og* gene_tree_file
         The output tree file (annotated with duplications)
+
+*-rerooted* gene_tree_file
+        The simple unannotated rerooted gene tree file
 
 *-phyloxml* gene_tree_phyloxml_file
         The output tree file (annotated with duplications) in phyloXML format
