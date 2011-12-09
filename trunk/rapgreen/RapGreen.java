@@ -80,7 +80,9 @@ public class RapGreen {
 /**
 * Ending point (exclusive) of the input gene tree directory 
 */
-	public static int end=-1;		
+	public static int end=-1;	
+	
+	public static boolean addOutparalogous=false;	
 	
 // ********************************************************************************************************************
 // ***     MAIN     ***
@@ -121,6 +123,8 @@ public class RapGreen {
 					System.out.println("-or" + NORMAL + " "  + UNDERLINE + "reconciled_tree_file\n\t" + NORMAL + "The output reconciled tree file (consensus tree, with reductions and losses)");
 					System.out.println(BOLD);
 					System.out.println("-stats" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The output scoring statistic file");
+					System.out.println(BOLD);
+					System.out.println("-outparalogous\n\t" + NORMAL + "Add outparalogous informations in stats file.");
 					System.out.println(BOLD);
 					System.out.println("-gt" + NORMAL + " " + UNDERLINE + "gene_threshold\n\t" + NORMAL + "The support threshold for gene tree branch collapse (optional, default 80.0)");
 					System.out.println(BOLD);
@@ -189,6 +193,10 @@ public class RapGreen {
 				}
 				if (args[i].equalsIgnoreCase("-stats")) {
 					stats= new File(args[i+1]);
+				}
+				if (args[i].equalsIgnoreCase("-outparalogous")) {
+					addOutparalogous=true;
+					i--;
 				}
 				if (args[i].equalsIgnoreCase("-idupw")) {
 					TreeScoring.iDupWeight=  (new Double(args[i+1])).doubleValue();
@@ -308,6 +316,8 @@ public class RapGreen {
 					}
 					} catch(Exception e) {
 						System.out.println("Error in this dataset.");
+						e.printStackTrace();
+						
 					}	
 				}
 	

@@ -120,10 +120,16 @@ public class TreeScoring {
 				distance[j][i]= localDistance;
 				// Count the number of duplications infered by topological incongruence
 				int localNbTopologicalDuplication= ancestor.nbTopologicalDuplications(leafI) + ancestor.nbTopologicalDuplications(leafJ);
+				if (ancestor.label.startsWith("'T_DUPLICATION")) {
+					localNbTopologicalDuplication++;
+				}
 				nbTopologicalDuplications[i][j]= localNbTopologicalDuplication;
 				nbTopologicalDuplications[j][i]= localNbTopologicalDuplication;
 				// Count the number of duplications infered by taxonomic intersection
 				int localNbIntersectionDuplication= ancestor.nbIntersectionDuplications(leafI) + ancestor.nbIntersectionDuplications(leafJ);
+				if (ancestor.label.startsWith("'I_DUPLICATION")) {
+					localNbIntersectionDuplication++;
+				}				
 				nbIntersectionDuplications[i][j]= localNbIntersectionDuplication;
 				nbIntersectionDuplications[j][i]= localNbIntersectionDuplication;
 				// Count the number of speciations
@@ -167,21 +173,26 @@ public class TreeScoring {
 			for (int i=0;i<tree.leafVector.size();i++) {
 				Tree leafI= (Tree)(tree.leafVector.elementAt(i));
 				for (int j=0;j<tree.leafVector.size();j++) {
-					if (i!=j) {
+					if (i<j) {
 						Tree leafJ= (Tree)(tree.leafVector.elementAt(j));
 						double reduc= distance[i][j];
 						reduc=reduc*10000.0;
 						int reducInt= (int)reduc;
 						reduc= (double)reducInt;
 						reduc=reduc/10000.0;
-						if (fitchOrthology[i][j]) {
+						if (!ultraParalogy[i][j] && (fitchOrthology[i][j] || RapGreen.addOutparalogous)) {
 
-
+							
 							phyloXMLBuffer.append("<sequence_relation id_ref_0=\"");
 							phyloXMLBuffer.append(leafI.label.substring(0,leafI.label.lastIndexOf("_")));
 							phyloXMLBuffer.append("\" id_ref_1=\"");
 							phyloXMLBuffer.append(leafJ.label.substring(0,leafJ.label.lastIndexOf("_")));
-							phyloXMLBuffer.append("\" type=\"orthology\">\n\t<confidence type=\"rap\">");
+							if (fitchOrthology[i][j]) {
+								phyloXMLBuffer.append("\" type=\"orthology\">\n\t<confidence type=\"rap\">");
+							} else {
+								phyloXMLBuffer.append("\" type=\"paralogy\">\n\t<confidence type=\"rap\">");
+								
+							}
 
 							//score computing, very prospective
 							double s= 1.0;
