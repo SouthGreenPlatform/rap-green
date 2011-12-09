@@ -44,6 +44,9 @@
 *-stats* gene_tree_file
         The output scoring statistic file
 
+*-outparalogous*
+        Add outparalogous informations in stats file.
+
 *-gt* gene_threshold
         The support threshold for gene tree branch collapse (optional, default 80.0)
 
