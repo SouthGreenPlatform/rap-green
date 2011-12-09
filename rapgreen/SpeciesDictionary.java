@@ -170,7 +170,25 @@ public class SpeciesDictionary {
 		}
 		return res;
 	}
-
+	
+// ********************************************************************************************************************
+/**
+* Get species list containing a parameter prefix
+* @param prefix	The prefix
+* @return		The species vector
+*/
+	public Vector prefixList(String prefix) {
+		String pref= prefix.toUpperCase();
+		Vector res= new Vector();
+		for (int i=0;i<code.size();i++) {
+			String local= (String)(code.elementAt(i));	
+			if (local.toUpperCase().startsWith(pref)) {
+				res.addElement(local);	
+			}
+		}
+		return res;
+	}
+	
 // ********************************************************************************************************************
 /**
 * Starts the iterator

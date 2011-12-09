@@ -15,7 +15,7 @@ public class PhylogeneticMapping {
 * Allow, or not, verbose mod
 */
 	public static boolean verbose=false;
-/**
+/** 
 * Input tree files
 */
 	public static String treeDirectory;

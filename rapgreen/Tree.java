@@ -412,6 +412,36 @@ public class Tree {
 	
 // ********************************************************************************************************************
 /**
+* The subtree of a species tree, from this tree and a species list.
+* @param species	the species table
+* @return		the newly created subtree
+*/
+	public Tree subtree(Hashtable species) {
+		Tree res=null;
+		if (isLeaf()) {
+			if (species.containsKey(label)) {
+				res=new Tree(this);
+			}				
+		} else {
+			Vector subSons= new Vector();
+			for (int i=0;i<sons.size();i++) {
+				Tree localNode= ((Tree)(sons.elementAt(i))).subtree(species);
+				if (localNode!=null) {
+					subSons.addElement(localNode);	
+				}
+			}	
+			if (subSons.size()==1) {
+				res=(Tree)(subSons.elementAt(0));
+			} else if (subSons.size()>1) {
+				res=new Tree(subSons,label,length);
+			}
+		}
+		
+		return res;
+	}
+		
+// ********************************************************************************************************************
+/**
 * Return the node corresponding to length and label
 * @return The target node
 */
@@ -514,6 +544,144 @@ public class Tree {
 			}
 		}
 	}
+// ********************************************************************************************************************
+/**
+* Tree pattern detection
+* @param pattern	The pattern to detect
+* @param ind		The species index
+* @param dic		The species dictionary
+* @return True if the pattern is in the tree, false overthise
+*/	
+// pattern example: ((THACI1,(PITOR1,THACI1)T)S,LOSS|THACI1|PITOR1)D
+		public boolean containsPattern(Tree pattern, Hashtable ind, SpeciesDictionary dic) {
+			boolean res=false;
+			if (pattern.label.startsWith("LOSS")) {
+				if (label.startsWith("L_")) {
+					//String[] lost=pattern.label.split("|");
+					res=true;
+					/*String[] refLost=taxon.split("|");
+					res=true;
+					Hashtable speciesTable= new Hashtable();
+					for (int i=1;i<refLost.length;i++) {
+						speciesTable.put(refLost[i],"ok");
+					}
+					res=true;	
+					for (int i=1;i<lost.length && res;i++) {
+						if (!speciesTable.containsKey(lost[i])) {
+							res=false;
+						}
+					}*/
+				} else {
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+					}						
+				}
+					
+				
+			} else if (pattern.isLeaf()) {
+				if (isLeaf()) {
+					res=label.contains(pattern.label);	
+				} else {
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);							
+					}								
+				}			
+			} else {
+				if (!isLeaf()) {
+				// if sons=null, the pattern cannot be contained	
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					Tree patternSonsZero= (Tree)(pattern.sons.elementAt(0));
+					Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
+					if ( (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
+						res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic)) ||(sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic));
+					}	
+					if (!res) {
+						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+							res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+						}
+					}
+					
+				}				
+			} 
+			/*if (res) {
+				coloring=true;	
+			}*/
+			return res;
+		}	
+// ********************************************************************************************************************
+/**
+* Tree pattern coloration
+* @param pattern	The pattern to detect
+* @param ind		The species index
+* @param dic		The species dictionary
+* @return True if the pattern is in the tree, false overthise
+*/	
+// pattern example: ((THACI1,(PITOR1,THACI1)T)S,LOSS|THACI1|PITOR1)D
+		public boolean colorPattern(Tree pattern, Hashtable ind, SpeciesDictionary dic, Hashtable colored) {
+			boolean res=false;
+			if (pattern.label.startsWith("LOSS")) {
+				if (label.startsWith("L_")) {
+					//String[] lost=pattern.label.split("|");
+					res=true;
+					/*String[] refLost=taxon.split("|");
+					res=true;
+					Hashtable speciesTable= new Hashtable();
+					for (int i=1;i<refLost.length;i++) {
+						speciesTable.put(refLost[i],"ok");
+					}
+					res=true;	
+					for (int i=1;i<lost.length && res;i++) {
+						if (!speciesTable.containsKey(lost[i])) {
+							res=false;
+						}
+					}*/
+				} else {
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+					}						
+				}
+					
+				
+			} else if (pattern.isLeaf()) {
+				if (isLeaf()) {
+					res=label.contains(pattern.label);	
+				} else {
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);							
+					}								
+				}			
+			} else {
+				if (!isLeaf()) {
+				// if sons=null, the pattern cannot be contained	
+					Tree sonsZero= (Tree)(sons.elementAt(0));
+					Tree sonsOne= (Tree)(sons.elementAt(1));
+					Tree patternSonsZero= (Tree)(pattern.sons.elementAt(0));
+					Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
+					if ( (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
+						res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic)) ||(sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic));
+					}	
+					if (!res) {
+						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+							res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+						}
+					}
+					
+				}				
+			} 
+			if (res) {
+				label=label+"_COLORED";	
+			}
+			return res;
+		}		
 // ********************************************************************************************************************
 /**
 * Specialized phyloXML string conversion method
@@ -953,6 +1121,23 @@ public class Tree {
 	}
 // ********************************************************************************************************************
 /**
+* Fill an ID table, deduced from labels, and clean leaf labels from Ids. Usable for some specialized species trees
+* @param table	The id table to fill
+*/
+	public void fillAndCleanID(Hashtable table) {			
+		if (isLeaf()) {
+			table.put(label.substring(label.lastIndexOf("_")+1,label.length()),this);
+			label=label.substring(0,label.lastIndexOf("_"));
+		} else {
+			table.put(label,this);
+			for (int i=0;i<sons.size();i++) {
+				Tree son= (Tree)(sons.elementAt(i));
+				son.fillAndCleanID(table);
+			}
+		}		
+	}
+// ********************************************************************************************************************
+/**
 * Return true if this subtree contains only paralogy, and false otherwise
 * @return True if this is an ultraparalogy node, false otherwise
 */
@@ -1011,6 +1196,38 @@ public class Tree {
 			res.append(length);
 		}
 	}
+	
+// ********************************************************************************************************************
+/**
+* Return the simple (no length, no support) newick representation of this node
+* @return The newick standard representation of this node
+*/
+	public String getSimpleNewick() {
+		StringBuffer res= new StringBuffer();
+		getSimpleNewick(res);
+		res.append(';');
+		return(res.toString());
+	}
+
+// ******************************
+/**
+* Standard string conversion method
+* @param lengthParam	The buffer used to store the result
+*/
+	private void getSimpleNewick(StringBuffer res) {
+		if (!isLeaf()) {
+			res.append('(');
+			((Tree)(sons.elementAt(0))).getSimpleNewick(res);
+			for (int i=1;i<sons.size();i++) {
+				res.append(',');
+				((Tree)(sons.elementAt(i))).getSimpleNewick(res);
+			}
+			res.append(')');
+		} else {
+			res.append(label);
+		}
+	}
+		
 // ********************************************************************************************************************
 /**
 * Return the max depth of the tree, 1.0 per level if no branch length, sum of branch lengths otherwise.
