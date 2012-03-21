@@ -191,6 +191,24 @@ public class SpeciesDictionary {
 	
 // ********************************************************************************************************************
 /**
+* Get species list containing a parameter prefix, regarding the scientific full name
+* @param prefix	The prefix
+* @return		The species vector
+*/
+	public Vector prefixScientificNameList(String prefix) {
+		String pref= prefix.toUpperCase();
+		Vector res= new Vector();
+		for (int i=0;i<code.size();i++) {
+			String local= (String)(code.elementAt(i));	
+			if (getScientificName(local).toUpperCase().startsWith(pref)) {
+				res.addElement(local);	
+			}
+		}
+		return res;
+	}	
+	
+// ********************************************************************************************************************
+/**
 * Starts the iterator
 */
 	public void start() {

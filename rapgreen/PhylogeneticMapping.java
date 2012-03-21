@@ -138,17 +138,21 @@ public class PhylogeneticMapping {
 
 			String talk="";
 
-			for (int i=1;i<=nb;i++) {
+			for (int i=0;i<nb;i++) {
 				BufferedReader readCluster= new BufferedReader(new FileReader(new File(clusterDirectory + clusterFileName.replace("#",(new Integer(i)).toString()))));
-				BufferedReader readTree= new BufferedReader(new FileReader(new File(treeDirectory + treeFileName.replace("#",(new Integer(i)).toString()))));
-				StringBuffer newickBuffer = new StringBuffer();
-				String s= readTree.readLine();
-				while (!s.endsWith(";")) {
+				BufferedReader readTree=null;
+				String newick=";";
+				if ((new File(treeDirectory + treeFileName.replace("#",(new Integer(i)).toString()))).exists()) {
+					readTree= new BufferedReader(new FileReader(new File(treeDirectory + treeFileName.replace("#",(new Integer(i)).toString()))));
+					StringBuffer newickBuffer = new StringBuffer();
+					String s= readTree.readLine();
+					while (!s.endsWith(";")) {
+						newickBuffer.append(s);
+						s= readTree.readLine();
+					}
 					newickBuffer.append(s);
-					s= readTree.readLine();
+					newick= newickBuffer.toString();
 				}
-				newickBuffer.append(s);
-				String newick= newickBuffer.toString();
 				if (newick.length()>2) {
 					//we have a tree
 					Tree current= new Tree(newick);
@@ -169,7 +173,8 @@ public class PhylogeneticMapping {
 					talk= i + "/" + nb + " clusters analysed.";
 					System.out.print(talk);
 				}
-				readTree.close();
+				if (readTree!=null) 
+					readTree.close();
 				readCluster.close();
 
 			}

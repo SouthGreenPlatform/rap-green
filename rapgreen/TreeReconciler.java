@@ -83,10 +83,10 @@ public class TreeReconciler {
 			//Add unexisting taxa to the root
 			Vector speciesSons= new Vector();
 			for (int i=0;i<unexistVector.size();i++) {
-				speciesSons.addElement(new Tree(null,(String)(unexistVector.elementAt(i)),-1.0));
+				speciesSons.addElement(new Tree(null,(String)(unexistVector.elementAt(i)),-1.0,null));
 			}
 			speciesSons.addElement(speciesTree);
-			speciesTree= new Tree(speciesSons,"null",-1.0);
+			speciesTree= new Tree(speciesSons,"null",-1.0,null);
 			speciesTree.heavyPretreatment();
 		}
 
@@ -300,7 +300,7 @@ public class TreeReconciler {
 				if (r.length!=-1.0) {
 					newLength=r.length/2.0;
 				}
-				Tree node0= new Tree(r.sons,r.label,newLength);
+				Tree node0= new Tree(r.sons,r.label,newLength,r.nhx);
 				Tree node1= new Tree(node0);
 				r.label="DUPLICATION";
 				Vector newSons=new Vector();
