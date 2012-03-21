@@ -233,7 +233,7 @@ public class TreeScoring {
 							phyloXMLBuffer.append(leafI.label.substring(0,leafI.label.lastIndexOf("_")));
 							phyloXMLBuffer.append("\" id_ref_1=\"");
 							phyloXMLBuffer.append(leafJ.label.substring(0,leafJ.label.lastIndexOf("_")));
-							phyloXMLBuffer.append("\" type=\"ultraparalogy\">\n\t<confidence type=\"rap\">");
+							phyloXMLBuffer.append("\" type=\"ultra_paralogy\">\n\t<confidence type=\"rap\">");
 
 							//score computing, very prospective
 							double s= 1.0;
