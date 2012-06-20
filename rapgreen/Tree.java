@@ -223,10 +223,16 @@ public class Tree {
 					}
 					i++;
 				}
-				if (intersection) {
-					label = "'I_" + label.substring(1,label.length());
+				if (ultra) {
+					//System.out.println("echo");
+					label = "'U_" + label.substring(1,label.length());
+					
 				} else {
-					label = "'T_" + label.substring(1,label.length());
+					if (intersection) {
+						label = "'I_" + label.substring(1,label.length());
+					} else {
+						label = "'T_" + label.substring(1,label.length());
+					}
 				}
 			}
 			for (int i=0;i<sons.size();i++) {
@@ -700,7 +706,27 @@ public class Tree {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,colored) || sonsOne.colorPattern(pattern,rootPattern,ind,dic,colored);
+							Vector localColored= new Vector();
+							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
+							if (res) {
+								for (int i=0;i<localColored.size();i++) {
+									colored.addElement(localColored.elementAt(i));	
+								}
+								
+								
+							} else {
+								localColored= new Vector();
+								res= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
+								if (res) {
+									for (int i=0;i<localColored.size();i++) {
+										colored.addElement(localColored.elementAt(i));	
+									}
+									
+								}	
+							}
+							if (res && rootPattern!=pattern) {
+								colored.addElement(this);
+							}
 						}
 					}
 
@@ -714,7 +740,28 @@ public class Tree {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,colored) || sonsOne.colorPattern(pattern,rootPattern,ind,dic,colored);
+							Vector localColored= new Vector();
+							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
+							if (res) {
+								for (int i=0;i<localColored.size();i++) {
+									colored.addElement(localColored.elementAt(i));	
+								}
+								
+							} //else { 
+								localColored= new Vector();
+								boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
+								if (resLocal) {
+									for (int i=0;i<localColored.size();i++) {
+										colored.addElement(localColored.elementAt(i));	
+									}								
+								}	
+								res= res || resLocal;								
+							//}
+							if (res && rootPattern!=pattern) {
+								colored.addElement(this);
+							}
+							
+							
 						}
 					}
 				} else {
@@ -725,21 +772,57 @@ public class Tree {
 						Tree patternSonsZero= (Tree)(pattern.sons.elementAt(0));
 						Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
 						if ( (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
-							res= (sonsZero.colorPattern(patternSonsZero,rootPattern,ind,dic,colored) && sonsOne.colorPattern(patternSonsOne,rootPattern,ind,dic,colored)) || (sonsZero.colorPattern(patternSonsOne,rootPattern,ind,dic,colored) && sonsOne.colorPattern(patternSonsZero,rootPattern,ind,dic,colored));
-							if (res)
+							Vector localColored= new Vector();
+							res= sonsZero.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored);
+							if (res) {
+								for (int i=0;i<localColored.size();i++) {
+									colored.addElement(localColored.elementAt(i));	
+								}		
+								
+							} else {
+								localColored= new Vector();
+								res= (sonsZero.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored));
+								if (res) {
+									for (int i=0;i<localColored.size();i++) {
+										colored.addElement(localColored.elementAt(i));	
+									}		
+									
+								}
+							}
+							if (res) {
 								colored.addElement(this);
+							}
 						}
 						if (!res) {
 							if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-								res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,colored) || sonsOne.colorPattern(pattern,rootPattern,ind,dic,colored);
+								Vector localColored= new Vector();
+								res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
+								if (res) {
+									for (int i=0;i<localColored.size();i++) {
+										colored.addElement(localColored.elementAt(i));	
+									}		
+									
+								} //else {
+									localColored= new Vector();
+									boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
+									if (resLocal) {
+										for (int i=0;i<localColored.size();i++) {
+											colored.addElement(localColored.elementAt(i));	
+										}		
+										
+										
+									}
+									res= resLocal || res;
+								
+								//}
+								if (res && rootPattern!=pattern) {
+									colored.addElement(this);
+								}
 							}
 						}
 
 					}
 				}
-				/*if (res) {
-					colored.addElement(this);
-				}*/
 
 			}
 			return res;
@@ -1132,7 +1215,7 @@ public class Tree {
 * @param threshold	The cutting threshold
 */
 	public void clusteringNodes(Vector trees, double threshold) {
-		if (!isLeaf() && (maxDepth-length)>=threshold) {
+		if (!isLeaf() && (((Tree)(sons.elementAt(0))).maxDepth + ((Tree)(sons.elementAt(1))).maxDepth)>=threshold) {
 			//The node case ; for each son
 			for (int i=0;i<sons.size();i++) {
 				Tree son= (Tree)(sons.elementAt(i));
@@ -1331,7 +1414,7 @@ public class Tree {
 	}
 // ********************************************************************************************************************
 /**
-* Return true if this subtree contains only paralogy, and false otherwise
+* Return true if this subtree contains only paralogy, and false otherwise, and initialise the ultra attributes for the whole tree
 * @return True if this is an ultraparalogy node, false otherwise
 */
 	public boolean ultraParalogy() {
@@ -1344,15 +1427,59 @@ public class Tree {
 				res= localRes && res;
 				i++;
 			}
-			if (!label.contains("DUPLICATION")) {
+			
+			if (!label.contains("DUPLICATION") && !label.contains("D_")) {
 				res= false;
 			}
+			ultra=res;
 
 		}
-		ultra=res;
+				
 		//System.out.println("res:" + res);
 		return res;
 	}
+// ********************************************************************************************************************
+/**
+* Fill a table with the largest ultraparalog group for each taxon
+* @param table	The table to fill
+*/	
+	public void fillUltraParalogs(Hashtable table) {
+		if (isLeaf()) {
+			// fill table with 1	
+			String tax= label.substring(label.lastIndexOf("_")+1,label.length());
+			
+			if (!table.containsKey(tax)) {
+				table.put(tax,new Integer(1));	
+				
+			}
+			
+		} else {
+			if (ultra) {
+				Tree leaf= (Tree)(leafVector.elementAt(0));
+				String tax= leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+				if (!table.containsKey(tax)) {
+					table.put(tax,new Integer(nbLeaves()));	
+					
+				} else {
+					int local= ((Integer)(table.get(tax))).intValue();	
+					if (local<nbLeaves()) {
+						table.put(tax,new Integer(nbLeaves()));	
+						
+					}
+					
+				}
+				
+			} else {
+				for (int i=0;i<sons.size();i++) {
+					Tree son= (Tree)(sons.elementAt(i));
+					son.fillUltraParalogs(table);
+				}
+				
+			}
+		
+		}
+		
+	}	
 
 // ********************************************************************************************************************
 /**
@@ -1550,6 +1677,15 @@ public class Tree {
 			}
 		}
 		return(res);
+	}
+// ********************************************************************************************************************
+/**
+* Return the number of leaves.
+* @return The number of leaves
+*/
+
+	public int nbLeaves() {
+		return(leafVector.size());	
 	}
 
 // ********************************************************************************************************************

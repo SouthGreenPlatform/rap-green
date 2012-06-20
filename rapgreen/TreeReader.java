@@ -39,6 +39,8 @@ public class TreeReader {
 * The index
 */
 	public int treeIndex;
+	
+	private int internalSpeciesIndex=0;
 
 // ********************************************************************************************************************
 // ***     CONSTRUCTORS      ***
@@ -519,12 +521,24 @@ public class TreeReader {
 				dico.addSpecies(code.toString(),scientific.toString(),id.toString());
 			res.append(code.toString());
 		}
-		if (events.length()>0 && events.toString().indexOf("duplication")!=-1) {
+		if (event.length()==0 && events.length()>0 && events.toString().indexOf("duplication")!=-1) {
 			res.append("D_");
+		}
+		if (event.length()==0 && events.length()>0 && events.toString().indexOf("speciation")!=-1) {
+			res.append("S_");
 		}
 		if (confidence.length()>0) {
 			res.append(confidence.toString());
 
+		}
+		if (code.length()==0 && scientific.length()>0) {
+			internalSpeciesIndex++;
+			res.append("_");
+			String localCode= (new Integer(internalSpeciesIndex)).toString();
+			res.append(localCode);
+			if (dico!=null)
+				dico.addSpecies(localCode,scientific.toString(),id.toString());
+			
 		}
 		if (blength.length()>0) {
 			res.append(":");

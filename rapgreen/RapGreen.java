@@ -51,6 +51,11 @@ public class RapGreen {
 * Output rerooted simple gene file
 */
 	public static File outputRerooted=null;	
+	
+/**
+* Output rerooted simple gene file
+*/
+	public static File outputRerootedSpecies=null;		
 
 /**
 * Output stats file
@@ -70,7 +75,11 @@ public class RapGreen {
 * Tax id inversion mod
 */
 	public static boolean invert=false;
-	
+
+/**
+* Pipe replacement mod
+*/
+	public static boolean pipe=false;	
 
 /**
 * Starting point of the input gene tree directory 
@@ -81,15 +90,32 @@ public class RapGreen {
 * Ending point (exclusive) of the input gene tree directory 
 */
 	public static int end=-1;	
-	
+
+/**
+* static parameter to add outparalogous genes to the stat file
+*/	
 	public static boolean addOutparalogous=false;	
+	
+/**
+* Table of taxa translation, for prefixed sequence names
+*/
+	public static Hashtable taxaTranslationTable;
+
+
+/**
+* Vector of taxa translation, for prefixed sequence names
+*/
+	public static Vector taxaTranslationVector;
 	
 // ********************************************************************************************************************
 // ***     MAIN     ***
 // ********************
 	public static void main(String[] args) {
 		try {
+			taxaTranslationTable= new Hashtable();
+			taxaTranslationVector= new Vector();
 			for (int i=0;i<args.length;i=i+2) {
+				//System.out.println(i);
 				if (args[i].contains("help")) {
 					System.out.println(BOLD);
 					System.out.println("NAME:");
@@ -106,6 +132,8 @@ public class RapGreen {
 					System.out.println(BOLD);
 					System.out.println("-invert\n\t" + NORMAL + "Activate this option if your taxa identifier is in front of the sequence identifier");
 					System.out.println(BOLD);
+					System.out.println("-pipe\n\t" + NORMAL + "Activate this option if your taxa identifier contains pipes instead of underscores");
+					System.out.println(BOLD);
 					System.out.println("-start" + NORMAL + " "  + UNDERLINE + "starting_index\n\t" + NORMAL + "The starting index (0 default), if the gene tree input is a directory");
 					System.out.println(BOLD);
 					System.out.println("-end" + NORMAL + " "  + UNDERLINE + "ending_index\n\t" + NORMAL + "The ending exclusive index (directory size default), if the gene tree input is a directory");
@@ -115,6 +143,8 @@ public class RapGreen {
 					System.out.println("-og" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The output tree file (annotated with duplications)");
 					System.out.println(BOLD);
 					System.out.println("-rerooted" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The simple unannotated rerooted gene tree file");
+					System.out.println(BOLD);
+					System.out.println("-rerootedSpecies" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The simple unannotated rerooted gene tree file, with only species on the leaf (for supertrees for example)");
 					System.out.println(BOLD);					
 					System.out.println("-phyloxml" + NORMAL + " "  + UNDERLINE + "gene_tree_phyloxml_file\n\t" + NORMAL + "The output tree file (annotated with duplications) in phyloXML format");
 					System.out.println(BOLD);
@@ -125,6 +155,8 @@ public class RapGreen {
 					System.out.println("-stats" + NORMAL + " "  + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The output scoring statistic file");
 					System.out.println(BOLD);
 					System.out.println("-outparalogous\n\t" + NORMAL + "Add outparalogous informations in stats file.");
+					System.out.println(BOLD);
+					System.out.println("-prefix" + NORMAL + " "  + UNDERLINE + "prefix" + NORMAL + " "  + UNDERLINE + "taxa\n\t" + NORMAL + "A prefix to be translated to a specific taxa, in sequence name.");
 					System.out.println(BOLD);
 					System.out.println("-gt" + NORMAL + " " + UNDERLINE + "gene_threshold\n\t" + NORMAL + "The support threshold for gene tree branch collapse (optional, default 80.0)");
 					System.out.println(BOLD);
@@ -144,82 +176,71 @@ public class RapGreen {
 					System.out.println(BOLD);
 					System.out.println("-distw" + NORMAL + " "  + UNDERLINE + "distance_weight\n\t" + NORMAL + "The weight of evolutionary distance in functional orthology scoring (0.0 for maximum weight, 1.0 for no weight, optional, default 0.10)\n\n");
 					System.exit(0);
-				}
-
-				if (args[i].equalsIgnoreCase("-g")) {
+				} else if (args[i].equalsIgnoreCase("-g")) {
 					if ((new File(args[i+1])).isDirectory()) {
 						geneFiles = (new File(args[i+1])).listFiles();
 					} else {
 						geneFiles= new File[1];
 						geneFiles[0]= new File(args[i+1]);
 					}
-				}
-				if (args[i].equalsIgnoreCase("-start")) {
+				} else if (args[i].equalsIgnoreCase("-start")) {
 					start= (new Integer(args[i+1])).intValue();
-				}
-				if (args[i].equalsIgnoreCase("-end")) {
+				} else if (args[i].equalsIgnoreCase("-end")) {
 					end= (new Integer(args[i+1])).intValue();
-				}
-				if (args[i].equalsIgnoreCase("-invert")) {
+				} else if (args[i].equalsIgnoreCase("-invert")) {
 					invert=true;
 					i--;
-				}
-				if (args[i].equalsIgnoreCase("-verbose")) {
+				} else if (args[i].equalsIgnoreCase("-pipe")) {
+					pipe=true;
+					i--;
+				} else if (args[i].equalsIgnoreCase("-verbose")) {
 					verbose=true;
 					i--;
-				}
-				if (args[i].equalsIgnoreCase("-s")) {
+				} else if (args[i].equalsIgnoreCase("-s")) {
 					speciesFile= new File(args[i+1]);
-				}
-				if (args[i].equalsIgnoreCase("-og")) {
+				} else if (args[i].equalsIgnoreCase("-og")) {
 					outputGene= new File(args[i+1]);
-				}
-				if (args[i].equalsIgnoreCase("-rerooted")) {
+				} else if (args[i].equalsIgnoreCase("-rerootedSpecies")) {
+					outputRerootedSpecies= new File(args[i+1]);
+
+				} else if (args[i].equalsIgnoreCase("-rerooted")) {
 					outputRerooted= new File(args[i+1]);
 
-				}
-				if (args[i].equalsIgnoreCase("-phyloxml")) {
+				} else if (args[i].equalsIgnoreCase("-phyloxml")) {
 					outputPhyloXML= new File(args[i+1]);
 
-				}
-				if (args[i].equalsIgnoreCase("-k")) {
+				} else if (args[i].equalsIgnoreCase("-k")) {
 					TreeReconciler.kLevel= (new Integer(args[i+1])).intValue();
-				}
-				if (args[i].equalsIgnoreCase("-os")) {
+				} else if (args[i].equalsIgnoreCase("-os")) {
 					outputSpecies= new File(args[i+1]);
-				}
-				if (args[i].equalsIgnoreCase("-or")) {
+				} else if (args[i].equalsIgnoreCase("-or")) {
 					outputReconciled= new File(args[i+1]);
-				}
-				if (args[i].equalsIgnoreCase("-stats")) {
+				} else if (args[i].equalsIgnoreCase("-stats")) {
 					stats= new File(args[i+1]);
-				}
-				if (args[i].equalsIgnoreCase("-outparalogous")) {
+				} else if (args[i].equalsIgnoreCase("-outparalogous")) {
 					addOutparalogous=true;
 					i--;
-				}
-				if (args[i].equalsIgnoreCase("-idupw")) {
+				} else if (args[i].equalsIgnoreCase("-prefix")) {
+					taxaTranslationTable.put(args[i+1],args[i+2]);
+					taxaTranslationVector.addElement(args[i+1]);
+					i++;
+				} else if (args[i].equalsIgnoreCase("-idupw")) {
 					TreeScoring.iDupWeight=  (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-tdupw")) {
+				} else if (args[i].equalsIgnoreCase("-tdupw")) {
 					TreeScoring.tDupWeight=  (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-ultraw")) {
+				} else if (args[i].equalsIgnoreCase("-ultraw")) {
 					TreeScoring.uParaWeight=  (new Double(args[i+1])).doubleValue();
-				}				
-				if (args[i].equalsIgnoreCase("-specw")) {
+				} else if (args[i].equalsIgnoreCase("-specw")) {
 					TreeScoring.specWeight=  (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-distw")) {
+				} else if (args[i].equalsIgnoreCase("-distw")) {
 					TreeScoring.lengthWeight=  (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-gt")) {
+				} else if (args[i].equalsIgnoreCase("-distt")) {
+					TreeScoring.lengthThreshold=  (new Double(args[i+1])).doubleValue();
+				} else if (args[i].equalsIgnoreCase("-gt")) {
 					TreeReconciler.geneCollapseThreshold= (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-st")) {
+				} else if (args[i].equalsIgnoreCase("-st")) {
 					TreeReconciler.speciesCollapseThreshold= (new Double(args[i+1])).doubleValue();
-				}
-				if (args[i].equalsIgnoreCase("-pt")) {
+				} else if (args[i].equalsIgnoreCase("-pt")) {
 					TreeReconciler.geneDepthThreshold= (new Double(args[i+1])).doubleValue();
 				}
 			}
@@ -234,6 +255,15 @@ public class RapGreen {
 					}
 					Tree geneTree= read.nextTree();
 					
+					if (pipe) {
+						geneTree.pretreatment();
+						Vector vect= geneTree.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));	
+							leaf.label=leaf.label.replace('|','_');
+						}
+						
+					}
 					if (invert) {
 						geneTree.pretreatment();
 						Vector vect= geneTree.leafVector;
@@ -241,6 +271,24 @@ public class RapGreen {
 							Tree leaf= (Tree)(vect.elementAt(x));	
 							leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
 						}
+						
+					}					
+					if (taxaTranslationVector.size()>0) {
+						geneTree.pretreatment();
+						Vector vect= geneTree.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));	
+							for (int k=0;k<taxaTranslationVector.size();k++) {
+								String prefix= (String)(taxaTranslationVector.elementAt(k));
+								String suffix= (String)(taxaTranslationTable.get(prefix));
+								if (leaf.label.startsWith(prefix) && !leaf.label.endsWith("_" + suffix)) {
+									leaf.label=leaf.label+"_"+suffix;
+								}
+								
+							}
+						}
+						
+						
 						
 					}
 	
@@ -275,8 +323,28 @@ public class RapGreen {
 							TreeWriter geneWriter= new TreeWriter(copyCat);
 							geneWriter.writeSimpleTree(new File(outputRerooted.getPath().replace("INPUT",geneFiles[i].getName())));						
 						}
-					}				
-	
+					}		
+							
+					if (outputRerootedSpecies!=null) {
+						Tree copyCat= new Tree(reconciler.geneTree);
+						copyCat.pretreatment();
+						Vector vect= copyCat.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));	
+							leaf.label=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+						}
+							
+											
+						// trying a masse reconciler
+						if (geneFiles.length==1) {
+							TreeWriter geneWriter= new TreeWriter(copyCat);
+							geneWriter.writeSimpleTree(outputRerootedSpecies);
+						} else {
+							TreeWriter geneWriter= new TreeWriter(copyCat);
+							geneWriter.writeSimpleTree(new File(outputRerootedSpecies.getPath().replace("INPUT",geneFiles[i].getName())));						
+						}
+					}	
+					
 					if (outputGene!=null) {
 						Tree copyCat= new Tree(reconciler.geneTree);
 						copyCat.pretreatment();
