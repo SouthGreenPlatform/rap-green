@@ -101,7 +101,7 @@ public class TreeReconciler {
 		//For each possible root
 		Vector roots= geneTree.getRootedTrees();
 		int maxCost=-1;
-		double maxMid=-1.0;
+		double maxMid=1000000.0;
 		int maxLoss=-1;
 		for (int i=0;i<roots.size();i++) {
 			if (RapGreen.verbose) {
@@ -196,8 +196,14 @@ public class TreeReconciler {
 					for (int k=0;k<vector.size();k++) {
 						Tree localLeaf= (Tree)(vector.elementAt(k));
 						if (leaf.label.equals(localLeaf.label.substring(localLeaf.label.lastIndexOf('_')+1,localLeaf.label.length()))) {
-							//System.out.print(tree.label  + " , " + localLeaf.label);
-							localLeaf.label=localLeaf.label.substring(0,localLeaf.label.lastIndexOf('_')) + "_" + tree.label;
+							
+							if (localLeaf.label.lastIndexOf('_')==0) {
+								localLeaf.label= "_" + tree.label;
+								
+							} else {
+								localLeaf.label=localLeaf.label.substring(0,localLeaf.label.lastIndexOf('_')) + "_" + tree.label;
+								
+							}
 							//System.out.println(" ; " + localLeaf.label);
 						}
 					}
@@ -267,7 +273,14 @@ public class TreeReconciler {
 			//The leaf case, no need to reconcile anything. Just annote the correct label at the right reconciled leaf
 			Tree leaf = (Tree)(r.leafHashtable.get(g.label.substring(g.label.lastIndexOf("_")+1,g.label.length())));
 			//System.out.println(g.label);
-			leaf.label=g.label;
+			try {
+				leaf.label=g.label;
+			} catch(Exception exx) {
+				System.out.print("error " + g.label);	
+				for (int i=0;i<r.leafVector.size();i++) {
+						System.out.print(" " + ((Tree)(r.leafVector.elementAt(i))).label);
+				}
+			}
 
 		} else if (((Tree)(g.sons.elementAt(0))).maxDepth+((Tree)(g.sons.elementAt(1))).maxDepth<=TreeReconciler.geneDepthThreshold) {
 			//System.out.println("$$$");
@@ -316,13 +329,16 @@ public class TreeReconciler {
 				for (int i=0;i<node0.leafVector.size();i++) {
 					Tree leaf= (Tree)(node0.leafVector.elementAt(i));
 					if (!genenode0.leafHashtable.containsKey(leaf.label)) {
-						leaf.label="LOSS";
+						if (leaf.label.indexOf("LOSS")==-1)
+							leaf.label= "LOSS_" + leaf.label;
 					}
 				}
 				for (int i=0;i<node1.leafVector.size();i++) {
 					Tree leaf= (Tree)(node1.leafVector.elementAt(i));
+					
 					if (!genenode1.leafHashtable.containsKey(leaf.label)) {
-						leaf.label="LOSS";
+						if (leaf.label.indexOf("LOSS")==-1)
+							leaf.label="LOSS_" + leaf.label;
 					}
 				}
 				res+=reconciliation(genenode0,advanceInLosses(node0));
@@ -500,7 +516,7 @@ public class TreeReconciler {
 			int j=0;
 			while (!notLoss && j<son.leafVector.size()) {
 				Tree leaf = (Tree)(son.leafVector.elementAt(j));
-				if (!leaf.label.equals("LOSS")) {
+				if (leaf.label.indexOf("LOSS")==-1) {
 					notLoss=true;
 				}
 				j++;
@@ -611,7 +627,7 @@ public class TreeReconciler {
 		i=0;
 		while (res && i<r.leafVector.size()) {
 			String taxa= ((Tree)(r.leafVector.elementAt(i))).label;
-			if (!taxa.equals("LOSS"))
+			if (taxa.indexOf("LOSS")==-1)
 				res=g.leafHashtable.containsKey(taxa);
 			i++;
 		}
@@ -635,7 +651,7 @@ public class TreeReconciler {
 				while (i<r.sons.size() && count<2) {
 					Tree son= (Tree)(r.sons.elementAt(i));
 					int j=0;
-					while (j<son.leafVector.size() && ((Tree)(son.leafVector.elementAt(j))).label.equals("LOSS")) {
+					while (j<son.leafVector.size() && ((Tree)(son.leafVector.elementAt(j))).label.indexOf("LOSS")!=-1) {
 						j++;
 					}
 					if (j<son.leafVector.size()) {

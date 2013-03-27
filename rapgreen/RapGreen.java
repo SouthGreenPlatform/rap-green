@@ -254,10 +254,11 @@ public class RapGreen {
 						System.out.println(geneFiles[i].getName() + " " + i + "/" + geneFiles.length);	
 					}
 					Tree geneTree= read.nextTree();
-					
+					geneTree.pretreatment();
+					Vector vect= geneTree.leafVector;
 					if (pipe) {
-						geneTree.pretreatment();
-						Vector vect= geneTree.leafVector;
+						//geneTree.pretreatment();
+						//vect= geneTree.leafVector;
 						for (int x=0;x<vect.size();x++) {
 							Tree leaf= (Tree)(vect.elementAt(x));	
 							leaf.label=leaf.label.replace('|','_');
@@ -265,8 +266,8 @@ public class RapGreen {
 						
 					}
 					if (invert) {
-						geneTree.pretreatment();
-						Vector vect= geneTree.leafVector;
+						//geneTree.pretreatment();
+						//vect= geneTree.leafVector;
 						for (int x=0;x<vect.size();x++) {
 							Tree leaf= (Tree)(vect.elementAt(x));	
 							leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
@@ -274,16 +275,19 @@ public class RapGreen {
 						
 					}					
 					if (taxaTranslationVector.size()>0) {
-						geneTree.pretreatment();
-						Vector vect= geneTree.leafVector;
+						//System.out.println("Prefix entry");
+						//geneTree.pretreatment();
+						//vect= geneTree.leafVector;
 						for (int x=0;x<vect.size();x++) {
 							Tree leaf= (Tree)(vect.elementAt(x));	
 							for (int k=0;k<taxaTranslationVector.size();k++) {
 								String prefix= (String)(taxaTranslationVector.elementAt(k));
 								String suffix= (String)(taxaTranslationTable.get(prefix));
+							//System.out.print("Prefix " + leaf.label + " ");
 								if (leaf.label.startsWith(prefix) && !leaf.label.endsWith("_" + suffix)) {
 									leaf.label=leaf.label+"_"+suffix;
 								}
+							//System.out.println(leaf.label);
 								
 							}
 						}
@@ -291,29 +295,46 @@ public class RapGreen {
 						
 						
 					}
-	
+					//vect= geneTree.leafVector;
+					for (int x=0;x<vect.size();x++) {
+						Tree leaf= (Tree)(vect.elementAt(x));
+						if (leaf.label.indexOf("_")==-1) {	
+							leaf.label="_" + leaf.label;
+						}
+					}					
+					Tree speciesTree=null;
 					SpeciesDictionary dico= new SpeciesDictionary();
-	
-					String test= (new BufferedReader(new FileReader(speciesFile))).readLine();
-					if (test.endsWith(";")) {
-						read= new TreeReader(speciesFile,dico,TreeReader.NEWICK);
+					if (speciesFile==null) {
+						Tree leaf= (Tree)(geneTree.leafVector.elementAt(0));
+						speciesTree= new Tree(leaf.label + ";");
 					} else {
-						read= new TreeReader(speciesFile,dico,TreeReader.XML);
+						String test= (new BufferedReader(new FileReader(speciesFile))).readLine();
+						if (test.endsWith(";")) {
+							read= new TreeReader(speciesFile,dico,TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(speciesFile,dico,TreeReader.XML);
+						}
+						speciesTree= read.nextTree();
 					}
-					Tree speciesTree= read.nextTree();
 					//System.out.println(speciesTree);
 					TreeReconciler reconciler= new TreeReconciler(geneTree,speciesTree);
 	
 					if (outputRerooted!=null) {
 						Tree copyCat= new Tree(reconciler.geneTree);
+						copyCat.pretreatment();
+						vect= copyCat.leafVector;
 						if (invert) {
-							copyCat.pretreatment();
-							Vector vect= copyCat.leafVector;
 							for (int x=0;x<vect.size();x++) {
 								Tree leaf= (Tree)(vect.elementAt(x));	
 								leaf.label=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.lastIndexOf("_"));
-							}
+							}	
 							
+						}
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));
+							if (leaf.label.startsWith("_")) {	
+								leaf.label=leaf.label.substring(1,leaf.label.length());
+							}
 						}					
 						// trying a masse reconciler
 						if (geneFiles.length==1) {
@@ -328,7 +349,7 @@ public class RapGreen {
 					if (outputRerootedSpecies!=null) {
 						Tree copyCat= new Tree(reconciler.geneTree);
 						copyCat.pretreatment();
-						Vector vect= copyCat.leafVector;
+						vect= copyCat.leafVector;
 						for (int x=0;x<vect.size();x++) {
 							Tree leaf= (Tree)(vect.elementAt(x));	
 							leaf.label=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
@@ -349,8 +370,17 @@ public class RapGreen {
 						Tree copyCat= new Tree(reconciler.geneTree);
 						copyCat.pretreatment();
 						copyCat.formatLabelsWithTrace();
+
+						vect= copyCat.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));
+							if (leaf.label.startsWith("_")) {	
+								leaf.label=leaf.label.substring(1,leaf.label.length());
+							}
+						}	
+						
 						TreeWriter geneWriter= new TreeWriter(copyCat);
-						geneWriter.writeTree(outputGene);
+						geneWriter.writeTree(outputGene);					
 					}
 					Tree copyCat=null;
 					if (outputPhyloXML!=null) {

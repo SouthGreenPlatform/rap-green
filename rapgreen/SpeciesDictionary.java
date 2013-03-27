@@ -1,5 +1,6 @@
 package rapgreen;
 import java.util.*;
+import java.io.*;
 
 
 /**
@@ -49,6 +50,10 @@ public class SpeciesDictionary {
 	* Iterator to explore the dictionary
 	*/
 	private int iter;
+	/**
+	* Linked species phylogeny
+	*/
+	Tree speciesTree;
 
 // ********************************************************************************************************************
 // ***     CONSTRUCTORS     ***
@@ -170,7 +175,7 @@ public class SpeciesDictionary {
 		}
 		return res;
 	}
-	
+
 // ********************************************************************************************************************
 /**
 * Get species list containing a parameter prefix
@@ -181,14 +186,14 @@ public class SpeciesDictionary {
 		String pref= prefix.toUpperCase();
 		Vector res= new Vector();
 		for (int i=0;i<code.size();i++) {
-			String local= (String)(code.elementAt(i));	
+			String local= (String)(code.elementAt(i));
 			if (local.toUpperCase().startsWith(pref)) {
-				res.addElement(local);	
+				res.addElement(local);
 			}
 		}
 		return res;
 	}
-	
+
 // ********************************************************************************************************************
 /**
 * Get species list containing a parameter prefix, regarding the scientific full name
@@ -199,14 +204,102 @@ public class SpeciesDictionary {
 		String pref= prefix.toUpperCase();
 		Vector res= new Vector();
 		for (int i=0;i<code.size();i++) {
-			String local= (String)(code.elementAt(i));	
+			String local= (String)(code.elementAt(i));
 			if (getScientificName(local).toUpperCase().startsWith(pref)) {
-				res.addElement(local);	
+				res.addElement(local);
 			}
 		}
 		return res;
-	}	
-	
+	}
+
+// ********************************************************************************************************************
+/**
+* Get species list containing a parameter prefix, regarding the scientific full name
+* @param prefix	The prefix
+* @return		The species vector
+*/
+	public Vector containsScientificNameList(String prefix) {
+		String pref= prefix.toUpperCase();
+		Vector res= new Vector();
+		for (int i=0;i<code.size();i++) {
+			String local= (String)(code.elementAt(i));
+			if (getScientificName(local).toUpperCase().indexOf(pref)!=-1) {
+				res.addElement(local);
+			}
+		}
+		return res;
+	}
+// ********************************************************************************************************************
+/**
+* Test if a taxon is compatible with a constraint list, regarding a species tree
+* @param taxonParam	The taxon to fit in constraints
+* @param allowedConstraints	The table of positive constraints
+* @param forbiddenConstraints	The table of positive constraints
+* @param speciesTree	The reference species tree
+* @return		True or false, regarding compatibility
+*/
+	public boolean isCompatible(String taxonParam,Hashtable allowedConstraints,Hashtable forbiddenConstraints) {
+		boolean res= false;
+
+		boolean founded=false;
+		String taxon= taxonParam.substring(taxonParam.lastIndexOf("_")+1,taxonParam.length());
+		//System.out.print(taxon);
+
+		Tree runner= (Tree)(speciesTree.leafHashtable.get(taxon));
+		while (runner!=null && !founded) {
+			if (allowedConstraints.containsKey(runner.label)) {
+				founded=true;
+				res=true;
+			} else if (forbiddenConstraints.containsKey(runner.label)) {
+				founded=true;
+			}
+			runner=runner.father;
+		}
+
+		//System.out.println(taxon);
+		//System.out.println(" " + res);
+		return res;
+	}
+
+// ********************************************************************************************************************
+/**
+* Test if a all taxa of a gene tree is compatible with a constraint list, regarding a species tree
+* @param taxonParam	The taxon to fit in constraints
+* @param allowedConstraints	The table of positive constraints
+* @param forbiddenConstraints	The table of positive constraints
+* @param speciesTree	The reference species tree
+* @return		True or false, regarding compatibility
+*/
+	public boolean isCompatible(Tree treeParam,Hashtable allowedConstraints,Hashtable forbiddenConstraints) {
+		boolean finalRes=true;
+		for (int i=0;i<treeParam.leafVector.size() && finalRes;i++) {
+
+			String taxonParam=((Tree)(treeParam.leafVector.elementAt(i))).label;
+
+			boolean res= false;
+
+			boolean founded=false;
+			String taxon= taxonParam.substring(taxonParam.lastIndexOf("_")+1,taxonParam.length());
+			//System.out.print(taxon);
+
+			Tree runner= (Tree)(speciesTree.leafHashtable.get(taxon));
+			while (runner!=null && !founded) {
+				if (allowedConstraints.containsKey(runner.label)) {
+					founded=true;
+					res=true;
+				} else if (forbiddenConstraints.containsKey(runner.label)) {
+					founded=true;
+				}
+				runner=runner.father;
+			}
+
+			finalRes=res;
+			//System.out.println(taxon);
+			//System.out.println(" " + res);
+		}
+		return finalRes;
+	}
+
 // ********************************************************************************************************************
 /**
 * Starts the iterator
@@ -214,7 +307,36 @@ public class SpeciesDictionary {
 	public void start() {
 		iter=0;
 	}
-
+// ********************************************************************************************************************
+/**
+* Link a species tree to a dictionnary
+* @param the species tree value
+*/
+	public void setSpeciesTree(Tree speciesTree) {
+		this.speciesTree=speciesTree;
+	}
+	
+// ********************************************************************************************************************
+/**
+* Parse a dico file to fill this dictionary 
+* @param the species dictionary
+*/
+	public void parseSpeciesDico(File speciesFile) {
+		try {
+			BufferedReader read= new BufferedReader(new FileReader(speciesFile));
+			String s= read.readLine();
+			while (s!=null) {
+				String[] sp= s.split("\t");
+				//System.out.println(sp[0] + " " + sp[2] + " " + sp[1]);
+				addSpecies(sp[0],sp[2],sp[1]);
+				s= read.readLine();
+			}
+			read.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
 // ********************************************************************************************************************
 /**
 * Get the next species in the iterator
