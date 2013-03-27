@@ -32,7 +32,8 @@ public class Tree {
 * The length of the branch upper this node.
 */
 	public double length;
-	
+	public String stringLength;
+
 /**
 * The NHX String.
 */
@@ -63,6 +64,34 @@ public class Tree {
 */
 	public boolean ultra;
 
+/**
+* Allowed left constraints for tree pattern definition
+*/
+	public Hashtable allowedLeft;
+
+/**
+* Allowed right constraints for tree pattern definition
+*/
+	public Hashtable allowedRight;
+
+/**
+* v left constraints for tree pattern definition
+*/
+	public Hashtable forbiddenLeft;
+
+/**
+* Forbidden right constraints for tree pattern definition
+*/
+	public Hashtable forbiddenRight;
+
+/**
+* True if right constraints are only composed by one simple taxon
+*/
+	public boolean isSimpleRight;
+	public boolean hasLeftConstraint=false;
+	public boolean hasRightConstraint=false;
+
+
 // ********************************************************************************************************************
 // ***     CONSTRUCTORS     ***
 // ****************************
@@ -81,8 +110,10 @@ public class Tree {
 		//Allocate the fields
 		sons=sonsParam;
 		label=labelParam.toString();
+		nhx=nhxParam.toString();
 		if (lengthParam.length()>0) {
 			length= (new Double(lengthParam.toString())).doubleValue();
+			stringLength= lengthParam.toString();
 		} else {
 			length= -1.0;
 		}
@@ -98,6 +129,21 @@ public class Tree {
 		this.sons=sons;
 		this.label=label;
 		this.length=length;
+		this.nhx=nhx;
+	}
+
+// ********************************************************************************************************************
+/**
+* Generic constructor of a node, directly from fields
+* @param sons	The sons of this node
+* @param label	The label of this node
+* @param length	The length of the branch upper this node
+*/
+	public Tree(Vector sons, String label, double length, String stringLength, String nhx) {
+		this.sons=sons;
+		this.label=label;
+		this.length=length;
+		this.stringLength=stringLength;
 		this.nhx=nhx;
 	}
 
@@ -144,11 +190,11 @@ public class Tree {
 			String nhxLocal=null;
 			if (nhxSon.length()>0) {
 				nhxLocal=nhxSon.toString();
-			}			
-			if (lengthSon.length()>0) {
-				sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),(new Double(lengthSon.toString())).doubleValue(),nhxLocal));
+			}
+			if (lengthSon.length()>0 && lengthSon.toString().indexOf("nan")==-1) {
+				sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),(new Double(lengthSon.toString())).doubleValue(),lengthSon.toString(),nhxLocal));
 			} else {
-				sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),-1.0,nhxLocal));
+				sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),-1.0,"-1.0",nhxLocal));
 			}
 			while (newick.charAt(index)==',') {
 				index++;
@@ -159,16 +205,16 @@ public class Tree {
 				nhxSon= new StringBuffer();
 				//Get the next son
 				index= ReadNode(index,newick,sonsSon,labelSon,lengthSon,nhxSon);
-				
+
 				nhxLocal=null;
 				if (nhxSon.length()>0) {
 					nhxLocal=nhxSon.toString();
 				}
-				
+
 				if (lengthSon.length()>0) {
-					sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),(new Double(lengthSon.toString())).doubleValue(),nhxLocal));
+					sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),(new Double(lengthSon.toString())).doubleValue(),lengthSon.toString(),nhxLocal));
 				} else {
-					sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),-1.0,nhxLocal));
+					sonsParam.addElement(new Tree(sonsSon,labelSon.toString(),-1.0,"-1.0",nhxLocal));
 				}
 			}
 			index++;
@@ -188,7 +234,7 @@ public class Tree {
 				index++;
 			}
 		}
-		
+
 		if (newick.charAt(index)=='[') {
 		// NHX case, stock the Extended Newick information if needed
 			index++;
@@ -197,8 +243,9 @@ public class Tree {
 				index++;
 			}
 			index++;
-		}		
-		
+			//System.out.println(nhxParam.toString());
+		}
+
 		return index;
 
 	}
@@ -226,7 +273,7 @@ public class Tree {
 				if (ultra) {
 					//System.out.println("echo");
 					label = "'U_" + label.substring(1,label.length());
-					
+
 				} else {
 					if (intersection) {
 						label = "'I_" + label.substring(1,label.length());
@@ -448,6 +495,62 @@ public class Tree {
 
 // ********************************************************************************************************************
 /**
+* Collapse branches strictly under the support threshold
+* @param sup	the support threshold
+*
+	public Tree collapseSupport(double sup) {
+		if (!isLeaf()) {
+
+		}
+
+		return res;
+	}
+// ********************************************************************************************************************
+/**
+* @param s	The full species tree
+* @return	The linked species tree node, LSA of this tree species
+*/
+	public Tree speciesMapping(Tree s) {
+		Tree res=null;
+		if (s.isLeaf()) {
+			res=s;
+
+		} else {
+			Vector hitNodes= new Vector();
+			for (int i=0;i<s.sons.size();i++) {
+				Tree son= (Tree)(s.sons.elementAt(i));
+				boolean hit= false;
+				int j=0;
+				while (!hit && j<leafVector.size()) {
+					Tree leaf= (Tree)(leafVector.elementAt(j));
+					//System.out.println(leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.lastIndexOf("_")+6));
+					if (son.leafHashtable.containsKey(leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.lastIndexOf("_")+6))) {
+						//System.out.println("true");
+						hit=true;
+					}
+					j++;
+				}
+				if (hit) {
+					hitNodes.addElement(son);
+				}
+
+
+			}
+
+
+			if (hitNodes.size()>1) {
+				res=s;
+			} else if (hitNodes.size()==0) {
+				System.out.println("\nwarning\n" + this + s);
+			} else {
+				res=this.speciesMapping((Tree)(hitNodes.elementAt(0)));
+			}
+		}
+		return res;
+
+	}
+// ********************************************************************************************************************
+/**
 * The subtree of a species tree, from this tree and a species list.
 * @param species	the species table
 * @return		the newly created subtree
@@ -474,6 +577,105 @@ public class Tree {
 		}
 
 		return res;
+	}
+
+// ********************************************************************************************************************
+/**
+* The subtree of a species tree, from this tree and a species list.
+* @param allRes	vector to fill
+* @param localRes	must be initialised to new Vector
+*/
+	public void fillOrthologs(Vector allRes, Vector allDepth, Vector localRes) {
+		if (isLeaf()) {
+			localRes.addElement(this);
+		} else {
+			if (this.label.indexOf("D_")!=-1 || this.label.indexOf("DUPLICATION")!=-1) {
+				for (int i=0;i<sons.size();i++) {
+					Tree son= (Tree)(sons.elementAt(i));
+					son.fillOrthologs(allRes,allDepth, new Vector());
+				}
+			} else {
+				if (this.father==null || this.father.label.indexOf("D_")!=-1 || this.father.label.indexOf("DUPLICATION")!=-1) {
+
+					for (int i=0;i<sons.size();i++) {
+						Tree son= (Tree)(sons.elementAt(i));
+						son.fillOrthologs(allRes, allDepth, localRes);
+					}
+					if (localRes.size()>1) {
+						allRes.addElement(localRes);
+					}
+					Vector localDepth= new Vector();
+					for (int i=0;i<localRes.size();i++) {
+						double depth=0.0;
+						Tree leaf= (Tree)(localRes.elementAt(i));
+						while (leaf!=this) {
+							if (leaf.length>0.0) {
+								depth+=leaf.length;
+							}
+							leaf=leaf.father;
+						}
+						localDepth.addElement(new Double(depth));
+					}
+					if (localRes.size()>1) {
+						allDepth.addElement(localDepth);
+					}
+				} else {
+					for (int i=0;i<sons.size();i++) {
+						Tree son= (Tree)(sons.elementAt(i));
+						son.fillOrthologs(allRes, allDepth, localRes);
+					}
+				}
+			}
+
+
+		}
+
+	}
+
+// ********************************************************************************************************************
+/**
+* Fill a vector with every losses node of this tree.
+* @param vect	the vector to fill-
+*/
+	public void getLosses(Vector vect) {
+		if (isLeaf()) {
+			if (label.indexOf("LOSS")!=-1) {
+				vect.addElement(this);
+			}
+		} else {
+			boolean isLoss=true;
+			for (int i=0;i<leafVector.size() && isLoss;i++) {
+				Tree leaf= (Tree)(leafVector.elementAt(i));
+				if (leaf.label.indexOf("LOSS")==-1) {
+					isLoss=false;
+				}
+			}
+			if (isLoss) {
+				vect.addElement(this);
+			} else {
+				for (int i=0;i<sons.size();i++) {
+					Tree son= (Tree)(sons.elementAt(i));
+					son.getLosses(vect);
+				}
+			}
+		}
+	}
+
+// ********************************************************************************************************************
+/**
+* Fill a vector with every duplication node of this tree.
+* @param vect	the vector to fill-
+*/
+	public void getDuplications(Vector vect) {
+		if (!isLeaf()) {
+			if (this.label.startsWith("D") || this.label.startsWith("'D") || this.label.startsWith("-D") || this.label.startsWith("-'D") || this.label.startsWith("'-D")) {
+				vect.addElement(this);
+			}
+			for (int i=0;i<sons.size();i++) {
+				Tree son= (Tree)(sons.elementAt(i));
+				son.getDuplications(vect);
+			}
+		}
 	}
 
 // ********************************************************************************************************************
@@ -582,6 +784,42 @@ public class Tree {
 	}
 // ********************************************************************************************************************
 /**
+* Add speciation events into every node
+* @return The string translation.
+*/
+	public void addSpeciations() {
+		if (!isLeaf()) {
+			label="S_"+label;
+			for (int i=0;i<sons.size();i++) {
+				((Tree)(sons.elementAt(i))).addSpeciations();
+			}
+		}
+	}
+
+// ********************************************************************************************************************
+	private Vector getTransferTarget() {
+		String[] elements= label.split("_");
+		Vector res= new Vector();
+		
+		Tree leaf0= (Tree)(sons.elementAt(0));
+		String[] elements0=leaf0.label.split("_");
+		Tree leaf1= (Tree)(sons.elementAt(1));
+		String[] elements1=leaf1.label.split("_");
+		
+		if ((leaf0.isLeaf() && elements[2].equals(elements0[elements0.length-1])) || (!leaf0.isLeaf() && elements[2].equals(elements0[1]))) {
+			res.addElement(leaf0);
+			res.addElement(leaf1);
+		} else {
+			res.addElement(leaf1);
+			res.addElement(leaf0);
+			
+		}
+		
+		return res;
+	}
+	
+// ********************************************************************************************************************
+/**
 * Tree pattern detection
 * @param pattern	The pattern to detect
 * @param ind		The species index
@@ -598,7 +836,7 @@ public class Tree {
 
 				//System.out.println(leaf.label + " " + leafHashtable.containsKey(leaf.label));
 
-				if (!leaf.label.startsWith("LOSS") && !leafHashtable.containsKey(leaf.label)) {
+				if (!leaf.label.startsWith("LOSS") && leaf.isSimpleRight && !leafHashtable.containsKey(leaf.label)) {
 					possible=false;
 				}
 			}
@@ -622,7 +860,7 @@ public class Tree {
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						if ((pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 							res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
 						}
 					}
@@ -630,27 +868,69 @@ public class Tree {
 
 				} else if (pattern.isLeaf()) {
 					if (isLeaf()) {
-						res=label.contains(pattern.label);
+						//res=label.contains(pattern.label);
+						res=(!hasLeftConstraint || dic.isCompatible(label,pattern.allowedLeft,pattern.forbiddenLeft)) && dic.isCompatible(label,pattern.allowedRight,pattern.forbiddenRight);
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-							res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+
+						if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
+							if ((pattern.length!=4.0 || label.startsWith("D_")) &&(pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+								res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+							}
 						}
 					}
 				} else {
 					if (!isLeaf()) {
 					// if sons=null, the pattern cannot be contained
+					
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 						Tree patternSonsZero= (Tree)(pattern.sons.elementAt(0));
 						Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
-						if ( (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
-							res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic)) ||(sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic));
+						if ((!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) && (!pattern.hasRightConstraint || dic.isCompatible(this,pattern.allowedRight,pattern.forbiddenRight))) {
+							//System.out.println("rest2 " + label + " " + pattern.label);
+							boolean neutralTransfer=false;
+							if (pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
+								neutralTransfer=true;
+							}
+							if (!neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) {
+								Vector sens=getTransferTarget();
+								
+								int patternSens= (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue();
+								
+								Tree patternTarget=null;
+								Tree patternSource=null;
+								
+								if (patternSens==0) {
+									patternTarget=(Tree)(pattern.sons.elementAt(0));
+									patternSource=(Tree)(pattern.sons.elementAt(1));
+								} else {
+									patternTarget=(Tree)(pattern.sons.elementAt(1));
+									patternSource=(Tree)(pattern.sons.elementAt(0));								
+								}
+								
+								//System.out.println("control4");
+								Tree target=(Tree)(sens.elementAt(0));
+								Tree source=(Tree)(sens.elementAt(1));
+								res= (target.containsPattern(patternTarget,ind,dic) && source.containsPattern(patternSource,ind,dic) && (!patternTarget.hasLeftConstraint || dic.isCompatible(target,patternTarget.allowedLeft,patternTarget.forbiddenLeft)) && (!patternSource.hasLeftConstraint || dic.isCompatible(source,patternSource.allowedLeft,patternSource.forbiddenLeft)));
+								//System.out.println(res);								
+							} else {
+								if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
+									
+									res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)));
+									if (!res) {
+										res=(sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)));
+									}
+								}
+							}
 						}
 						if (!res) {
-							if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-								res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+
+							if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
+								if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+									res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
+								}
 							}
 						}
 
@@ -678,7 +958,7 @@ public class Tree {
 			for (int i=0;possible && i<pattern.leafVector.size();i++) {
 				Tree leaf= (Tree)(pattern.leafVector.elementAt(i));
 				//System.out.println(leaf.label);
-				if (!leaf.label.startsWith("LOSS") && !leafHashtable.containsKey(leaf.label)) {
+				if (!leaf.label.startsWith("LOSS") && leaf.isSimpleRight && !leafHashtable.containsKey(leaf.label)) {
 					possible=false;
 				}
 			}
@@ -705,24 +985,24 @@ public class Tree {
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 							Vector localColored= new Vector();
 							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
 							if (res) {
 								for (int i=0;i<localColored.size();i++) {
-									colored.addElement(localColored.elementAt(i));	
+									colored.addElement(localColored.elementAt(i));
 								}
-								
-								
+
+
 							} else {
 								localColored= new Vector();
 								res= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
 								if (res) {
 									for (int i=0;i<localColored.size();i++) {
-										colored.addElement(localColored.elementAt(i));	
+										colored.addElement(localColored.elementAt(i));
 									}
-									
-								}	
+
+								}
 							}
 							if (res && rootPattern!=pattern) {
 								colored.addElement(this);
@@ -733,35 +1013,40 @@ public class Tree {
 
 				} else if (pattern.isLeaf()) {
 					if (isLeaf()) {
-						res=label.contains(pattern.label);
+						//res=label.contains(pattern.label);
+						//System.out.println(pattern.allowedRight);
+						res=(!hasLeftConstraint || dic.isCompatible(label,pattern.allowedLeft,pattern.forbiddenLeft)) && dic.isCompatible(label,pattern.allowedRight,pattern.forbiddenRight);
 						if (res)
 							colored.addElement(this);
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-							Vector localColored= new Vector();
-							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
-							if (res) {
-								for (int i=0;i<localColored.size();i++) {
-									colored.addElement(localColored.elementAt(i));	
-								}
-								
-							} //else { 
-								localColored= new Vector();
-								boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
-								if (resLocal) {
+						if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
+							//System.out.println(this + "\n" + pattern+ "\n" + pattern.hasLeftConstraint + "\n" + dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft) + "\n+++++++");
+							if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+								Vector localColored= new Vector();
+								res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
+								if (res) {
 									for (int i=0;i<localColored.size();i++) {
-										colored.addElement(localColored.elementAt(i));	
-									}								
-								}	
-								res= res || resLocal;								
-							//}
-							if (res && rootPattern!=pattern) {
-								colored.addElement(this);
+										colored.addElement(localColored.elementAt(i));
+									}
+
+								} //else {
+									localColored= new Vector();
+									boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
+									if (resLocal) {
+										for (int i=0;i<localColored.size();i++) {
+											colored.addElement(localColored.elementAt(i));
+										}
+									}
+									res= res || resLocal;
+								//}
+								if (res && rootPattern!=pattern) {
+									colored.addElement(this);
+								}
+
+
 							}
-							
-							
 						}
 					}
 				} else {
@@ -771,52 +1056,85 @@ public class Tree {
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 						Tree patternSonsZero= (Tree)(pattern.sons.elementAt(0));
 						Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
-						if ( (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
-							Vector localColored= new Vector();
-							res= sonsZero.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored);
-							if (res) {
-								for (int i=0;i<localColored.size();i++) {
-									colored.addElement(localColored.elementAt(i));	
-								}		
-								
-							} else {
-								localColored= new Vector();
-								res= (sonsZero.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored));
-								if (res) {
-									for (int i=0;i<localColored.size();i++) {
-										colored.addElement(localColored.elementAt(i));	
-									}		
-									
-								}
+						if ((!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) && (!pattern.hasRightConstraint || dic.isCompatible(this,pattern.allowedRight,pattern.forbiddenRight))) {
+							boolean neutralTransfer=false;
+							if (pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
+								neutralTransfer=true;
 							}
-							if (res) {
-								colored.addElement(this);
+							if (!neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) {
+								Vector localColored= new Vector();
+								Vector sens=getTransferTarget();
+								int patternSens= (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue();
+								Tree patternTarget=null;
+								Tree patternSource=null;
+								if (patternSens==0) {
+									patternTarget=(Tree)(pattern.sons.elementAt(0));
+									patternSource=(Tree)(pattern.sons.elementAt(1));
+								} else {
+									patternTarget=(Tree)(pattern.sons.elementAt(1));
+									patternSource=(Tree)(pattern.sons.elementAt(0));								
+								}
+								Tree target=(Tree)(sens.elementAt(0));
+								Tree source=(Tree)(sens.elementAt(1));
+								res= (target.colorPattern(patternTarget,rootPattern,ind,dic,localColored) && source.colorPattern(patternSource,rootPattern,ind,dic,localColored) && (!patternTarget.hasLeftConstraint || dic.isCompatible(target,patternTarget.allowedLeft,patternTarget.forbiddenLeft)) && (!patternSource.hasLeftConstraint || dic.isCompatible(source,patternSource.allowedLeft,patternSource.forbiddenLeft)));	
+								if (res) {
+									colored.addElement(this);
+									for (int i=0;i<localColored.size();i++) {
+										colored.addElement(localColored.elementAt(i));
+									}
+								}							
+							} else {							
+								if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
+									Vector localColored= new Vector();
+									res= sonsZero.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft));
+									if (res) {
+										for (int i=0;i<localColored.size();i++) {
+											colored.addElement(localColored.elementAt(i));
+										}
+	
+									} else {
+										localColored= new Vector();
+										res= (sonsZero.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored) && sonsOne.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored)) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft));
+										if (res) {
+											for (int i=0;i<localColored.size();i++) {
+												colored.addElement(localColored.elementAt(i));
+											}
+	
+										}
+									}
+									if (res) {
+										colored.addElement(this);
+									}
+								}
 							}
 						}
 						if (!res) {
-							if ((pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
-								Vector localColored= new Vector();
-								res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
-								if (res) {
-									for (int i=0;i<localColored.size();i++) {
-										colored.addElement(localColored.elementAt(i));	
-									}		
-									
-								} //else {
-									localColored= new Vector();
-									boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
-									if (resLocal) {
+
+							if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
+								if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+									Vector localColored= new Vector();
+									res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored);
+									if (res) {
 										for (int i=0;i<localColored.size();i++) {
-											colored.addElement(localColored.elementAt(i));	
-										}		
-										
-										
+											colored.addElement(localColored.elementAt(i));
+										}
+
+									} //else {
+										localColored= new Vector();
+										boolean resLocal= sonsOne.colorPattern(pattern,rootPattern,ind,dic,localColored);
+										if (resLocal) {
+											for (int i=0;i<localColored.size();i++) {
+												colored.addElement(localColored.elementAt(i));
+											}
+
+
+										}
+										res= resLocal || res;
+
+									//}
+									if (res && rootPattern!=pattern) {
+										colored.addElement(this);
 									}
-									res= resLocal || res;
-								
-								//}
-								if (res && rootPattern!=pattern) {
-									colored.addElement(this);
 								}
 							}
 						}
@@ -1178,7 +1496,7 @@ public class Tree {
 					tb.length=marge*0.05;
 				}
 			}
-			res=Math.abs((a+ta.length)-(b+tb.length));
+			//res=Math.abs((a+ta.length)-(b+tb.length));
 		}
 		return res;
 	}
@@ -1341,7 +1659,98 @@ public class Tree {
 			}
 		}
 	}
+// ********************************************************************************************************************
+/**
+* Fill the Vector, Hashtable and pointer fields, in order to compare and reconcile this tree with others.
+*/
+	public void patternPretreatment(Tree speciesTree) {
+		patternPretreatment(null,speciesTree);
+	}
 
+// ********************************************************************************************************************
+/**
+* Pretreatment submethod
+* @param father	The father of this node
+*/
+	private void patternPretreatment(Tree father,Tree speciesTree) {
+		this.father=father;
+		leafHashtable = new Hashtable();
+		leafVector= new Vector();
+		allowedLeft= new Hashtable();
+		allowedRight= new Hashtable();
+		forbiddenLeft= new Hashtable();
+		forbiddenRight= new Hashtable();
+		isSimpleRight=true;
+
+		if (nhx!=null) {
+			if (nhx.indexOf("<L>")!=-1) {
+				hasLeftConstraint=true;
+				String leftString= nhx.substring(nhx.indexOf("<L>")+3,nhx.indexOf("</L>"));
+				//System.out.println(leftString);
+				String[] strings= leftString.split(";");
+				for (int i=0;i<strings.length;i++) {
+					if (strings[i].startsWith("Not ")) {
+						forbiddenLeft.put(strings[i].substring(4,strings[i].length()),"0");
+					} else {
+						allowedLeft.put(strings[i],"0");
+					}
+				}
+			}
+			if (nhx.indexOf("<R>")!=-1) {
+				hasRightConstraint=true;
+				String rightString= nhx.substring(nhx.indexOf("<R>")+3,nhx.indexOf("</R>"));
+				//System.out.println(rightString);
+				String[] strings= rightString.split(";");
+				if (strings.length>1 || !speciesTree.leafHashtable.containsKey(strings[0])) {
+					isSimpleRight=false;
+				}
+				for (int i=0;i<strings.length;i++) {
+					if (strings[i].startsWith("Not ")) {
+						forbiddenRight.put(strings[i].substring(4,strings[i].length()),"0");
+					} else {
+						allowedRight.put(strings[i],"0");
+					}
+				}
+				//System.out.println(isSimpleRight + " " + rightString);
+			}
+		}
+
+		if (isLeaf()) {
+			//The leaf case, put this into the fields
+			leafVector.addElement(this);
+			leafHashtable.put(label,this);
+			if (length==-1.0) {
+				maxDepth=1.0;
+			} else {
+				maxDepth=length;
+			}
+		} else {
+			//The node case ; for each son
+			maxDepth=0.0;
+			for (int i=0;i<sons.size();i++) {
+				//Pretreat the son recursivly
+				Tree son= (Tree)(sons.elementAt(i));
+				son.patternPretreatment(this,speciesTree);
+				if (son.maxDepth>maxDepth) {
+					maxDepth=son.maxDepth;
+				}
+				for (int j=0;j<son.leafVector.size();j++) {
+					Tree leaf= (Tree)(son.leafVector.elementAt(j));
+					leafVector.addElement(leaf);
+					leafHashtable.put(leaf.label,leaf);
+				}
+
+			}
+			/*if (father==null) {
+				length=0.0;
+			}*/
+			if (length==-1.0) {
+				maxDepth+=1.0;
+			} else {
+				maxDepth+=length;
+			}
+		}
+	}
 // ********************************************************************************************************************
 /**
 * Fill the Vector, Hashtable and pointer fields, in order to compare and reconcile this tree with others.
@@ -1427,14 +1836,14 @@ public class Tree {
 				res= localRes && res;
 				i++;
 			}
-			
+
 			if (!label.contains("DUPLICATION") && !label.contains("D_")) {
 				res= false;
 			}
 			ultra=res;
 
 		}
-				
+
 		//System.out.println("res:" + res);
 		return res;
 	}
@@ -1442,44 +1851,139 @@ public class Tree {
 /**
 * Fill a table with the largest ultraparalog group for each taxon
 * @param table	The table to fill
-*/	
-	public void fillUltraParalogs(Hashtable table) {
+* @param table2	The id table to fill
+* @param limit	the minimum number of ultraparalog in a group to fill the ids table
+*/
+	public void fillUltraParalogs(Hashtable table,Vector table2, int limit, Vector subspecies, Vector subspeciesTags, Hashtable globalTable) {
 		if (isLeaf()) {
-			// fill table with 1	
+			// fill table with 1
 			String tax= label.substring(label.lastIndexOf("_")+1,label.length());
-			
-			if (!table.containsKey(tax)) {
-				table.put(tax,new Integer(1));	
-				
+
+
+			if (!table.containsKey(tax) && !globalTable.containsKey(tax)) {
+						//System.out.println("3 " + tax);
+				table.put(tax,new Integer(1));
+
 			}
-			
+
+		} else {
+			boolean subUltra=false;
+			int w=0;
+			while (w<subspecies.size() && !subUltra) {
+				boolean subUltra2=true;
+				Hashtable tableLocal= (Hashtable)(subspecies.elementAt(w));
+				String tag= (String)(subspeciesTags.elementAt(w));
+				//System.out.println(tag);
+				for (int i=0;i<leafVector.size() && subUltra2;i++) {
+					Tree leaf = ((Tree)(leafVector.elementAt(i)));
+					String tax= leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+					if (!tableLocal.containsKey(tax)) {
+						subUltra2=false;
+					}
+				}
+				subUltra=subUltra2;
+				if (subUltra) {
+				//System.out.println("ok");
+					String tax= tag;
+					if (!table.containsKey(tax)) {
+						//System.out.println("1 " + tax);
+						table.put(tax,new Integer(nbLeaves()));
+					} else {
+						int local= ((Integer)(table.get(tax))).intValue();
+						if (local<nbLeaves()) {
+							table.put(tax,new Integer(nbLeaves()));
+						}
+
+					}
+					if (leafVector.size()>=limit) {
+						Vector localIds= new Vector();
+						for (int i=0;i<leafVector.size();i++) {
+							localIds.addElement(((Tree)(leafVector.elementAt(i))).label);
+						}
+						table2.addElement(localIds);
+					}
+
+				}
+
+
+
+
+
+
+				w++;
+			}
+			if (!subUltra && ultra) {
+				Tree leaf= (Tree)(leafVector.elementAt(0));
+				String tax= leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+				if (!table.containsKey(tax)) {
+					//System.out.println("2 " + tax);
+					table.put(tax,new Integer(nbLeaves()));
+				} else {
+					int local= ((Integer)(table.get(tax))).intValue();
+					if (local<nbLeaves()) {
+						table.put(tax,new Integer(nbLeaves()));
+					}
+
+				}
+				if (leafVector.size()>=limit) {
+					Vector localIds= new Vector();
+					for (int i=0;i<leafVector.size();i++) {
+						localIds.addElement(((Tree)(leafVector.elementAt(i))).label);
+					}
+					table2.addElement(localIds);
+				}
+
+			} else if (!subUltra)  {
+				for (int i=0;i<sons.size();i++) {
+					Tree son= (Tree)(sons.elementAt(i));
+					son.fillUltraParalogs(table,table2,limit,subspecies,subspeciesTags,globalTable);
+				}
+
+			}
+
+		}
+
+	}
+
+// ********************************************************************************************************************
+/**
+* Fill a table with the number of ultraparalogous groups for each taxon
+* @param table	The table to fill
+*/
+	public void getNbUltraparalogGroups(Hashtable table) {
+		if (isLeaf()) {
+			// fill table with 1
+			String tax= label.substring(label.lastIndexOf("_")+1,label.length());
+			if (!table.containsKey(tax)) {
+				table.put(tax,new Integer(1));
+
+			} else {
+				int local= ((Integer)(table.get(tax))).intValue();
+				table.put(tax,new Integer(local+1));
+
+			}
+
 		} else {
 			if (ultra) {
 				Tree leaf= (Tree)(leafVector.elementAt(0));
 				String tax= leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
 				if (!table.containsKey(tax)) {
-					table.put(tax,new Integer(nbLeaves()));	
-					
+					table.put(tax,new Integer(1));
 				} else {
-					int local= ((Integer)(table.get(tax))).intValue();	
-					if (local<nbLeaves()) {
-						table.put(tax,new Integer(nbLeaves()));	
-						
-					}
-					
+					int local= ((Integer)(table.get(tax))).intValue();
+					table.put(tax,new Integer(local+1));
+
 				}
-				
 			} else {
 				for (int i=0;i<sons.size();i++) {
 					Tree son= (Tree)(sons.elementAt(i));
-					son.fillUltraParalogs(table);
+					son.getNbUltraparalogGroups(table);
 				}
-				
+
 			}
-		
+
 		}
-		
-	}	
+	}
 
 // ********************************************************************************************************************
 /**
@@ -1685,7 +2189,7 @@ public class Tree {
 */
 
 	public int nbLeaves() {
-		return(leafVector.size());	
+		return(leafVector.size());
 	}
 
 // ********************************************************************************************************************

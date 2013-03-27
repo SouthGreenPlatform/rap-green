@@ -36,6 +36,8 @@ public class TreeClustering {
 * Closer option
 */
 	public static String closer=null;
+	
+	public static boolean toCut=false;
 
 // ********************************************************************************************************************
 // ***     MAIN     ***
@@ -64,6 +66,9 @@ public class TreeClustering {
 				}
 				if (args[i].equalsIgnoreCase("-closer")) {
 					closer= args[i+1];
+				}
+				if (args[i].equalsIgnoreCase("-trunk")) {
+					toCut= true;
 				}
 				if (args[i].equalsIgnoreCase("-dictionary")) {
 					dictionary= new File(args[i+1]);
@@ -171,13 +176,28 @@ public class TreeClustering {
 					Hashtable d= new Hashtable();
 					while (s!=null) {
 						String[] elements= s.split("\t");	
-						d.put(elements[0],elements[1]);
+						if (toCut) {
+							d.put(elements[0].substring(0,elements[0].indexOf("_")),elements[1]);
+						} else {
+							d.put(elements[0],elements[1]);
+						}
 						s= read.readLine();
 					}
 					read.close();
 					for (int j=0;j<tree.leafVector.size();j++) {
 						Tree leaf=(Tree)(tree.leafVector.elementAt(j));
-						leaf.label= (String)(d.get(leaf.label));
+						if (toCut) {
+							if (!d.containsKey(leaf.label.substring(0,leaf.label.indexOf("_")))) {
+								System.out.println(leaf.label + " not present in dictionary.");	
+							}
+							leaf.label= (String)(d.get(leaf.label.substring(0,leaf.label.indexOf("_"))));
+						} else {
+							if (!d.containsKey(leaf.label)) {
+								System.out.println(leaf.label + " not present in dictionary.");	
+							}
+							leaf.label= (String)(d.get(leaf.label));
+							
+						}
 					}							
 					
 					BufferedWriter write = new BufferedWriter(new FileWriter(outputFile));
@@ -187,6 +207,7 @@ public class TreeClustering {
 			}
 
 		} catch(Exception e) {
+			e.printStackTrace();
 			System.out.println("Usage for standard tree clustering:\ntreeclustering -input your_tree_file -output your_output_file -cut your_threshold\ntreeclustering -input your_tree_file -output your_output_file -length target_length -label target_label\nUsage to replace labels in a tree, using a CSV dictionary:\ntreeclustering -input your_tree_file -output your_output_file -dictionary input_dictionary\nUsage to choose the most representative sequence in a tree:\ntreeclustering -closer your_tree_file [-length target_length -label target_label]\n");
 		}
 	}
