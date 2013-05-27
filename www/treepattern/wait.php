@@ -1,0 +1,1 @@
+<p id="textual">Tree pattern matching in progress…<br>Results will be displayed in another window.</p>

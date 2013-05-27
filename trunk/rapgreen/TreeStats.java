@@ -39,6 +39,7 @@ public class TreeStats {
 	
 	public static boolean nbleaves=false;
 	public static boolean speciesRepresentation=false;
+	public static boolean fullRepresentation=false;
 	public static boolean duplications=false;
 	public static boolean losses=false;
 	public static boolean ultraparalogs=false;
@@ -83,6 +84,8 @@ public class TreeStats {
 					System.out.println(BOLD);
 					System.out.println("-representation\n\t" + NORMAL + "count the number of sequences representing each species in each tree");
 					System.out.println(BOLD);
+					System.out.println("-fullRepresentation" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "count the number of sequences representing each species, and each internal taxon, in each tree");
+					System.out.println(BOLD);
 					System.out.println("-ultraparalogs" + NORMAL + " " + UNDERLINE + "output_ultraparalogs_file" + NORMAL + " " + UNDERLINE + "min_number\n\t" + NORMAL + "provide for each species and each tree the size of the biggest ultraparalog group, and save sequence ids of groups in this file, if it contains the minimum number of genes");					
 					System.out.println(BOLD);
 					System.out.println("-orthologs" + NORMAL + " " + UNDERLINE + "output_orthologs_file" + NORMAL + " " + UNDERLINE + "min_number\n\t" + NORMAL +  "number of orthologous clusters in the output file, and the list of sequence and depth for each cluster in the output orthologs file.");					
@@ -109,6 +112,9 @@ public class TreeStats {
 				} else if (args[i].equalsIgnoreCase("-representation")) {
 					speciesRepresentation= true;
 					i--;
+				} else if (args[i].equalsIgnoreCase("-fullRepresentation")) {
+					fullRepresentation= true;
+					speciesFile= new File(args[i+1]);
 				} else if (args[i].equalsIgnoreCase("-losses")) {
 					losses= true;
 					speciesFile= new File(args[i+1]);
@@ -246,7 +252,7 @@ public class TreeStats {
 	        	write.close();
 				
 				
-			} else 			if (duplications) {
+			} else if (duplications) {
 			
 	        	File[] treeFiles = treeFile.listFiles();	
 
@@ -465,6 +471,103 @@ public class TreeStats {
 
 	        	}
 	        	write.close();
+			} else if (fullRepresentation) {				
+			
+						
+	        	File[] treeFiles = treeFile.listFiles();	
+
+				Vector res= new Vector();
+				Vector taxaVector= new Vector();
+				Hashtable taxaTable= new Hashtable();
+
+				TreeReader read= null;
+				BufferedReader buf= new BufferedReader(new FileReader(speciesFile));
+				String test= buf.readLine();
+				buf.close();
+				if (test.endsWith(";")) {
+					read= new TreeReader(speciesFile,TreeReader.NEWICK);
+				} else {
+					read= new TreeReader(speciesFile,TreeReader.XML);
+				}
+				Tree speciesTree= read.nextTree();
+				speciesTree.pretreatment();
+			
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= new Hashtable();
+	        		if (treeFiles[i].getName().contains(key)) {
+						read= null;
+						buf= new BufferedReader(new FileReader(treeFiles[i]));
+						test= buf.readLine();
+						buf.close();
+						if (test.endsWith(";")) {
+							read= new TreeReader(treeFiles[i],TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(treeFiles[i],TreeReader.XML);
+						}
+						Tree tree= read.nextTree();
+						tree.pretreatment();	        			
+	        			
+	        			Vector speciationsVector= new Vector();
+	        			tree.getSpeciations(speciationsVector);
+	        			
+	        			System.out.println(treeFiles[i].getName() + " : " + speciationsVector.size());
+	        			
+	        			for (int j=0;j<speciationsVector.size();j++) {
+	        				Tree g= (Tree)(speciationsVector.elementAt(j));
+							Tree s=g.speciesMapping(speciesTree);
+	        				
+	        				if (!taxaTable.containsKey(s.label)) {
+	        					//System.out.println(s.label);
+	        					taxaTable.put(s.label,"1");
+	        					taxaVector.addElement(s.label);
+	        				}
+	        				
+	        				if (!localRes.containsKey(s.label)) {								
+	        					localRes.put(s.label,new Integer(1));	        				
+	        				} else {
+	        					int localInt= (    (Integer)(localRes.get(s.label))     ).intValue();
+	        					localInt++;
+	        					localRes.put(s.label,new Integer(localInt));
+	        					
+	        				}
+	        			}
+	        		}   	
+	        		res.addElement(localRes);		        		
+	        	}	
+	        	
+	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+	       		write.write("FILE");
+	        	for (int j=0;j<taxaVector.size();j++) {
+	        		write.write("\t");	
+	        		write.write((String)(taxaVector.elementAt(j)));	
+	        	}
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= (Hashtable)(res.elementAt(i));
+	        		if (treeFiles[i].getName().contains(key)) {
+	       				write.write(treeFiles[i].getName());
+		        		for (int j=0;j<taxaVector.size();j++) {
+		        			String taxa= (String)(taxaVector.elementAt(j));
+	        				int localInt= 0;
+	        				if (localRes.containsKey(taxa)) {
+	        					localInt = ((Integer)(localRes.get(taxa))).intValue();
+	        				}
+	        				write.write("\t");	
+	        				write.write((new Integer(localInt)).toString());
+	   						write.flush();	
+		        			
+		        		}
+	   					write.write("\n");
+	   					write.flush();
+	        		}
+	        	}		
+	        	write.close();
+				
+				
+
+
 			} else if (speciesRepresentation) {
 				Hashtable speciesTable= new Hashtable();
 				Vector speciesVector= new Vector();
@@ -541,7 +644,7 @@ public class TreeStats {
 							localUl=((Integer)(localTable2.get(localSp))).intValue();
 						}
 
-				        write.write(localUl + ";" + localCount + "\t");
+				        write.write(/*localUl + ";" + */localCount + "\t");
 					}
 					write.write("\n");
 					write.flush();

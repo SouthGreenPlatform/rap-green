@@ -39,6 +39,8 @@ public class TreeFilter {
 	//public static double support=null;
 	
 	public static boolean clean=false;
+	
+	public static boolean newick=false;
 
 // ********************************************************************************************************************
 // ***     MAIN     ***
@@ -62,6 +64,10 @@ public class TreeFilter {
 				}
 				if (args[i].equalsIgnoreCase("-clean")) {
 					clean=true;
+					i--;
+				}
+				if (args[i].equalsIgnoreCase("-newick")) {
+					newick=true;
 					i--;
 				}
 								
@@ -99,6 +105,7 @@ public class TreeFilter {
 			Tree tree= reader.nextTree();	
 			Hashtable excluded= new Hashtable();
 			tree.taxonomicPretreatment();
+			//System.out.println(tree.getNewick());
 			/*if (support!=null) {
 				tree.collapseSupport(support);
 				String phylo= tree.getNewick();
@@ -118,13 +125,22 @@ public class TreeFilter {
 					String phylo= tree.toPhyloXMLString(relations);
 					if (outputFile!=null) {
 						BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
-						write.write(phylo+"\n");
+						if (newick) {
+							write.write(tree.getNewick()+"\n");
+						} else {
+							write.write(phylo+"\n");
+						}
 						write.flush();
 						write.close();
 					} else {
-						System.out.println(phylo);				
+						if (newick) {
+							System.out.println(tree.getNewick());
+						} else {
+							System.out.println(phylo);		
+						}		
 					}
 					
+					//System.out.println("******\n\n" + tree.getNewick());
 				} else {				
 					System.out.println("Empty tree.");
 				}
@@ -132,7 +148,7 @@ public class TreeFilter {
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("Usage for standard tree filtering:\njava -jar TreeFilter.jar -input your_tree_file -remove taxid_to_remove [-remove taxid_to_remove] [-output your_output_file]\n");
+			System.out.println("Usage for standard tree filtering:\njava -jar TreeFilter.jar -input your_tree_file -remove taxid_to_remove [-remove taxid_to_remove] [-output your_output_file] [-newick]\n");
 		}
 	}
 

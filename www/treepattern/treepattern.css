@@ -1,0 +1,303 @@
+/* general body style */
+body {
+	margin:0;
+	padding:0ex 0;
+	font-family: Verdana,Candara,Sans-serif;
+	font-size: 12px;
+}
+
+div#poptaxa {
+	display:block;
+	position: absolute;
+	border:0px;
+	height:400px;	
+	margin:0;
+	padding:0ex 0;
+	text-align:left;
+}
+
+div#treeDivId {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	
+}
+/************************/
+/* The toolbox full php */
+table#toolbox {
+	margin:0 0;
+	padding:5px 5px;
+	height:55px;
+	color: black;
+	width:100%;
+	border-width: 0px;
+	font-family: Arial,Sans-serif;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+}
+table#toolbox tr#itemtr {
+	white-space:nowrap;
+	text-align: center;
+	margin:0 0;
+	padding:0 0;
+	height: 100%;
+}
+table#toolbox td#itemtd {
+	margin:0 0 0 0;
+	padding:0px 10px 0px 10px;
+	font-weight: 400;
+	border-width: 2px;
+	border-style: outset;
+	border-padding: 5px;
+	border-color:#FFFFFF;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	vertical-align:middle;
+	color: #FFFFFF;
+	opacity: 0.8;
+}
+/*********************/
+/* The menu full php */
+table#menu div {
+	display:block;
+	position: absolute;
+	border-width: 3px;
+	border-style: groove;
+	border-color:#444444;
+	margin:0;
+	padding:4px 0px 10px 0px;
+	background: #333333;
+	color: black;
+	color: #FFFFFF;
+}
+
+table#menu div p#lienimage {
+	font-weight: 800;
+	margin:0px 0px;
+	padding:5px 20px 5px 20px;
+	opacity: 0.8;
+}
+
+table#menu div p#textual {
+	font-weight: 400;
+	margin:0px 0px;
+	padding:5px 70px 5px 15px;
+}
+
+table#menu div p#listing {
+	font-weight: 400;
+	margin:0px 0px;
+	text-align:left;
+	padding:5px 5px 5px 5px;
+}
+
+table#menu div p#linking {
+	font-weight: 800;
+	margin:0px 0px;
+	padding:5px 70px 5px 15px;
+	opacity: 0.8;
+}
+
+
+table#menu div hr#large {
+	opacity: 0.7;
+}
+
+table#menu {
+	margin:0 0;
+	padding:0 0;
+	width:100%;
+	height:55px;
+	background: #333333;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: black;
+	border-width: 0px;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	font-family: Arial,Sans-serif;
+}
+table#menu tr#toptr {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	height: 4px;
+}
+table#menu tr#toptr td {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	background: #666666;
+}
+table#menu tr#itemtr {
+	white-space:nowrap;
+	text-align: center;
+	margin:0 0;
+	padding:0 0;
+	height: 100%;
+}
+table#menu td#itemtd {
+	margin:0 0 0 0;
+	padding:0px 20px 0px 20px;
+	font-weight: 800;
+	border-width: 0 3px 0 0;
+	border-style: groove;
+	border-color:#444444;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+	opacity: 0.8;
+}
+table#menu td#poptr {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	height: 0px;
+}
+table#menu td#poptd {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	background: #333333;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+}
+table#menu td#tdresults {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	background-image:none;
+	background:#FFFFFF;
+	color: #000000;
+}
+table#menu td#begining {
+	margin:0 0 0 0;
+	padding:0px 15px 0px 0px;
+	border-width: 0 3px 0 0;
+	border-style: groove;
+	border-color:#444444;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+}
+table#menu td#closing {
+	margin:0 0;
+	border-width: 0px;
+	width:100%;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: black;
+}
+
+
+/* Les liens  */
+A {
+	color: #F1971F;
+	font-weight: bold;
+	font-size: 12px;
+	margin:0px 0px;
+	padding:0px 0px;
+
+}
+A:link {
+	text-decoration : none;
+}
+A:hover {
+	text-decoration: underline overline; 
+}
+A:active {
+	text-decoration : none;
+}
+A:visited {
+	text-decoration : none;
+}
+A:active:hover {
+	text-decoration : underline overline;
+}
+A:visited:hover {
+	text-decoration : underline overline;
+}
+
+
+
+
+/* configuration of the main cell */
+div#main {
+	font-weight: 100;
+	background:white;
+	margin-left:0px;
+	height: 100%;
+	width: auto;
+	padding:0ex 0;
+}
+
+/* organisation table, used to organise pages without any borders and lines */
+table#organise {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+}
+table#organise tr {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+}
+table#organise td {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	vertical-align: center;
+	text-align: center;
+}
+
+table#organise td#toped {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	vertical-align: top;
+	text-align: center;
+}
+
+
+table#organise td#lefted {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	vertical-align: center;
+	text-align: left;
+}
+
+
+
+
