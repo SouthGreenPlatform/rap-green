@@ -99,7 +99,7 @@ public class Temp {
 				Hashtable dico= new Hashtable();
 				while (s!=null) {
 					String[] splited= s.split("\t");
-					dico.put(splited[0],splited[3]);
+					dico.put(splited[1].substring(0,splited[1].lastIndexOf("_")),splited[3]);
 					s= read.readLine();
 				}
 				read.close();
@@ -110,8 +110,8 @@ public class Temp {
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
 					
-					if (dico.containsKey(leaf.label)) {
-						leaf.label=(String)(dico.get(leaf.label));
+					if (dico.containsKey(leaf.label.substring(0,leaf.label.lastIndexOf("_")))) {
+						leaf.label=leaf.label.substring(0,leaf.label.lastIndexOf("_")+1) + (String)(dico.get(leaf.label.substring(0,leaf.label.lastIndexOf("_")))) + "LRR_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
 						
 					} else {
 						System.out.println("Warning: " + leaf.label);

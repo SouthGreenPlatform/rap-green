@@ -660,7 +660,26 @@ public class Tree {
 			}
 		}
 	}
-
+	
+// ********************************************************************************************************************
+/**
+* Fill a vector with every speciations of leaves node of this tree.
+* @param vect	the vector to fill-
+*/
+	public void getSpeciations(Vector vect) {
+		if (!isLeaf()) {
+			if (!this.label.startsWith("D") && !this.label.startsWith("'D") && !this.label.startsWith("-D") && !this.label.startsWith("-'D") && !this.label.startsWith("'-D") && !this.label.startsWith("T") && !this.label.startsWith("'T") && !this.label.startsWith("-T") && !this.label.startsWith("-'T") && !this.label.startsWith("'-T")) {
+				vect.addElement(this);
+			}
+			for (int i=0;i<sons.size();i++) {
+				Tree son= (Tree)(sons.elementAt(i));
+				son.getSpeciations(vect);
+			}
+		} else {
+			vect.addElement(this);
+		}
+	}
+	
 // ********************************************************************************************************************
 /**
 * Fill a vector with every duplication node of this tree.
@@ -891,7 +910,7 @@ public class Tree {
 						if ((!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) && (!pattern.hasRightConstraint || dic.isCompatible(this,pattern.allowedRight,pattern.forbiddenRight))) {
 							//System.out.println("rest2 " + label + " " + pattern.label);
 							boolean neutralTransfer=false;
-							if (pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
+							if (pattern.label.startsWith("T") && pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
 								neutralTransfer=true;
 							}
 							if (!neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) {
@@ -918,10 +937,8 @@ public class Tree {
 							} else {
 								if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
 									
-									res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)));
-									if (!res) {
-										res=(sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)));
-									}
+									res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft))) || (sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)));
+									
 								}
 							}
 						}
@@ -1058,7 +1075,7 @@ public class Tree {
 						Tree patternSonsOne= (Tree)(pattern.sons.elementAt(1));
 						if ((!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) && (!pattern.hasRightConstraint || dic.isCompatible(this,pattern.allowedRight,pattern.forbiddenRight))) {
 							boolean neutralTransfer=false;
-							if (pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
+							if (pattern.label.startsWith("T") && pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
 								neutralTransfer=true;
 							}
 							if (!neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) {
@@ -1195,7 +1212,12 @@ public class Tree {
 
 
 					}
-					label= (new Double(Math.max(support1,support2))).toString();
+					if (label.indexOf("_")!=-1) {
+						label= label.substring(0,label.lastIndexOf("_")+1) + (new Double(Math.max(support1,support2))).toString();
+					} else {
+						label= (new Double(Math.max(support1,support2))).toString();
+					}
+					sons=son.sons;
 				} else {
 					label=son.label;
 					sons=null;
@@ -1206,6 +1228,8 @@ public class Tree {
 				sons=keep;
 				res=true;
 
+			} else {
+				//System.out.println("EX " + res + ":" + getNewick());	
 			}
 		}
 		return res;
