@@ -23,7 +23,11 @@
 <form name="research" action="http://gohelle.cirad.fr/phylogeny/treedisplay/index.php" method="post">
 <input type="hidden" name="hiddenfield" value="PLOUF">
 </form>
+<?php
 
+ include('config.php');
+
+?>
 <?php
 
 // Get the tree newick from the daemon

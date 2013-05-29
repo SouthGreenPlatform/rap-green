@@ -1,4 +1,8 @@
+<?php
 
+ include('config.php');
+
+?>
 <?php
 echo "<p>Tree pattern matching in progress...</p>";
 //echo($_REQUEST['pattern']."<BR>".$_REQUEST['database']."<BR>");
