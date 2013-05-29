@@ -13,6 +13,11 @@
 <body>
 <?php
 
+ include('config.php');
+
+?>
+<?php
+
  include('pattern.php');
 
 ?>
