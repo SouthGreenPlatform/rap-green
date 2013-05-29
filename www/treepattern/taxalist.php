@@ -1,7 +1,7 @@
 <?php
 // open the socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-$resultat = socket_connect($socket, "localhost", 1666);
+$resultat = socket_connect($socket, $server, $port);
 // send the signal to the daemon
 $count=0;
 $first="";

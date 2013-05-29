@@ -4,7 +4,7 @@ echo "<p>Tree pattern matching in progress...</p>";
 //echo($_REQUEST['pattern']."<BR>".$_REQUEST['database']."<BR>");
 // open the socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-$resultat = socket_connect($socket, "localhost", 1666);
+$resultat = socket_connect($socket, $server, $port);
 // send the signal to the daemon
 $envoi="patternSearch\n";
 socket_write($socket, $envoi, strlen($envoi));
