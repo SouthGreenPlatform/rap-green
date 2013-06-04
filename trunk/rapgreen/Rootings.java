@@ -27,6 +27,10 @@ public class Rootings {
 */
 	public static File midpoint=null;
 
+/**
+* Output redundancy rooting file
+*/
+	public static File redundancy=null;
 
    private static final String NORMAL     = "\u001b[0m";
    private static final String BOLD       = "\u001b[1m";
@@ -54,6 +58,8 @@ public class Rootings {
 					System.out.println(BOLD);
 					System.out.println("-output" + NORMAL + " "  + UNDERLINE + "rootings_file\n\t" + NORMAL + "The output file containing input tree rootings");
 					System.out.println(BOLD);
+					System.out.println("-redundancy" + NORMAL + " "  + UNDERLINE + "redundancy_file\n\t" + NORMAL + "The output file containing the rooted by redundancy tree");
+					System.out.println(BOLD);
 					System.out.println("-midpoint" + NORMAL + " "  + UNDERLINE + "midpoint_file\n\t" + NORMAL + "The output file containing the midpoint rooted input tree\n\n");
 					System.exit(0);
 				}				
@@ -66,42 +72,70 @@ public class Rootings {
 				if (args[i].equalsIgnoreCase("-midpoint")) {
 					midpoint= new File(args[i+1]);
 				}
+				if (args[i].equalsIgnoreCase("-redundancy")) {
+					redundancy= new File(args[i+1]);
+				}
 			}
 
 			TreeReader reader= new TreeReader(input,TreeReader.NEWICK);
 			Tree tree= reader.nextTree();
 
 			tree.pretreatment();
-			Vector roots= tree.getRootedTrees();
-
-
-
-			BufferedWriter write = null;
-			if (output!=null) {
-				write = new BufferedWriter(new FileWriter(output));
-			}
-			double maxMidpoint=10000000.0;
 			Tree midpointTree=null;
-			for (int i=0;i<roots.size();i++) {
-				Tree root= (Tree)(roots.elementAt(i));
-				root.pretreatment();
-				double localMidpoint= root.midpoint();
-				if (localMidpoint<maxMidpoint) {
-					maxMidpoint=localMidpoint;
-					midpointTree= root;	
+			BufferedWriter write = null;
+			//System.out.println(tree);
+			if (tree.leafVector.size()==2) {
+			//System.out.println("echo2");
+				midpointTree=new Tree(tree);
+				
+			} else {
+				Vector roots= tree.getRootedTrees();
+	
+	
+	
+				if (output!=null) {
+					write = new BufferedWriter(new FileWriter(output));
+				}
+				double maxMidpoint=10000000.0;
+				int minRedundancy=0;
+				for (int i=0;i<roots.size();i++) {
+					Tree root= (Tree)(roots.elementAt(i));
+					root.taxonomicPretreatment();
+					double localMidpoint= root.midpoint();
+					if (redundancy!=null) {
+						int localRedundancy= root.getNbRedundancy();
+						if (localRedundancy<minRedundancy || (localRedundancy==minRedundancy && localMidpoint<=maxMidpoint)) {
+							maxMidpoint=localMidpoint;
+							midpointTree= root;	
+							minRedundancy=localRedundancy;
+						}
+					}
+					if (redundancy==null && localMidpoint<maxMidpoint) {
+						maxMidpoint=localMidpoint;
+						midpointTree= root;	
+					}
+					if (output!=null) {
+						TreeWriter writer= new TreeWriter(root);
+						writer.writeSimpleTree(write);
+						//write.write(localMidpoint+"\n");
+						write.flush();
+					}
 				}
 				if (output!=null) {
-					TreeWriter writer= new TreeWriter(root);
-					writer.writeSimpleTree(write);
-					//write.write(localMidpoint+"\n");
-					write.flush();
+					write.close();
 				}
 			}
-			if (output!=null) {
-				write.close();
-			}
+			//System.out.println("FINAL:" + midpointTree);
 			if (midpoint!=null) {
 				write = new BufferedWriter(new FileWriter(midpoint));
+				TreeWriter writer= new TreeWriter(midpointTree);
+				writer.writeSimpleTree(write);
+				write.flush();
+				write.close();
+				
+			}
+			if (redundancy!=null) {
+				write = new BufferedWriter(new FileWriter(redundancy));
 				TreeWriter writer= new TreeWriter(midpointTree);
 				writer.writeSimpleTree(write);
 				write.flush();

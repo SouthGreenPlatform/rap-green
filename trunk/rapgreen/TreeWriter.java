@@ -75,10 +75,10 @@ public class TreeWriter {
 				if (!localTree.isLeaf()) {
 					Tree son1= (Tree)(localTree.sons.elementAt(0));
 					Tree son2= (Tree)(localTree.sons.elementAt(1));
-					if (son1.isLeaf()) {
+					if (son1.isLeaf() && !son2.isLeaf()) {
 						son2.label="";
 					}
-					if (son2.isLeaf()) {
+					if (son2.isLeaf() && !son1.isLeaf()) {
 						son1.label="";
 					}
 				} 
@@ -109,10 +109,10 @@ public class TreeWriter {
 				if (!localTree.isLeaf()) {
 					Tree son1= (Tree)(localTree.sons.elementAt(0));
 					Tree son2= (Tree)(localTree.sons.elementAt(1));
-					if (son1.isLeaf()) {
+					if (son1.isLeaf() && !son2.isLeaf()) {
 						son2.label="";
 					}
-					if (son2.isLeaf()) {
+					if (son2.isLeaf() && !son1.isLeaf()) {
 						son1.label="";
 					}
 				} 

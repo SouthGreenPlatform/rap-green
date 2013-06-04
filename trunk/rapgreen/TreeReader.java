@@ -31,7 +31,7 @@ public class TreeReader {
 /**
 * Simple output
 */
-	public static final int SIMPLE=1;
+	public static final int SIMPLE=4;
 
 /**
 * Trees
@@ -138,7 +138,7 @@ public class TreeReader {
 				}
 				trees.addElement(localTree);
 			}
-		} else {
+		} else if (format==XML) {
 			//XML case, modify the string to newick format
 			StringBuffer newick= new StringBuffer();
 			toNewick(0,result.toString().replace("\t",""),newick,dico);
@@ -149,6 +149,18 @@ public class TreeReader {
 			for (int i=0;i<newicks.length;i++) {
 				trees.addElement(new Tree(newicks[i]+";"));
 			}
+		} else {
+			//XML case, modify the string to newick format
+			StringBuffer newick= new StringBuffer();
+			toSimpleNewick(0,result.toString().replace("\t",""),newick,dico);
+			newicks= new String[1];
+			newicks[0]=newick.toString();
+			//System.out.println(newicks[0]);
+			//Construct trees from newick strings
+			for (int i=0;i<newicks.length;i++) {
+				trees.addElement(new Tree(newicks[i]+";"));
+			}
+			
 		}
 
 	}
@@ -694,6 +706,7 @@ public class TreeReader {
 * @return The new index
 */
 	public int toSimpleNewick(int index, String source, StringBuffer res, SpeciesDictionary dico) {
+		//System.out.println("ECHO3");
 		StringBuffer common= new StringBuffer();
 		StringBuffer blength= new StringBuffer();
 		StringBuffer id= new StringBuffer();
