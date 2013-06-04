@@ -1598,6 +1598,7 @@ public class Tree {
 				maxDepth=length;
 			}
 		} else {
+			//System.out.println(label);
 			leafHashtable.put(label,this);
 			//The node case ; for each son
 			maxDepth=0.0;
@@ -2145,7 +2146,36 @@ public class Tree {
 
 		return res;
 	}
-
+// ********************************************************************************************************************
+/**
+* Return the number of redundant nodes.
+* @return The number of redundant nodes
+*/	
+	public int getNbRedundancy() {
+		int res=0;
+		if (!isLeaf()) {
+			Tree son1= (Tree)(sons.elementAt(0));
+			Tree son2= (Tree)(sons.elementAt(1));
+			boolean isRedundant=false;
+			int i=0;
+			while (isRedundant && i<son1.leafVector.size()) {
+				Tree son= (Tree)(son1.leafVector.elementAt(i));
+				String localLabel=son.label.substring(son.label.lastIndexOf("_")+1,son.label.length());
+				if (son2.leafHashtable.containsKey(localLabel)) {
+					isRedundant=true;
+				}
+				i++;
+			}
+			
+			if (isRedundant) {
+				res=1;
+			}
+			for (i=0;i<this.sons.size();i++) {
+				res+=((Tree)(sons.elementAt(i))).getNbRedundancy();
+			}
+		}		
+		return res;
+	}
 // ********************************************************************************************************************
 /**
 * Return true if this node is a leaf
@@ -2290,7 +2320,7 @@ public class Tree {
 					}
 				}
 			}
-			this.label=sourceSon.label;
+			//this.label=sourceSon.label;
 			this.sons=newSons;
 
 		} else {
@@ -2306,7 +2336,7 @@ public class Tree {
 				}
 			}
 			this.length=sourceSon.length;
-			this.label=sourceSon.label;
+			//this.label=sourceSon.label;
 			this.sons=newSons;
 		}
 	}

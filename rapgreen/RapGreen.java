@@ -312,7 +312,7 @@ public class RapGreen {
 						if (test.endsWith(";")) {
 							read= new TreeReader(speciesFile,dico,TreeReader.NEWICK);
 						} else {
-							read= new TreeReader(speciesFile,dico,TreeReader.XML);
+							read= new TreeReader(speciesFile,dico,TreeReader.SIMPLE);
 						}
 						speciesTree= read.nextTree();
 					}

@@ -93,6 +93,7 @@ public class TreeReconciler {
 		//Remove useless parts of the species tree
 		//System.out.println(speciesTree);
 		removeUselessSubtrees(speciesTree,geneTree.leafVector);
+		System.out.println(speciesTree);
 		//System.out.println(geneTree);
 		//Reinitialize the pretreatment of the species tree
 		speciesTree.pretreatment();
@@ -169,11 +170,11 @@ public class TreeReconciler {
 * @param vector	The list of allowed taxa
 */
 	public void removeUselessSubtrees(Tree tree,Vector vector) {
-		if (!tree.isLeaf()) {
-
-			/*if (tree.label.equals("ORYZA")) {
+			/*if (tree.label.equals("ORYSA")) {
 				System.out.println("okok\n" + tree);
 			}*/
+		if (!tree.isLeaf()) {
+
 			//Internal node case
 			//Check if this internal node is contained in usefull taxa
 			boolean localyUsefull=false;
