@@ -850,7 +850,7 @@ public class Tree {
 			boolean res=false;
 
 			boolean possible=true;
-			for (int i=0;possible && i<pattern.leafVector.size();i++) {
+			/*for (int i=0;possible && i<pattern.leafVector.size();i++) {
 				Tree leaf= (Tree)(pattern.leafVector.elementAt(i));
 
 				//System.out.println(leaf.label + " " + leafHashtable.containsKey(leaf.label));
@@ -858,7 +858,22 @@ public class Tree {
 				if (!leaf.label.startsWith("LOSS") && leaf.isSimpleRight && !leafHashtable.containsKey(leaf.label)) {
 					possible=false;
 				}
-			}
+			}*/
+			
+			/*if (!possible) {
+			
+				System.out.println("NOT POSSIBLE 1");
+				for (int i=0;i<pattern.leafVector.size();i++) {
+					Tree leaf= (Tree)(pattern.leafVector.elementAt(i));
+
+					System.out.println(leaf.label + " " + leafHashtable.containsKey(leaf.label));
+
+					if (!leaf.label.startsWith("LOSS") && leaf.isSimpleRight && !leafHashtable.containsKey(leaf.label)) {
+						possible=false;
+					}
+				}				
+			}*/
+			
 			if (possible) {
 				if (pattern.label.startsWith("LOSS")) {
 					if (label.startsWith("L_")) {
@@ -887,6 +902,7 @@ public class Tree {
 
 				} else if (pattern.isLeaf()) {
 					if (isLeaf()) {
+						//System.out.println(this);
 						//res=label.contains(pattern.label);
 						res=(!hasLeftConstraint || dic.isCompatible(label,pattern.allowedLeft,pattern.forbiddenLeft)) && dic.isCompatible(label,pattern.allowedRight,pattern.forbiddenRight);
 					} else {
@@ -972,14 +988,17 @@ public class Tree {
 			boolean res=false;
 			// test if the pattern taxa are present in this tree part
 			boolean possible=true;
-			for (int i=0;possible && i<pattern.leafVector.size();i++) {
+			/*for (int i=0;possible && i<pattern.leafVector.size();i++) {
 				Tree leaf= (Tree)(pattern.leafVector.elementAt(i));
 				//System.out.println(leaf.label);
 				if (!leaf.label.startsWith("LOSS") && leaf.isSimpleRight && !leafHashtable.containsKey(leaf.label)) {
 					possible=false;
 				}
-			}
+			}*/
 
+			/*if (!possible) {
+				System.out.println("NOT POSSIBLE 2");
+			}*/
 			if (possible) {
 				if (pattern.label.startsWith("LOSS")) {
 					if (label.startsWith("L_")) {
@@ -1031,7 +1050,7 @@ public class Tree {
 				} else if (pattern.isLeaf()) {
 					if (isLeaf()) {
 						//res=label.contains(pattern.label);
-						//System.out.println(pattern.allowedRight);
+						//System.out.println("ECHO:" + this + " " + dic.isCompatible(label,pattern.allowedRight,pattern.forbiddenRight));
 						res=(!hasLeftConstraint || dic.isCompatible(label,pattern.allowedLeft,pattern.forbiddenLeft)) && dic.isCompatible(label,pattern.allowedRight,pattern.forbiddenRight);
 						if (res)
 							colored.addElement(this);
@@ -1684,7 +1703,8 @@ public class Tree {
 			}
 		}
 	}
-// ********************************************************************************************************************
+
+// ********************************************************************************************************************
 /**
 * Fill the Vector, Hashtable and pointer fields, in order to compare and reconcile this tree with others.
 */
@@ -1776,6 +1796,62 @@ public class Tree {
 			}
 		}
 	}
+// ********************************************************************************************************************
+/**
+* Fill the Vector, Hashtable and pointer fields, for species trees
+*/
+	public void globalPretreatment() {
+		globalPretreatment(null);
+	}
+
+// ********************************************************************************************************************
+/**
+* Pretreatment submethod
+* @param father	The father of this node
+*/
+	private void globalPretreatment(Tree father) {
+		this.father=father;
+		leafHashtable = new Hashtable();
+		leafVector= new Vector();
+		if (isLeaf()) {
+			//The leaf case, put this into the fields
+			leafVector.addElement(this);
+			leafHashtable.put(label,this);
+			if (length==-1.0) {
+				maxDepth=1.0;
+			} else {
+				maxDepth=length;
+			}
+		} else {
+			//The node case ; for each son
+			maxDepth=0.0;
+			for (int i=0;i<sons.size();i++) {
+				//Pretreat the son recursivly
+				Tree son= (Tree)(sons.elementAt(i));
+				son.globalPretreatment(this);
+				if (son.maxDepth>maxDepth) {
+					maxDepth=son.maxDepth;
+				}
+				for (int j=0;j<son.leafVector.size();j++) {
+					Tree leaf= (Tree)(son.leafVector.elementAt(j));
+					leafVector.addElement(leaf);
+					leafHashtable.put(leaf.label,leaf);
+				}
+
+			}
+			leafHashtable.put(this.label,this);
+			leafVector.addElement(this);
+			/*if (father==null) {
+				length=0.0;
+			}*/
+			if (length==-1.0) {
+				maxDepth+=1.0;
+			} else {
+				maxDepth+=length;
+			}
+		}
+	}
+		
 // ********************************************************************************************************************
 /**
 * Fill the Vector, Hashtable and pointer fields, in order to compare and reconcile this tree with others.

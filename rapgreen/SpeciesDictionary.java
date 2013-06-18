@@ -243,9 +243,10 @@ public class SpeciesDictionary {
 
 		boolean founded=false;
 		String taxon= taxonParam.substring(taxonParam.lastIndexOf("_")+1,taxonParam.length());
-		//System.out.print(taxon);
-
+		//System.out.println(taxon);
+		
 		Tree runner= (Tree)(speciesTree.leafHashtable.get(taxon));
+		//System.out.println(runner);
 		while (runner!=null && !founded) {
 			if (allowedConstraints.containsKey(runner.label)) {
 				founded=true;

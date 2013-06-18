@@ -1,22 +1,38 @@
 package rapgreen;
 import java.net.*;
+
 import java.io.*;
+
 import java.lang.reflect.*;
+
 import java.util.*;
 import java.sql.*;
 //import com.mysql.jdbc.Driver;
 
+
+
 /**
+
 * Executable program to manage reconciliation database (add trees ...)
+
 * @author	Dufayard Jean-François
+
 * @version	1.0
+
 * date : 06/2010
+
 */
+
 public class ReconciliationDatabaseDaemon {
 
+
+
 // *******************************************************************************
+
 //ATTRIBUTS
+
 // *******************************************************************************
+
 
 	/**
 	* List of species trees
@@ -66,17 +82,26 @@ public class ReconciliationDatabaseDaemon {
 	/**
 	* Verbose / quiet boolean
 	*/
+
 	static boolean quiet= false;
 
    private static final String NORMAL     = "\u001b[0m";
+
    private static final String BOLD       = "\u001b[1m";
+
    private static final String UNDERLINE  = "\u001b[4m";
 
+
 // *******************************************************************************
 
 
+
+
+
 // *******************************************************************************
+
 //EXECUTABLE & CONSTRUCTOR
+
 // *******************************************************************************
 	public ReconciliationDatabaseDaemon(String args[]) {
 
@@ -86,6 +111,7 @@ public class ReconciliationDatabaseDaemon {
 		Vector argsDatabases= new Vector();
 		Vector argsDirectories= new Vector();
 		Vector argsDirectoriesDico= new Vector();
+		Vector argsFilesDico= new Vector();
 
 
  		//Initialization of collections
@@ -99,27 +125,50 @@ public class ReconciliationDatabaseDaemon {
 		geneTreeStructures= new Hashtable();
 
 		for (int i=0;i<args.length;i=i+2) {
+
 			if (args[i].contains("help")) {
+
 				System.out.println(BOLD);
+
 				System.out.println("NAME:");
+
 				System.out.println(NORMAL);
+
 				System.out.println("\t- Reconciliation Database Daemon v1.0 -");
+
 				System.out.println(BOLD);
+
 				System.out.println("SYNOPSIS:");
+
 				System.out.println(NORMAL);
+
 				System.out.println("\treconciliationdatabasedaemon [command args]");
+
 				System.out.println(BOLD);
+
 				System.out.println("OPTIONS:");
+
 				System.out.println(BOLD);
+
 				System.out.println("-database" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The identifier of the database, the species tree file, the directory containing all gene tree files, and the tree file name eventually containing 'INPUT' marker for directory name.");
+
 				System.out.println(BOLD);
-				System.out.println("-directory" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees. Arguments are: the identifier of the database, the species tree file and the directory containing all gene tree files.");
+				System.out.println("-directory" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees. Arguments are: the identifier of the database, the species tree file, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
+
 				System.out.println(BOLD);
-				System.out.println("-directoryDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_directory\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, and the directory containing all gene tree files.");
+				System.out.println("-directoryDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
 				System.out.println(BOLD);
+				System.out.println("-fileDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "type" + NORMAL + " " + UNDERLINE + "[invert]\n\t" + NORMAL + "Alternate version of database option: one simple file full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL). Add invert keyword if the species identifier is at the begining of sequence names in phylogenetic trees.");
+
+				System.out.println(BOLD);
+
 				System.out.println("-quiet\n\t" + NORMAL + "Activate this option to turn off\n\n");
+
 				System.exit(0);
+
 			}
+
+
 
 			if (args[i].equalsIgnoreCase("-database")) {
 
@@ -132,8 +181,12 @@ public class ReconciliationDatabaseDaemon {
 
 				argsDatabases.addElement(localArgs);
 
+
 	        	i+=3;
+
 			}
+
+
 
 			if (args[i].equalsIgnoreCase("-directory")) {
 
@@ -145,7 +198,9 @@ public class ReconciliationDatabaseDaemon {
 
 				argsDirectories.addElement(localArgs);
 
+
 	        	i+=3;
+
 			}
 			if (args[i].equalsIgnoreCase("-directoryDico")) {
 
@@ -158,189 +213,43 @@ public class ReconciliationDatabaseDaemon {
 
 				argsDirectoriesDico.addElement(localArgs);
 
+
 	        	i+=3;
+
+			}	
+			if (args[i].equalsIgnoreCase("-fileDico")) {
+				String[] localArgs= new String[5];
+				if (i+6<args.length && args[i+6].equals("invert")) {
+					localArgs= new String[6];
+					localArgs[5]= args[i+6];
+				}
+			
+			
+				localArgs[0]= args[i+1];
+				localArgs[1]= args[i+2];
+				localArgs[2]= args[i+3];
+				localArgs[3]= args[i+4];
+				localArgs[4]= args[i+5];
+
+				argsFilesDico.addElement(localArgs);
+
+	        	i+=3;
+				if (i+6<args.length && args[i+6].equals("invert")) {
+					i++;
+				}
 			}			
+
 			if (args[i].equalsIgnoreCase("-quiet")) {
+
 				quiet=true;
+
 				i--;
+
 			}
+
 		}
-
-		for (int t=0;t<argsDatabases.size();t++) {
-			String[] localArgs= (String[])(argsDatabases.elementAt(t));
-			String localId="";
-
-	        try {
-
-
-        		String speciesTreeId= localArgs[0];
-        		String specification= localArgs[4];
-        		speciesTreeIds.addElement(speciesTreeId);
-        		specifications.put(speciesTreeId,specification);
-				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
-
-				SpeciesDictionary dico= new SpeciesDictionary();
-				Hashtable localSpeciesIndex= new Hashtable();
-
-				String test= (new BufferedReader(new FileReader(new File(localArgs[1])))).readLine();
-				TreeReader read=null;
-				if (test.endsWith(";")) {
-					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.NEWICK);
-				} else {
-					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.XML,TreeReader.SIMPLE);
-				}
-				Tree speciesTree= read.nextTree();
-				//System.out.println(speciesTree);
-				speciesTree.pretreatment();
-				speciesTreeStructures.put(speciesTreeId,speciesTree);
-				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
-				speciesTreeDictionaries.put(speciesTreeId,dico);
-
-				//System.out.println(dico.getScientificName("PITOR1"));
-
-        		Vector geneIds= new Vector();
-        		Hashtable geneStructures= new Hashtable();
-        		File[] geneFiles = (new File(localArgs[2])).listFiles();
-        		BufferedReader read2=null;
-        		int lak=1;
-        		for (int j=0;j<geneFiles.length;j++) {
-        			if (geneFiles[j].isDirectory()) {
-        				File[] geneInFiles = geneFiles[j].listFiles();
-
-
-	        			for (int k=0;k<geneInFiles.length;k++) {
-		        			if (geneInFiles[k].isDirectory()) {
-								try {
-									localId= geneInFiles[k].getName();
-									geneIds.addElement(localId);
-									File geneFile= new File(geneInFiles[k].getPath() + "/" + localArgs[3].replace("INPUT",geneInFiles[k].getName()));
-									read2=new BufferedReader(new FileReader(geneFile));
-									test= read2.readLine();
-									if (test.endsWith(";")) {
-										read= new TreeReader(geneFile,TreeReader.NEWICK);
-									} else {
-										read= new TreeReader(geneFile,TreeReader.XML);
-									}
-									read2.close();
-									Tree tree= read.nextTree();
-									tree.taxonomicPretreatment();
-									geneStructures.put(localId,tree);
-									lak++;
-									if (lak%1000==0)
-										System.out.println(lak);
-
-								} catch (Exception E) {
-									read2.close();
-									//E.printStackTrace();
-									//System.out.println(localId);
-								}
-		        			}
-	        			}
-        			}
-        		}
-
-
-				geneTreeIds.put(speciesTreeId,geneIds);
-				geneTreeStructures.put(speciesTreeId,geneStructures);
-
-				if (!quiet) System.out.println("Loaded.");
-
-
-
-	        } catch (Exception E) {
-	        	E.printStackTrace();
-	        	System.out.println(localId);
-	        }
-		}
-		
-		
-		
-		for (int t=0;t<argsDirectories.size();t++) {
-			String[] localArgs= (String[])(argsDirectories.elementAt(t));
-			String localId="";
-
-	        try {
-
-
-        		String speciesTreeId= localArgs[0];
-        		String specification= localArgs[3];
-        		speciesTreeIds.addElement(speciesTreeId);
-        		specifications.put(speciesTreeId,specification);
-				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
-
-				SpeciesDictionary dico= new SpeciesDictionary();
-				Hashtable localSpeciesIndex= new Hashtable();
-
-				String test= (new BufferedReader(new FileReader(new File(localArgs[1])))).readLine();
-				TreeReader read=null;
-				if (test.endsWith(";")) {
-					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.NEWICK);
-				} else {
-					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.XML,TreeReader.SIMPLE);
-				}
-				Tree speciesTree= read.nextTree();
-				//System.out.println(speciesTree);
-				speciesTree.pretreatment();
-				dico.setSpeciesTree(speciesTree);
-				speciesTreeStructures.put(speciesTreeId,speciesTree);
-				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
-				speciesTreeDictionaries.put(speciesTreeId,dico);
-
-				//System.out.println(dico.getScientificName("PITOR1"));
-
-        		Vector geneIds= new Vector();
-        		Hashtable geneStructures= new Hashtable();
-        		File[] geneFiles = (new File(localArgs[2])).listFiles();
-        		BufferedReader read2=null;
-        		int lak=1;
-        		for (int j=0;j<geneFiles.length;j++) {
-
-					try {
-						localId= geneFiles[j].getName();
-						geneIds.addElement(localId);
-						File geneFile= new File(geneFiles[j].getPath());
-						read2=new BufferedReader(new FileReader(geneFile));
-						test= read2.readLine();
-						if (test.endsWith(";")) {
-							read= new TreeReader(geneFile,TreeReader.NEWICK);
-						} else {
-							read= new TreeReader(geneFile,TreeReader.XML);
-						}
-						read2.close();
-						Tree tree= read.nextTree();
-						tree.taxonomicPretreatment();
-						//System.out.println(tree);
-						//System.out.println(tree.nbLeaves());
-						geneStructures.put(localId,tree);
-						lak++;
-						if (lak%1000==0)
-							System.out.println(lak);
-
-					} catch (Exception E) {
-						read2.close();
-						//E.printStackTrace();
-						//System.out.println(localId);
-					}
-
-
-
-        		}
-
-
-				geneTreeIds.put(speciesTreeId,geneIds);
-				geneTreeStructures.put(speciesTreeId,geneStructures);
-
-				if (!quiet) System.out.println("Loaded.");
-
-
-
-	        } catch (Exception E) {
-	        	E.printStackTrace();
-	        	System.out.println(localId);
-	        }
-		}
-for (int t=0;t<argsDirectoriesDico.size();t++) {
-			String[] localArgs= (String[])(argsDirectoriesDico.elementAt(t));
+		for (int t=0;t<argsFilesDico.size();t++) {
+			String[] localArgs= (String[])(argsFilesDico.elementAt(t));
 			String localId="";
 
 	        try {
@@ -359,7 +268,7 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 				
 				Tree speciesTree= read.nextTree();
 				//System.out.println(speciesTree);
-				speciesTree.pretreatment();
+				speciesTree.globalPretreatment();
 				dico.parseSpeciesDico(new File(localArgs[2]));
 				dico.setSpeciesTree(speciesTree);
 				speciesTreeStructures.put(speciesTreeId,speciesTree);
@@ -370,36 +279,276 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 
         		Vector geneIds= new Vector();
         		Hashtable geneStructures= new Hashtable();
-        		File[] geneFiles = (new File(localArgs[3])).listFiles();
-        		BufferedReader read2=null;
+				try {
+        		BufferedReader geneFiles = new BufferedReader(new FileReader(new File(localArgs[3])));
+        		//BufferedReader read2=null;
         		int lak=1;
+				String s= geneFiles.readLine();
+        		while (s!=null) {
+
+					localId= s.substring(0,s.indexOf(" "));
+					geneIds.addElement(localId);
+
+					Tree tree= new Tree(s.substring(s.indexOf(" ")+1,s.length()));
+					tree.pretreatment();
+					if (localArgs.length>5 && localArgs[5].equals("invert")) {
+						for (int i=0;i<tree.leafVector.size();i++) {
+							try {
+								Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+								leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
+							} catch(Exception exp) {
+								//System.out.println("Warning: " + localId);
+							}
+						}
+					}
+					if (specification.equals("NR")) {
+						tree.addSpeciations();
+					}
+					tree.taxonomicPretreatment();
+					//System.out.println(tree);
+					geneStructures.put(localId,tree);
+					lak++;
+					if (lak%1000==0)
+						System.out.println(lak);
+
+			
+					s= geneFiles.readLine();
+
+
+        		}
+
+				} catch (Exception E) {
+					E.printStackTrace();
+				}
+				geneTreeIds.put(speciesTreeId,geneIds);
+				geneTreeStructures.put(speciesTreeId,geneStructures);
+
+				if (!quiet) System.out.println("Loaded.");
+
+
+
+	        } catch (Exception E) {
+	        	E.printStackTrace();
+	        	System.out.println(localId);
+	        }
+		}		
+		for (int t=0;t<argsDatabases.size();t++) {
+			String[] localArgs= (String[])(argsDatabases.elementAt(t));
+			String localId="";
+
+
+	        try {
+
+
+        		String speciesTreeId= localArgs[0];
+        		String specification= localArgs[4];
+        		speciesTreeIds.addElement(speciesTreeId);
+        		specifications.put(speciesTreeId,specification);
+				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
+
+				SpeciesDictionary dico= new SpeciesDictionary();
+				Hashtable localSpeciesIndex= new Hashtable();
+
+
+
+				String test= (new BufferedReader(new FileReader(new File(localArgs[1])))).readLine();
+				TreeReader read=null;
+
+				if (test.endsWith(";")) {
+
+					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.NEWICK);
+
+				} else {
+
+					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.XML,TreeReader.SIMPLE);
+
+				}
+
+				Tree speciesTree= read.nextTree();
+				//System.out.println(speciesTree);
+				speciesTree.pretreatment();
+				speciesTreeStructures.put(speciesTreeId,speciesTree);
+				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
+				speciesTreeDictionaries.put(speciesTreeId,dico);
+
+				//System.out.println(dico.getScientificName("PITOR1"));
+
+        		Vector geneIds= new Vector();
+        		Hashtable geneStructures= new Hashtable();
+        		File[] geneFiles = (new File(localArgs[2])).listFiles();
+
+        		BufferedReader read2=null;
+
+        		int lak=1;
+
+        		for (int j=0;j<geneFiles.length;j++) {
+        			if (geneFiles[j].isDirectory()) {
+        				File[] geneInFiles = geneFiles[j].listFiles();
+
+
+	        			for (int k=0;k<geneInFiles.length;k++) {
+		        			if (geneInFiles[k].isDirectory()) {
+								try {
+
+									localId= geneInFiles[k].getName();
+									geneIds.addElement(localId);
+									File geneFile= new File(geneInFiles[k].getPath() + "/" + localArgs[3].replace("INPUT",geneInFiles[k].getName()));
+									read2=new BufferedReader(new FileReader(geneFile));
+
+									test= read2.readLine();
+
+									if (test.endsWith(";")) {
+
+										read= new TreeReader(geneFile,TreeReader.NEWICK);
+
+									} else {
+
+										read= new TreeReader(geneFile,TreeReader.XML);
+
+									}
+
+									read2.close();
+
+									Tree tree= read.nextTree();
+									tree.taxonomicPretreatment();
+									geneStructures.put(localId,tree);
+									lak++;
+
+									if (lak%1000==0)
+
+										System.out.println(lak);
+
+
+
+								} catch (Exception E) {
+
+									read2.close();
+
+									//E.printStackTrace();
+
+									//System.out.println(localId);
+
+								}
+
+		        			}
+	        			}
+        			}
+        		}
+
+
+				geneTreeIds.put(speciesTreeId,geneIds);
+				geneTreeStructures.put(speciesTreeId,geneStructures);
+
+				if (!quiet) System.out.println("Loaded.");
+
+
+
+	        } catch (Exception E) {
+	        	E.printStackTrace();
+	        	System.out.println(localId);
+
+	        }
+		}
+		
+		
+		
+		for (int t=0;t<argsDirectories.size();t++) {
+			String[] localArgs= (String[])(argsDirectories.elementAt(t));
+			String localId="";
+
+
+	        try {
+
+
+        		String speciesTreeId= localArgs[0];
+        		String specification= localArgs[3];
+        		speciesTreeIds.addElement(speciesTreeId);
+        		specifications.put(speciesTreeId,specification);
+				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
+
+				SpeciesDictionary dico= new SpeciesDictionary();
+				Hashtable localSpeciesIndex= new Hashtable();
+
+
+
+				String test= (new BufferedReader(new FileReader(new File(localArgs[1])))).readLine();
+				TreeReader read=null;
+
+				if (test.endsWith(";")) {
+
+					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.NEWICK);
+
+				} else {
+
+					read= new TreeReader(new File(localArgs[1]),dico,localSpeciesIndex,TreeReader.XML,TreeReader.SIMPLE);
+
+				}
+
+				Tree speciesTree= read.nextTree();
+				//System.out.println(speciesTree);
+				speciesTree.pretreatment();
+				dico.setSpeciesTree(speciesTree);
+
+				speciesTreeStructures.put(speciesTreeId,speciesTree);
+				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
+				speciesTreeDictionaries.put(speciesTreeId,dico);
+
+				//System.out.println(dico.getScientificName("PITOR1"));
+
+        		Vector geneIds= new Vector();
+        		Hashtable geneStructures= new Hashtable();
+        		File[] geneFiles = (new File(localArgs[2])).listFiles();
+
+        		BufferedReader read2=null;
+
+        		int lak=1;
+
         		for (int j=0;j<geneFiles.length;j++) {
 
 					try {
+
 						localId= geneFiles[j].getName();
 						geneIds.addElement(localId);
 						File geneFile= new File(geneFiles[j].getPath());
 						read2=new BufferedReader(new FileReader(geneFile));
-						String test= read2.readLine();
+
+						test= read2.readLine();
+
 						if (test.endsWith(";")) {
+
 							read= new TreeReader(geneFile,TreeReader.NEWICK);
+
 						} else {
+
 							read= new TreeReader(geneFile,TreeReader.XML);
+
 						}
+
 						read2.close();
+
 						Tree tree= read.nextTree();
 						tree.taxonomicPretreatment();
 						//System.out.println(tree);
+						//System.out.println(tree.nbLeaves());
 						geneStructures.put(localId,tree);
 						lak++;
+
 						if (lak%1000==0)
+
 							System.out.println(lak);
 
+
+
 					} catch (Exception E) {
+
 						read2.close();
-						E.printStackTrace();
+
+						//E.printStackTrace();
+
 						//System.out.println(localId);
+
 					}
+
 
 
 
@@ -416,8 +565,117 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 	        } catch (Exception E) {
 	        	E.printStackTrace();
 	        	System.out.println(localId);
+
 	        }
 		}
+	for (int t=0;t<argsDirectoriesDico.size();t++) {
+			String[] localArgs= (String[])(argsDirectoriesDico.elementAt(t));
+			String localId="";
+
+
+	        try {
+
+
+        		String speciesTreeId= localArgs[0];
+        		String specification= localArgs[4];
+        		speciesTreeIds.addElement(speciesTreeId);
+        		specifications.put(speciesTreeId,specification);
+				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
+
+				SpeciesDictionary dico= new SpeciesDictionary();
+				Hashtable localSpeciesIndex= new Hashtable();
+
+
+
+				TreeReader read= new TreeReader(new File(localArgs[1]),TreeReader.NEWICK);
+
+				
+
+				Tree speciesTree= read.nextTree();
+				//System.out.println(speciesTree);
+				speciesTree.pretreatment();
+				dico.parseSpeciesDico(new File(localArgs[2]));
+				dico.setSpeciesTree(speciesTree);
+
+				speciesTreeStructures.put(speciesTreeId,speciesTree);
+				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
+				speciesTreeDictionaries.put(speciesTreeId,dico);
+
+				//System.out.println(dico.getScientificName("N5"));
+
+        		Vector geneIds= new Vector();
+        		Hashtable geneStructures= new Hashtable();
+        		File[] geneFiles = (new File(localArgs[3])).listFiles();
+
+        		BufferedReader read2=null;
+
+        		int lak=1;
+
+        		for (int j=0;j<geneFiles.length;j++) {
+
+					try {
+
+						localId= geneFiles[j].getName();
+						geneIds.addElement(localId);
+						File geneFile= new File(geneFiles[j].getPath());
+						read2=new BufferedReader(new FileReader(geneFile));
+
+						String test= read2.readLine();
+
+						if (test.endsWith(";")) {
+
+							read= new TreeReader(geneFile,TreeReader.NEWICK);
+
+						} else {
+
+							read= new TreeReader(geneFile,TreeReader.XML);
+
+						}
+
+						read2.close();
+
+						Tree tree= read.nextTree();
+						tree.taxonomicPretreatment();
+						//System.out.println(tree);
+						geneStructures.put(localId,tree);
+						lak++;
+
+						if (lak%1000==0)
+
+							System.out.println(lak);
+
+
+
+					} catch (Exception E) {
+
+						read2.close();
+
+						E.printStackTrace();
+
+						//System.out.println(localId);
+
+					}
+
+
+
+
+        		}
+
+
+				geneTreeIds.put(speciesTreeId,geneIds);
+				geneTreeStructures.put(speciesTreeId,geneStructures);
+
+				if (!quiet) System.out.println("Loaded.");
+
+
+
+	        } catch (Exception E) {
+	        	E.printStackTrace();
+	        	System.out.println(localId);
+
+	        }
+		}
+
 
         // Open the server socket, and wait for connexion
 
@@ -439,6 +697,7 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 
 	}
 
+
 	public static void main(String args[]) {
 
         ReconciliationDatabaseDaemon daemon=new ReconciliationDatabaseDaemon(args);
@@ -448,7 +707,9 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 
 	}
 // *******************************************************************************
+
 // SUBCLASSES
+
 // *******************************************************************************
 /**
 * Class that implements multithreading
@@ -565,6 +826,7 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 						//GeneTree refTree= (GeneTree)(refTrees.get(id));
 						//System.out.println(geneTree);
 						try {
+
 							if (geneTree!=null && geneTree.containsPattern(pattern,ind,dic)) {
 								out.println(id);
 							}/* else {
@@ -572,13 +834,17 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 							}*/
 						} catch(Exception e) {
 
+
+
 						}
+
 					//System.out.println(s);
 					}
 					//System.out.println(tree.subtree(speciesList));
 				} else if (s.equals("patternDisplay")) {
 					String databank=in.readLine();
 					Tree tree= (Tree)(speciesTreeStructures.get(databank));
+
 					String id=in.readLine();
 					Hashtable trees= (Hashtable)(geneTreeStructures.get(databank));
 					Hashtable ind= (Hashtable)(speciesTreeIndex.get(databank));
@@ -586,6 +852,7 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 					//Hashtable refTrees= (Hashtable)(referenceTreeStructures.get(databank));
 					String patternString=in.readLine();
 					System.out.println(patternString);
+
 					Tree pattern= new Tree(patternString);
 					pattern.patternPretreatment(tree);
 					Tree geneTree= (Tree)(trees.get(id));
@@ -611,12 +878,15 @@ for (int t=0;t<argsDirectoriesDico.size();t++) {
 					String databank=in.readLine();
 					String id=in.readLine();
 					Tree tree= (Tree)(speciesTreeStructures.get(databank));
+
 					Hashtable trees= (Hashtable)(geneTreeStructures.get(databank));
 					Hashtable ind= (Hashtable)(speciesTreeIndex.get(databank));
 					SpeciesDictionary dic= (SpeciesDictionary)(speciesTreeDictionaries.get(databank));
 					//Hashtable refTrees= (Hashtable)(referenceTreeStructures.get(databank));
 
+
 					String patternString=in.readLine();
+
 					System.out.println(patternString);
 					Tree pattern= new Tree(patternString);
 					pattern.patternPretreatment(tree);
