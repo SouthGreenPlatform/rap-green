@@ -19,12 +19,15 @@ function getElementsByName_iefix(tag, name) {
 <tr id="itemtr">
 
 <td name="speciationTd" id="itemtd" onmouseout="if (this.style.color != 'black') {this.style.opacity = 0.8;}" onmouseover="this.style.opacity = '1.0';" onclick="eraseTarget();changeVisibilite2('poptaxa',0);tool='speciation';this.style.opacity=1.0;this.style.backgroundImage = 'url(img/white.png)';this.style.color = 'black';this.style.border = '4px solid #888888';getElementsByName_iefix('td','duplicationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','duplicationTd')[0].style.color = 'white';getElementsByName_iefix('td','duplicationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','duplicationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','taxaTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','taxaTd')[0].style.color = 'white';getElementsByName_iefix('td','taxaTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','taxaTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','deleteTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','deleteTd')[0].style.color = 'white';getElementsByName_iefix('td','deleteTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','deleteTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noDuplicationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noDuplicationTd')[0].style.color = 'white';getElementsByName_iefix('td','noDuplicationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noDuplicationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noSpeciationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noSpeciationTd')[0].style.color = 'white';getElementsByName_iefix('td','noSpeciationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noSpeciationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noConstraintTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noConstraintTd')[0].style.color = 'white';getElementsByName_iefix('td','noConstraintTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noConstraintTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','transfertTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','transfertTd')[0].style.color = 'white';getElementsByName_iefix('td','transfertTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','transfertTd')[0].style.opacity = 0.8;" onmouseout="" onmouseover="">
-<table id="organise"><tr><td><img height=20px src="img/speciation.png"></td><td>&nbsp;&nbsp;Speciation</td></tr></table>
+<table id="organise"><tr><td><img height=20px src="img/speciation.png"></td><td>&nbsp;&nbsp;<?php if ($spec!="NR") { ?>Speciation<?php } ?>Node<?php } else { ?></td></tr></table>
 </td>
+<?php if ($spec!="NR") { ?>
 
 <td name="duplicationTd" id="itemtd" onmouseout="if (this.style.color != 'black') {this.style.opacity = 0.8;}" onmouseover="this.style.opacity = '1.0';" onclick="eraseTarget();changeVisibilite2('poptaxa',0);tool='duplication';this.style.opacity=1.0;this.style.backgroundImage = 'url(img/white.png)';this.style.color = 'black';this.style.border = '4px solid #888888';getElementsByName_iefix('td','speciationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','speciationTd')[0].style.color = 'white';getElementsByName_iefix('td','speciationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','speciationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','taxaTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','taxaTd')[0].style.color = 'white';getElementsByName_iefix('td','taxaTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','taxaTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','deleteTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','deleteTd')[0].style.color = 'white';getElementsByName_iefix('td','deleteTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','deleteTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noDuplicationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noDuplicationTd')[0].style.color = 'white';getElementsByName_iefix('td','noDuplicationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noDuplicationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noSpeciationTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noSpeciationTd')[0].style.color = 'white';getElementsByName_iefix('td','noSpeciationTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noSpeciationTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','noConstraintTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','noConstraintTd')[0].style.color = 'white';getElementsByName_iefix('td','noConstraintTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','noConstraintTd')[0].style.opacity = 0.8;getElementsByName_iefix('td','transfertTd')[0].style.backgroundImage = 'url(img/menuback.png)';getElementsByName_iefix('td','transfertTd')[0].style.color = 'white';getElementsByName_iefix('td','transfertTd')[0].style.border = '2px outset white';getElementsByName_iefix('td','transfertTd')[0].style.opacity = 0.8;" onmouseout="" onmouseover="">
 <table id="organise"><tr><td><img height=20px src="img/duplication.png"></td><td>&nbsp;&nbsp;Duplication</td></tr></table>
 </td>
+
+<?php } ?>
 
 <?php if ($spec=="DTL") { ?>
 
@@ -59,6 +62,7 @@ getElementsByName_iefix('td','speciationTd')[0].style.opacity = 1.0;
 </script>
 
 </table>
+<?php if ($spec!="NR") { ?>
 <table id="toolbox">
 
 <tr id="itemtr">
@@ -81,3 +85,5 @@ getElementsByName_iefix('td','speciationTd')[0].style.opacity = 1.0;
 </tr>
 
 </table>
+
+<?php } ?>
