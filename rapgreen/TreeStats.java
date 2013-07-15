@@ -155,7 +155,6 @@ public class TreeStats {
 
 			}
 
-
 			if (losses) {
 			
 	        	File[] treeFiles = treeFile.listFiles();	
@@ -416,7 +415,8 @@ public class TreeStats {
 	        		if (tree.containsPattern(pattern,null,null)) {
 	        			//System.out.println("true");
 	        			Vector res= new Vector();
-	        			tree.colorPattern(pattern,pattern,null,null,res);
+	        			Hashtable res2= new Hashtable();
+	        			tree.colorPattern(pattern,pattern,null,null,res,res2);
 	        			for (int i=0;i<res.size();i++) {
 	        				Tree local= (Tree)(res.elementAt(i));	
 	        				if (local.isLeaf() && local.label.equals("Sorgho")) {

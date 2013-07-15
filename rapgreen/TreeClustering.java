@@ -118,6 +118,11 @@ public class TreeClustering {
 				
 				System.out.println("\nMost representative sequence : " + ((Tree)(tree.leafVector.elementAt(bestIndex))).label);
 			} else {
+			
+			
+			
+			
+			
 				if (dictionary==null) {
 					TreeReader reader= new TreeReader(treeFile,TreeReader.NEWICK);
 					Tree tree= reader.nextTree();
@@ -150,9 +155,56 @@ public class TreeClustering {
 								write.write(((Tree)(current.leafVector.elementAt(j))).label + "\n");
 								write.flush();
 							}
+							
+							
+							int bestIndex=-1;
+							double bestDist=10000.0;
+							for (int k=0;k<current.leafVector.size();k++) {
+								Tree leaf = (Tree)(current.leafVector.elementAt(k));
+								double localDist=0.0;
+								for (int j=0;j<current.leafVector.size();j++) {
+									if (k!=j) {
+										Tree leaf2 = (Tree)(current.leafVector.elementAt(j));
+										// Find the last common ancestor of the two target leaves
+										Tree ancestor= tree.lastCommonAncestor(leaf,leaf2);
+										// Compute the simple distance (sum of branch lengths)
+										double d= ancestor.getDepth(leaf) + ancestor.getDepth(leaf2);
+							
+										localDist+=d;
+							
+							
+							
+									}						
+								}
+								localDist= localDist / ((double)tree.leafVector.size() - 1.0);
+					
+								System.out.println(leaf.label + " : " + localDist);
+				
+				
+				
+								if (localDist<bestDist) {
+									bestIndex=k;
+									bestDist=localDist;						
+								}
+				
+				
+					
+							}				
+							
+							
+							
+							
+							write.write("Most representative sequence:\n" + ((Tree)(current.leafVector.elementAt(bestIndex))).label + "\n");
 						}
 			
 						write.close();
+						
+						
+						
+						
+						
+						
+						
 					} else {
 						BufferedWriter write = new BufferedWriter(new FileWriter(outputFile));
 					

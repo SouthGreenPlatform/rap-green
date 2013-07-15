@@ -247,6 +247,7 @@ public class SpeciesDictionary {
 		
 		Tree runner= (Tree)(speciesTree.leafHashtable.get(taxon));
 		//System.out.println(runner);
+		//System.out.println(allowedConstraints.containsKey(runner.label) + " " + forbiddenConstraints.containsKey(runner.label));
 		while (runner!=null && !founded) {
 			if (allowedConstraints.containsKey(runner.label)) {
 				founded=true;
@@ -273,6 +274,8 @@ public class SpeciesDictionary {
 */
 	public boolean isCompatible(Tree treeParam,Hashtable allowedConstraints,Hashtable forbiddenConstraints) {
 		boolean finalRes=true;
+		
+			//System.out.println(treeParam.leafVector.size());
 		for (int i=0;i<treeParam.leafVector.size() && finalRes;i++) {
 
 			String taxonParam=((Tree)(treeParam.leafVector.elementAt(i))).label;
