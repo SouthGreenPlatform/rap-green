@@ -7,4 +7,6 @@
 $server="localhost";
 /* specify the opened port on the server as an integer */
 $port=1666;
+/* path to the result directory */
+$resdir="";
 ?>

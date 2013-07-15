@@ -19,7 +19,7 @@
 <?php
 
 
-$fp = fopen("/usr/share/nginx/www/test/out/".$_REQUEST['id'].".csv", 'w');
+$fp = fopen($resdir.$_REQUEST['id'].".csv", 'w');
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 $resultat = socket_connect($socket, $server, $port);
 // send the signal to the daemon
