@@ -2108,7 +2108,7 @@ function ffillSplit(threshold,split,splitSens) {
 		}
 	} else {
 		if (count>0) {
-			if (threshold>=this.maxDepth()) {
+			if (threshold>(this.sons[0].maxDepth() + this.sons[1].maxDepth())) {
 				split[split.length]=this;
 				splitSens[splitSens.length]=0;	
 			} else {

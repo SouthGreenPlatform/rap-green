@@ -55,6 +55,7 @@ function drawAll() {
 		taxaMargin= maxTaxaString * fontSize * 0.6;
 
 		// Initialize the coordinates of each node and leaf of the tree
+		tree.fillStickers(1);
 
 		tree.initCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
 
@@ -71,6 +72,7 @@ function drawAll() {
 }
 
 function refreshAll() {
+	//alert("refresh");
 	var maxDepth=0.0;
 	maxDepth=tree.maxDepth();
 	var nbLeaves= tree.nbLeaves();
@@ -78,9 +80,11 @@ function refreshAll() {
 	taxaMargin= maxTaxaString * fontSize * 0.5;
 
 	// Initialize the coordinates of each node and leaf of the tree
-
+	tree.fillStickers(1);
 	tree.initCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
-
+	
+	// Fill the saving area
+	document.getElementById('hiddenfield').value = tree.getNewick() + ";";
 
 	// Build the main SVG object
    	tree.drawTree(taxaMargin,1);
@@ -98,6 +102,8 @@ function refreshAll() {
    			}
    		}
    	}
+   	
+	//alert("end refresh");
 }
 
 // **********************************************
@@ -119,6 +125,9 @@ function Node(newick) {
 
 	// Initialize the taxon string
 	this.label="";
+	
+	// Initialize the leaf sticker
+	this.sticker="1";	
 	
 	// Transfer type
 	this.transfer=2;
@@ -145,12 +154,14 @@ function Node(newick) {
 	this.hline="";
 	this.round="";
 	this.textLabel="";
+	this.textSticker="";
 	this.leftTextLabel="";
 	this.spot="";
 	this.branchConstraint="";
 
 	// Node or leaf conditionnal
 	if (newick.charAt(index)=="(") {
+		//alert(this.label);
 		//document.writeln("A0");
 		// The node case
 		// Initialize the son index
@@ -175,6 +186,16 @@ function Node(newick) {
 			this.label = this.label + newick.charAt(index);
 			index++;
 		}
+		
+		if (this.label=="D") {
+			this.label="duplication";
+		} else if (this.label=="S") {
+			this.label="speciation";
+		} else if (this.label=="T") {
+			this.label="transfert";
+			
+		}
+		
 		//alert(this.label);
 		if (newick.charAt(index)==":") {
 			index++;
@@ -186,6 +207,10 @@ function Node(newick) {
 			this.length=parseFloat(localLength);
 			//echo this.length;
 		}
+		
+		
+		
+		
 		if (newick.charAt(index)=="[") {
 			index++;
 			while (newick.charAt(index)!="]") {
@@ -195,9 +220,14 @@ function Node(newick) {
 			index++;
 			//echo this.length;
 		}
+		if (this.label=="transfert") {
+			this.transfer= parseInt(this.nhx.substring(this.nhx.indexOf("<T>")+3,this.nhx.indexOf("</T>")));
+			//alert("out " + this.transfer);
+		}
 	} else {
 		//document.writeln("B1");
-
+		//alert(this.label);
+	
 		// The leaf case
 		while (newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			this.label = this.label + newick.charAt(index);
@@ -223,7 +253,30 @@ function Node(newick) {
 			//echo this.length;
 		}
 	}
-
+	if (this.nhx.length>1) {
+		if (this.nhx.indexOf("<L>")!=-1) {
+			this.leftConstraint= (this.nhx.substring(this.nhx.indexOf("<L>")+3,this.nhx.indexOf("</L>"))).split(";");
+			for (var i=0;i<this.leftConstraint.length;i++) {
+				if (this.leftConstraint[i].indexOf("Not ")==0) {
+					this.leftConstraint[i]= "Not " + reverseDico[this.leftConstraint[i].substring(4,this.leftConstraint[i].length)];
+				} else {
+					this.leftConstraint[i]=reverseDico[this.leftConstraint[i]];
+				}
+			}
+		}
+		if (this.nhx.indexOf("<R>")!=-1) {
+			this.rightConstraint= (this.nhx.substring(this.nhx.indexOf("<R>")+3,this.nhx.indexOf("</R>"))).split(";");
+			for (var i=0;i<this.rightConstraint.length;i++) {
+				if (this.rightConstraint[i].indexOf("Not ")==0) {
+					this.rightConstraint[i]= "Not " + reverseDico[this.rightConstraint[i].substring(4,this.rightConstraint[i].length)];
+				} else {
+					//alert(this.rightConstraint[i]);
+					this.rightConstraint[i]=reverseDico[this.rightConstraint[i]];
+					//alert(this.rightConstraint[i]);
+				}
+			}
+		}
+	}
 
 }
 // ************************
@@ -334,6 +387,28 @@ function fnbLeaves() {
 	}
 
 }
+
+// ************************
+// fill stickers with incremental numbers
+function ffillStickers(beg) {
+	// Counting the number of sons
+
+	var count = this.sons.length;
+	if (count>0) {
+		// It's a node
+		var i=0;
+		for (i = 0; i < count; i++) {
+			// Compute the number of leaves of the sons
+			beg=this.sons[i].fillStickers(beg);
+		}
+		return beg;
+	} else {
+		this.sticker=beg;
+		// Its a leaf
+		return beg+1;
+	}
+
+}
 // ************************
 // Return the number of leaves
 function fdeleteSubparts() {
@@ -369,6 +444,10 @@ function fdeleteSubparts() {
 	if (this.branchConstraint!="") {
 		this.branchConstraint.remove();
 		this.branchConstraint="";
+	}
+	if (this.textSticker!="") {
+		this.textSticker.remove();
+		this.textSticker="";
 	}
 
 	var count = this.sons.length;
@@ -522,7 +601,16 @@ function fdrawTree(taxaMargin,isRoot) {
 		lineRight.mouseover(lineMouseOver);
 		lineRight.mouseout(lineMouseOut);
 		lineRight.click(lineMouseClick);
-		lineRight.attr({"fill":constraintNoneColor});
+		if (this.length==4.0) {
+			this.branchConstraint.attr({"fill": dupColor});
+		} else if (this.length==-1.0) {
+			this.branchConstraint.attr({"fill": constraintNoneColor});
+		} else if (this.length==1.0) {
+			this.branchConstraint.attr({"fill": specColor});
+		} else if (this.length==3.0) {
+			this.branchConstraint.attr({"fill": specColor});
+		}
+		
 		lineRight.attr({"stroke-width":constraintLine});
 	}
 	lineRight.attr({"stroke":lineColor});
@@ -756,7 +844,9 @@ function fdrawTree(taxaMargin,isRoot) {
 				this.leftTextLabel.hide();
 			}
 		}
-
+		if (this.textSticker!="") {
+			this.textSticker.hide();
+		}
 		// Its a node
 		var i=0;
 		for (i = 0; i < count; i++) {
@@ -886,7 +976,7 @@ function fdrawTree(taxaMargin,isRoot) {
 		}*/
 
 	} else if (this.label=="transfert") {
-		//alert(this.transfer);
+		//alert("in " + this.transfer);
 		// undefined leaf
 		var undefinedLeaf;
 		if (this.spot!="" && this.spot.type=="path") {
@@ -904,7 +994,13 @@ function fdrawTree(taxaMargin,isRoot) {
 			if (this.spot!="") {
 				this.spot.remove();
 			}
-			undefinedLeaf= svg.path("M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");
+			if (this.transfer==0) {
+				undefinedLeaf= svg.path("M" + (this.x) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y + spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");
+			} else if (this.transfer==1) {
+				undefinedLeaf= svg.path("M" + (this.x) + " " + (this.y + spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y - spotRadius) + "z");		
+			} else {
+				undefinedLeaf= svg.path("M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");		
+			}
 			var clickedIndex=clickedTreeNodes.length;
 			clickedTreeNodes[clickedIndex]=this;
 			undefinedLeaf.data("indexNode",clickedIndex);
@@ -991,8 +1087,27 @@ function fdrawTree(taxaMargin,isRoot) {
 		if (this.textLabel!="" && this.rightConstraint.length>0) {
 			this.textLabel.hide();
 		}
+		
 
+		
+		
+		
 	}
+	
+			// sticker
+		if (this.textSticker=="") {
+			this.textSticker= svg.text(this.x-15,this.y+10,this.sticker);
+		} else {
+			this.textSticker.attr({"x": (this.x -15) ,"y":(this.y+10),"text":this.sticker});
+		}
+		//alert(this.x + " " + this.label);
+		this.textSticker.attr({"font-size": fontSize,"font-family": fontFamily, 'text-anchor': 'start'});
+		this.textSticker.attr({"fill": fontColor});	
+		if (count>0) {
+			this.textSticker.hide();
+		} else {
+			this.textSticker.show();
+		}
 
 
 }
@@ -1000,6 +1115,7 @@ function fdrawTree(taxaMargin,isRoot) {
 // ************************
 // Translate the gene tree
 function fgetNewick() {
+	//alert("ESSAI");
 	var res="";
 	var count = this.sons.length;
 	if (count>0) {
@@ -1056,7 +1172,7 @@ function fgetNewick() {
 		} */
 	}
 
-	if (this.leftConstraint.length>0 || this.rightConstraint.length>0 || this.label=="transfert") {
+	if (this.sons.length==0 || this.leftConstraint.length>0 || this.rightConstraint.length>0 || this.label=="transfert") {
 		res=res + "[";
 		if (this.leftConstraint.length>0) {
 			if (this.leftConstraint[0].indexOf("Not ")==0) {
@@ -1095,7 +1211,10 @@ function fgetNewick() {
 		if (this.label=="transfert") {
 			res=res + "<T>" + this.transfer + "</T>"
 		}
-
+		//alert("trace:" + this.sons.length + " " + this.sticker);
+		if (this.sons.length==0) {
+			res=res+"<S>"+this.sticker+"</S>";
+		}
 
 
 		res=res + "]";
@@ -1109,6 +1228,7 @@ Node.prototype.printTree = fprintTree;
 Node.prototype.maxTaxaString = fmaxTaxaString;
 Node.prototype.maxDepth = fmaxDepth;
 Node.prototype.nbLeaves = fnbLeaves;
+Node.prototype.fillStickers = ffillStickers;
 Node.prototype.deleteSubparts = fdeleteSubparts;
 Node.prototype.initCoordinates=finitCoordinates;
 Node.prototype.drawTree=fdrawTree;
@@ -1427,6 +1547,7 @@ function refreshTaxaList(e,tag) {
 	}
 }
 
+
 function step1() {
 	var position = "popresults";
 
@@ -1455,14 +1576,13 @@ function step1() {
 
 function step2() {
 	var position = "popresults";
-	window.open("resultsList.php?database=" + database + "&pattern=" + tree.getNewick() + ";");
+	window.open("wait.php?database=" + database + "&pattern=" + tree.getNewick() + ";");
 	changeVisibilite2("popresults",0);
 	return 1;
 }
 
 function displayResults() {
-	var nomat=step1();
-	nomat=step2();
+	var nomat=step2();
 
 }
 

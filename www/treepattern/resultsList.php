@@ -43,13 +43,15 @@ while ($reception = socket_read($socket, 2048)) {
 	document.forms['resultForm'].submit();
 
  }
+// alert("<?php echo $res[0]; ?>");
+// alert("<?php echo $res[1]; ?>");
 
 </script>
 
 <form name="resultForm" action="dynamiclist.php?databank=<?php echo $_REQUEST['database']; ?>&pattern=<?php echo $_REQUEST['pattern']; ?>" method="post">
 <input type="hidden" name="hiddenlist" value="<?php
 
-if ($count==0) {
+/*if ($count==0) {
 	echo "No matching tree for this pattern";
 } else{
 	for ($i=0;$i<$count;$i++) {
@@ -58,12 +60,13 @@ if ($count==0) {
 		echo $res[$i];
 		
 	}		
-}
+}*/
+
 socket_close($socket);
 
 
 ?>">
-<input type="hidden" name="start" value="0"></form> 
+<input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $res[0]; ?>"><input type="hidden" name="size" value="<?php echo $res[1]; ?>"></form> 
 
 
 <script type="text/javascript">

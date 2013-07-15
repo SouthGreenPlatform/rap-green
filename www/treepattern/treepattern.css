@@ -299,5 +299,27 @@ table#organise td#lefted {
 }
 
 
+table#organise td#righted {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	vertical-align: center;
+	text-align: right;
+}
 
+
+
+
+p#waiting {
+	font-weight: 400;
+	margin:300px 300px;
+	padding:5px 70px 5px 15px;
+	vertical-align: center;
+	text-align: center;
+	font-family: Verdana,Candara,Sans-serif;
+	font-size: 28px;
+}
 

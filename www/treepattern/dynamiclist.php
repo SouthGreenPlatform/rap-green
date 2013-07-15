@@ -9,18 +9,63 @@
  include('header.php');
 
 ?>
+<?php
+
+ include('config.php');
+
+?>
 </head>
 <body>
 <?php
+
+
 $range=30;
-$resfiles=split(";", $_POST['hiddenlist']);
-$count=count($resfiles);
+
+
+$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+$resultat = socket_connect($socket, $server, $port);
+// send the signal to the daemon
+$envoi="resultSplit\n";
+socket_write($socket, $envoi, strlen($envoi));
+$envoi=$_POST['id']."\n";
+socket_write($socket, $envoi, strlen($envoi));
+$envoi=$_POST['start']."\n";
+socket_write($socket, $envoi, strlen($envoi));
+$envoi=$range."\n";
+socket_write($socket, $envoi, strlen($envoi));
+$count=0;
+
+while ($reception = socket_read($socket, 2048)) {
+	// split the buffer
+	$families=split("\n", $reception);
+	for ($i=0;$i<count($families);$i++) {
+		// if the current word is significant
+		if (strlen($families[$i])>0) {
+
+
+	
+			$resfiles[$count]=$families[$i];
+			$count++;
+		}
+	}
+
+}
+
+socket_close($socket);
+
+
+//$resfiles=split(";", $_POST['hiddenlist']);
+//$count=count($resfiles);
+	$count=$_POST['size'];
 	echo "<blockquote><table id='organise'>";
 	if ($resfiles[0]=="No matching tree for this pattern") {
 		echo "<tr><td>No matching tree for this pattern.</td></tr>";
 	} else {
 
 		echo "<tr><td colspan=2 id='lefted'><p><b>".$count." matching trees.</b></p></td></tr>";
+		
+		echo "<tr><td colspan=4 id='lefted'><p>Compute <a target='_blank' href='wait2.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$_POST['id']."'>full results</a>  in CSV format<br>(A new window will pop, and it could take a few minutes for the file to be generated).</p></td></tr>";
+		echo "</table><table id='organise'>";
 		echo "<tr><td id='lefted'><b>Results ".($_POST['start']+1)." to ".($_POST['start']+$range).":</b>&nbsp;&nbsp;&nbsp;</td><td id='lefted'>";
 		if ($_POST['start']>0) {
 			echo "<a onclick='refreshList(0);'><< Prev</a>";
@@ -30,7 +75,8 @@ $count=count($resfiles);
 			echo "<a onclick='refreshList(1);'>Next >></a>";
 		}
 		echo "</td></tr>";
-		for ($i=$_POST['start'];$i<count($resfiles) && $i<$range+$_POST['start'];$i++) {
+
+		for ($i=0;$i<count($resfiles);$i++) {
 			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>display</a></td></tr>";
 		}
 		
@@ -58,7 +104,7 @@ $count=count($resfiles);
 <form name="resultForm" action="dynamiclist.php?start=0&databank=<?php echo $_REQUEST['databank']; ?>&pattern=<?php echo $_REQUEST['pattern']; ?>" method="post">
 <input type="hidden" name="hiddenlist" value="<?php
 
-if ($count==0) {
+/*if ($count==0) {
 	echo "No matching tree for this pattern";
 } else{
 	for ($i=0;$i<$count;$i++) {
@@ -67,11 +113,11 @@ if ($count==0) {
 		echo $resfiles[$i];
 		
 	}		
-}
+}*/
 
 
 ?>">
-<input type="hidden" name="start" value="0"></form> 
+<input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"><input type="hidden" name="size" value="<?php echo $_POST['size']; ?>"></form> 
 
 
 </body>

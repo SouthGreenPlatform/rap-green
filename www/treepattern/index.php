@@ -35,6 +35,8 @@ var database="";
 var tree= new Node(";");
 var tool="speciation";
 var dico= new Array();
+var reverseDico= new Array();
+
 
 </script>
 
@@ -88,3 +90,9 @@ Enter a taxa scientific name:<br>
 ?>
 </body>
 </html>
+
+<?php
+
+ include('refreshAllTaxa.php');
+
+?>

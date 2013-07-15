@@ -124,9 +124,9 @@ SEARCH PATTERN
 
 <div id="popfile" id="itempop" name="popfile" style="display:none;" onmouseover="changeVisibiliteOnName('popfile',1)" onmouseout="changeVisibiliteOnName('popfile',0)">
 <form name="changeTreeForm" method="post"  action="index.php">
-<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="">Load pattern</p>
-<hr id="large" onmouseover="changeVisibiliteOnName('popfile',1)">
-<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="">Save pattern</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);">Pattern string (copy to save, replace to load):</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popfile',1)" cols="50" rows="5" name="hiddenfield" id="hiddenfield"></textarea></p>
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node(document.getElementById('hiddenfield').value);refreshAll();">Load</p>
 </form>
 </div>
 </td>

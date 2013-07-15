@@ -11,7 +11,7 @@
 ?>
 </head>
 <body>
-<p id="waiting">Tree pattern matching in progress...</p>
+<p id="waiting">Computing and generating whole result file...</p>
 
 
 
@@ -20,8 +20,8 @@
 
 
 <script type="text/javascript">
-var database="<?php echo $_REQUEST['database']; ?>";
+var databank="<?php echo $_REQUEST['databank']; ?>";
 var pattern="<?php echo $_REQUEST['pattern']; ?>";
-window.location.href="resultsList.php?database=" + database + "&pattern=" + pattern + ";";
-
+var id="<?php echo $_REQUEST['id']; ?>";
+window.location.href="fullresults.php?databank=" + databank + "&pattern=" + pattern + ";" + "&id=" + id;
 </script>
