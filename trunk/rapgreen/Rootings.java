@@ -42,6 +42,7 @@ public class Rootings {
 		String s=null;
 		try {
 			for (int i=0;i<args.length;i=i+2) {
+				
 				if (args[i].contains("help")) {
 					System.out.println(BOLD);
 					System.out.println("NAME:");

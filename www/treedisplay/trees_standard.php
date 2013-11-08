@@ -20,13 +20,14 @@ var legendFontSize="14";
 var supportSize=11;
 var fontColor="black";
 var backColor="white";
-var lineWidth= 3;
+var lineWidth= 2;
 var lineColor= "#05357E";
 var collapseColor="#EEEEEE";
 var tagColor="#FF0000";
 var roundray=20;
 var collapseWidth=3.0;
 var tagWidth=15;
+var opacitydegree=0.3;
 
 //Static annotation graphic elements
 var annotationFrame;
@@ -88,6 +89,10 @@ function hideShow(tag) {
 // display type
 var displaytype="ultra";
 
+// tool switcher
+var annotebranchestool="collapse";
+var colorbranchannote="Red";
+
 // display or not branch support
 var displaySupport=0;
 
@@ -103,7 +108,7 @@ var legendSvg;
 var back;
 var legendBack;
 
-function setAttributes(widthparam,displaytypeparam,lineParam,roundparam,fontSizeParam,supportSizeParam,fontFamilyParam,collapseWidthParam,backColorParam,lineColorParam,collapseColorParam,fontColorParam, tagColorParam) {
+function setAttributes(widthparam,displaytypeparam,lineParam,roundparam,fontSizeParam,supportSizeParam,fontFamilyParam,collapseWidthParam,backColorParam,lineColorParam,collapseColorParam,fontColorParam, tagColorParam, opacitydeg) {
 	if (widthparam!="") {
 		width=parseInt(widthparam);
 	}
@@ -143,6 +148,10 @@ function setAttributes(widthparam,displaytypeparam,lineParam,roundparam,fontSize
 	if (tagColorParam!="") {
 		tagColor=tagColorParam;
 	}
+	if (opacitydeg!="") {
+		opacitydegree=parseFloat(opacitydeg);
+	}
+	//alert("deg:" + opacitydegree + " " + opacitydeg);
 	reinitCoordinateSVG();
 	resizeSVG();
 }
@@ -470,6 +479,9 @@ function Node(newick) {
 
 	this.xtext= new Array();
 	this.addXtext= new Array();
+	
+	// Mark of coloring point for branch annotation
+	this.isColoringRoot=0;
 
 
 	// Coloration of pattern matching
@@ -1298,13 +1310,13 @@ function fresizeTree(normalMod) {
 					if (this.sons[0].colored==1 && this.colored==1) {
 						this.left1.setAttribute("stroke", tagColor);
 					} else {
-						this.left1.setAttribute("stroke", lineColor);
+						//this.left1.setAttribute("stroke", lineColor);
 
 					}
 					if (this.sons[count-1].colored==1 && this.colored==1) {
 						this.left2.setAttribute("stroke", tagColor);
 					} else {
-						this.left2.setAttribute("stroke", lineColor);
+						//this.left2.setAttribute("stroke", lineColor);
 
 					}
 				} else {
@@ -1338,7 +1350,7 @@ function fresizeTree(normalMod) {
 				if (this.sons[0].colored==1 && this.colored==1) {
 					this.sons[0].round.setAttribute("stroke", tagColor);
 				} else {
-					this.sons[0].round.setAttribute("stroke", lineColor);
+					//this.sons[0].round.setAttribute("stroke", lineColor);
 
 				}
 
@@ -1368,7 +1380,7 @@ function fresizeTree(normalMod) {
 				if (this.sons[count-1].colored==1 && this.colored==1) {
 					this.sons[count-1].round.setAttribute("stroke", tagColor);
 				} else {
-					this.sons[count-1].round.setAttribute("stroke", lineColor);
+					//this.sons[count-1].round.setAttribute("stroke", lineColor);
 
 				}
 				if (this.sons[count-1].addRound==0) {
@@ -1380,8 +1392,8 @@ function fresizeTree(normalMod) {
 
 				if (this.support.indexOf("D_",0)!=-1) {
 					this.nodeType.setAttribute('points', (this.x -2*lineWidth-lineWidth) + "," + (this.y -lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y - lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y + lineWidth) + " " + (this.x-2*lineWidth  - lineWidth) + "," + (this.y + lineWidth));
-					this.nodeType.setAttribute("stroke", lineColor);
-					this.nodeType.setAttribute("fill", lineColor);
+					//this.nodeType.setAttribute("stroke", lineColor);
+					//this.nodeType.setAttribute("fill", lineColor);
 					if (this.addNodeType==0) {
 						this.addNodeType=1;
 						svg.appendChild(this.nodeType);
@@ -1390,8 +1402,8 @@ function fresizeTree(normalMod) {
 				
 				if (this.support.indexOf("T_",0)!=-1) {
 					this.nodeType.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
-					this.nodeType.setAttribute("stroke", lineColor);
-					this.nodeType.setAttribute("fill", lineColor);
+					//this.nodeType.setAttribute("stroke", lineColor);
+					//this.nodeType.setAttribute("fill", lineColor);
 					if (this.addNodeType==0) {
 						this.addNodeType=1;
 						svg.appendChild(this.nodeType);
@@ -1447,7 +1459,7 @@ function fresizeTree(normalMod) {
 						if (this.sons[i].colored==1 && this.colored==1) {
 							this.sons[i].line.setAttribute("stroke", tagColor);
 						} else {
-							this.sons[i].line.setAttribute("stroke", lineColor);
+							//this.sons[i].line.setAttribute("stroke", lineColor);
 
 						}
 					} else {
@@ -1471,7 +1483,12 @@ function fresizeTree(normalMod) {
 							} else {
 								polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 							}
-							polyCol.setAttribute('stroke', lineColor);
+							if (this.sons[i].line!=null && this.sons[i].line!="") {
+								polyCol.setAttribute('stroke', this.sons[i].line.getAttribute("stroke"));
+							} else {
+								polyCol.setAttribute('stroke', lineColor);
+							
+							}
 							polyCol.setAttribute("stroke-width", lineWidth);
 							polyCol.setAttribute('fill', collapseColor);
 
@@ -1536,7 +1553,7 @@ function fresizeTree(normalMod) {
 								this.sons[i].poly.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 							}
 							this.sons[i].poly.setAttribute('stroke-width', lineWidth);
-							this.sons[i].poly.setAttribute('stroke', lineColor);
+							//this.sons[i].poly.setAttribute('stroke', lineColor);
 							this.sons[i].poly.setAttribute('fill', collapseColor);
 							var w=0;
 							var full= this.sons[i].fullNbLeaves();
@@ -2127,6 +2144,418 @@ function ffillSplit(threshold,split,splitSens) {
 
 }
 
+function ftoneDownUndocumented() {
+	// Counting the number of sons
+
+	var count = this.sons.length;
+		//alert(count);
+	if (count>0) {
+		var i=0;
+		var isTone=1;
+		var father=-1;
+		for (i = 0; i < count; i++) {
+			var tempIsTone=this.sons[i].toneDownUndocumented();
+			if (tempIsTone==0) {
+				isTone=0;
+			} else {
+				father=i;
+			}
+		}
+		if (father==0 && isTone==0) {	
+			if (this.left1!=null) { 
+				if (this.left1.getAttribute("opacity")==null || this.left1.getAttribute("opacity")==1.0) {
+					this.left1.setAttribute("opacity",opacitydegree);
+					this.left1.setAttribute("fill-opacity",opacitydegree);
+				} else {
+					this.left1.setAttribute("opacity",1.0);
+					this.left1.setAttribute("fill-opacity",1.0);
+				}
+			}	
+		
+		}
+		if (father==1 && isTone==0) {	
+			if (this.left2!=null) { 
+				if (this.left2.getAttribute("opacity")==null || this.left2.getAttribute("opacity")==1.0) {
+					this.left2.setAttribute("opacity",opacitydegree);
+					this.left2.setAttribute("fill-opacity",opacitydegree);
+				} else {
+					this.left2.setAttribute("opacity",1.0);
+					this.left2.setAttribute("fill-opacity",1.0);
+				}
+			}	
+		
+		}
+		if (isTone==1) {
+			if (this.line!=null && (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0)) {
+				if (this.round!=null) { 
+				this.round.setAttribute("opacity",opacitydegree);
+				this.round.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.line!=null) { 
+				this.line.setAttribute("opacity",opacitydegree);
+				this.line.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.poly!=null) { 
+				this.poly.setAttribute("opacity",opacitydegree);
+				this.poly.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.col!=null) { 
+				this.col.setAttribute("opacity",opacitydegree);
+				this.col.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.sup!=null) { 
+				this.sup.setAttribute("opacity",opacitydegree);
+				this.sup.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.text!=null) { 
+				this.text.setAttribute("opacity",opacitydegree);
+				this.text.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.poimg!=null) { 
+				this.poimg.setAttribute("opacity",opacitydegree);
+				this.poimg.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.goimg!=null) { 
+				this.goimg.setAttribute("opacity",opacitydegree);
+				this.goimg.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.left1!=null) { 
+				this.left1.setAttribute("opacity",opacitydegree);
+				this.left1.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.left2!=null) { 
+				this.left2.setAttribute("opacity",opacitydegree);
+				this.left2.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.nodeType!=null) { 
+				this.nodeType.setAttribute("opacity",opacitydegree);
+				this.nodeType.setAttribute("fill-opacity",opacitydegree);
+				}
+			} else {
+				if (this.round!=null) { 
+				this.round.setAttribute("opacity",1.0);
+				this.round.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.line!=null) { 
+				this.line.setAttribute("opacity",1.0);
+				this.line.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.poly!=null) { 
+				this.poly.setAttribute("opacity",1.0);
+				this.poly.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.col!=null) { 
+				this.col.setAttribute("opacity",1.0);
+				this.col.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.sup!=null) { 
+				this.sup.setAttribute("opacity",1.0);
+				this.sup.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.text!=null) { 
+				this.text.setAttribute("opacity",1.0);
+				this.text.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.poimg!=null) { 
+				this.poimg.setAttribute("opacity",1.0);
+				this.poimg.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.goimg!=null) { 
+				this.goimg.setAttribute("opacity",1.0);
+				this.goimg.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.left1!=null) { 
+				this.left1.setAttribute("opacity",1.0);
+				this.left1.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.left2!=null) { 
+				this.left2.setAttribute("opacity",1.0);
+				this.left2.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.nodeType!=null) { 
+				this.nodeType.setAttribute("opacity",1.0);
+				this.nodeType.setAttribute("fill-opacity",1.0);
+				}	
+			}	
+			return 1;		
+		} else {
+			return 0;
+		}
+	} else {
+		if (infos[this.taxon]==null || (infos[this.taxon]["PO"]==null && infos[this.taxon]["GO"]==null)) {
+			
+			if (this.line!=null && (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0)) {
+				if (this.round!=null) { 
+				this.round.setAttribute("opacity",opacitydegree);
+				this.round.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.line!=null) { 
+				this.line.setAttribute("opacity",opacitydegree);
+				this.line.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.poly!=null) { 
+				this.poly.setAttribute("opacity",opacitydegree);
+				this.poly.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.col!=null) { 
+				this.col.setAttribute("opacity",opacitydegree);
+				this.col.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.sup!=null) { 
+				this.sup.setAttribute("opacity",opacitydegree);
+				this.sup.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.text!=null) { 
+				this.text.setAttribute("opacity",opacitydegree);
+				this.text.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.poimg!=null) { 
+				this.poimg.setAttribute("opacity",opacitydegree);
+				this.poimg.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.goimg!=null) { 
+				this.goimg.setAttribute("opacity",opacitydegree);
+				this.goimg.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.left1!=null) { 
+				this.left1.setAttribute("opacity",opacitydegree);
+				this.left1.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.left2!=null) { 
+				this.left2.setAttribute("opacity",opacitydegree);
+				this.left2.setAttribute("fill-opacity",opacitydegree);
+				}	
+				if (this.nodeType!=null) { 
+				this.nodeType.setAttribute("opacity",opacitydegree);
+				this.nodeType.setAttribute("fill-opacity",opacitydegree);
+				}
+			} else {
+				if (this.round!=null) { 
+				this.round.setAttribute("opacity",1.0);
+				this.round.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.line!=null) { 
+				this.line.setAttribute("opacity",1.0);
+				this.line.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.poly!=null) { 
+				this.poly.setAttribute("opacity",1.0);
+				this.poly.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.col!=null) { 
+				this.col.setAttribute("opacity",1.0);
+				this.col.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.sup!=null) { 
+				this.sup.setAttribute("opacity",1.0);
+				this.sup.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.text!=null) { 
+				this.text.setAttribute("opacity",1.0);
+				this.text.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.poimg!=null) { 
+				this.poimg.setAttribute("opacity",1.0);
+				this.poimg.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.goimg!=null) { 
+				this.goimg.setAttribute("opacity",1.0);
+				this.goimg.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.left1!=null) { 
+				this.left1.setAttribute("opacity",1.0);
+				this.left1.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.left2!=null) { 
+				this.left2.setAttribute("opacity",1.0);
+				this.left2.setAttribute("fill-opacity",1.0);
+				}	
+				if (this.nodeType!=null) { 
+				this.nodeType.setAttribute("opacity",1.0);
+				this.nodeType.setAttribute("fill-opacity",1.0);
+				}	
+			}		
+			//alert(taxon + " " + 1);	
+			return 1;
+		} else {
+			//alert(taxon + " " + 2);	
+			return 0;
+		}
+		 
+		
+	}
+}
+
+function ftoneDown() {
+	// Counting the number of sons
+	//alert(this.line.getAttribute("opacity"));
+	if (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0) {
+		if (this.round!=null) { 
+		this.round.setAttribute("opacity",opacitydegree);
+		this.round.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.line!=null) { 
+		this.line.setAttribute("opacity",opacitydegree);
+		this.line.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.poly!=null) { 
+		this.poly.setAttribute("opacity",opacitydegree);
+		this.poly.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.col!=null) { 
+		this.col.setAttribute("opacity",opacitydegree);
+		this.col.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.sup!=null) { 
+		this.sup.setAttribute("opacity",opacitydegree);
+		this.sup.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.text!=null) { 
+		this.text.setAttribute("opacity",opacitydegree);
+		this.text.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.poimg!=null) { 
+		this.poimg.setAttribute("opacity",opacitydegree);
+		this.poimg.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.goimg!=null) { 
+		this.goimg.setAttribute("opacity",opacitydegree);
+		this.goimg.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.left1!=null) { 
+		this.left1.setAttribute("opacity",opacitydegree);
+		this.left1.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.left2!=null) { 
+		this.left2.setAttribute("opacity",opacitydegree);
+		this.left2.setAttribute("fill-opacity",opacitydegree);
+		}	
+		if (this.nodeType!=null) { 
+		this.nodeType.setAttribute("opacity",opacitydegree);
+		this.nodeType.setAttribute("fill-opacity",opacitydegree);
+		}
+	} else {
+		if (this.round!=null) { 
+		this.round.setAttribute("opacity",1.0);
+		this.round.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.line!=null) { 
+		this.line.setAttribute("opacity",1.0);
+		this.line.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.poly!=null) { 
+		this.poly.setAttribute("opacity",1.0);
+		this.poly.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.col!=null) { 
+		this.col.setAttribute("opacity",1.0);
+		this.col.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.sup!=null) { 
+		this.sup.setAttribute("opacity",1.0);
+		this.sup.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.text!=null) { 
+		this.text.setAttribute("opacity",1.0);
+		this.text.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.poimg!=null) { 
+		this.poimg.setAttribute("opacity",1.0);
+		this.poimg.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.goimg!=null) { 
+		this.goimg.setAttribute("opacity",1.0);
+		this.goimg.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.left1!=null) { 
+		this.left1.setAttribute("opacity",1.0);
+		this.left1.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.left2!=null) { 
+		this.left2.setAttribute("opacity",1.0);
+		this.left2.setAttribute("fill-opacity",1.0);
+		}	
+		if (this.nodeType!=null) { 
+		this.nodeType.setAttribute("opacity",1.0);
+		this.nodeType.setAttribute("fill-opacity",1.0);
+		}	
+	}
+	var count = this.sons.length;
+	if (count>0) {
+		var i=0;
+		for (i = 0; i < count; i++) {
+			this.sons[i].toneDown();
+		}
+	} else {
+		
+		
+	}
+}
+
+function fcolorizeSubtree(erasor) {
+	if (this.isColoringRoot==0) {
+		if (this.round!=null) { 
+			if (erasor==1) {		
+				this.round.setAttribute("stroke",lineColor);		
+			} else {
+				this.round.setAttribute("stroke",colorbranchannote);		
+			}
+		}	
+	
+		if (this.line!=null) { 
+			if (erasor==1) {		
+				this.line.setAttribute("stroke",lineColor);		
+			} else {
+				this.line.setAttribute("stroke",colorbranchannote);		
+			}
+		}	
+	
+		if (this.left1!=null) { 
+			if (erasor==1) {		
+				this.left1.setAttribute("stroke",lineColor);		
+			} else {
+				this.left1.setAttribute("stroke",colorbranchannote);		
+			}
+		}	
+	
+		if (this.left2!=null) { 
+			if (erasor==1) {		
+				this.left2.setAttribute("stroke",lineColor);		
+			} else {
+				this.left2.setAttribute("stroke",colorbranchannote);		
+			}
+		}	
+	
+		if (this.poly!=null) { 
+			if (erasor==1) {		
+				this.poly.setAttribute("stroke",lineColor);		
+			} else {
+				this.poly.setAttribute("stroke",colorbranchannote);		
+			}
+		}	
+
+		if (this.nodeType!=null) { 
+			if (erasor==1) {		
+				this.nodeType.setAttribute("stroke",lineColor);			
+				this.nodeType.setAttribute("fill",lineColor);	
+			} else {
+				this.nodeType.setAttribute("stroke",colorbranchannote);		
+				this.nodeType.setAttribute("fill",colorbranchannote);		
+			}
+		}				
+		var count = this.sons.length;
+		if (count>0) {
+			var i=0;
+			for (i = 0; i < count; i++) {
+				this.sons[i].colorizeSubtree(erasor);
+			}
+		} else {
+		
+		
+		}
+	}
+}
+
 Node.prototype.printTree = fprintTree;
 Node.prototype.maxTaxaString = fmaxTaxaString;
 Node.prototype.colorizeArbitrarly=fcolorizeArbitrarly;
@@ -2145,6 +2574,9 @@ Node.prototype.initUltraCoordinates=finitUltraCoordinates;
 Node.prototype.resizeTree=fresizeTree;
 Node.prototype.drawTree=fdrawTree;
 Node.prototype.fillSplit=ffillSplit;
+Node.prototype.toneDownUndocumented=ftoneDownUndocumented;
+Node.prototype.toneDown=ftoneDown;
+Node.prototype.colorizeSubtree=fcolorizeSubtree;
 
 
 
@@ -2312,21 +2744,36 @@ function lineMouseClick(evt) {
 	}
 	//alert(clickedTreeNode.nbLeaves());
 	if (clickedTreeNode.sons.length > 0) {
-		if (clickedTreeNode.collapsed=="") {
-			clickedTreeNode.collapsed=clickedTreeNode.fullNbLeaves() + " LEAVES";
-			if (clickedTreeNode.sons.length>0) {
-				clickedTreeNode.tags= new Array();
-			    var i=0;
-				for (i = 0; i < colorArray.length; i++) {
-					clickedTreeNode.tags[i]=0;
+		if (annotebranchestool=="collapse") {
+			if (clickedTreeNode.collapsed=="") {
+				clickedTreeNode.collapsed=clickedTreeNode.fullNbLeaves() + " LEAVES";
+				if (clickedTreeNode.sons.length>0) {
+					clickedTreeNode.tags= new Array();
+					var i=0;
+					for (i = 0; i < colorArray.length; i++) {
+						clickedTreeNode.tags[i]=0;
+					}
+					clickedTreeNode.fillInternalTags(clickedTreeNode);
 				}
-				clickedTreeNode.fillInternalTags(clickedTreeNode);
+
+
+			} else {
+				clickedTreeNode.collapsed="";
+
 			}
-
-
+		} else if (annotebranchestool=="down") {
+			clickedTreeNode.toneDown();
 		} else {
-			clickedTreeNode.collapsed="";
-
+			if (clickedTreeNode.line!=null && clickedTreeNode.line.getAttribute("stroke")==lineColor) {
+				clickedTreeNode.colorizeSubtree(0);
+				clickedTreeNode.isColoringRoot=1;
+			} else if (clickedTreeNode.isColoringRoot==1) {
+				clickedTreeNode.isColoringRoot=0;
+				clickedTreeNode.colorizeSubtree(1);
+			} else {
+				clickedTreeNode.colorizeSubtree(0);	
+				clickedTreeNode.isColoringRoot=1;	
+			}
 		}
 		reinitCoordinateSVG();
 		//clickedTreeNode.refreshCollapse(1);
@@ -2379,29 +2826,43 @@ function collapseLabel(label) {
 
 	var clickedTreeNode= tree.findAncestor(label);
 
-
-	if (collapsedArray[label]==0) {
-		var labelMaj=label;
-		clickedTreeNode.collapsed=labelMaj.toUpperCase() + " (" + clickedTreeNode.fullNbLeaves() + ")";
-		collapsedArray[label]=1;
-	} else {
-		clickedTreeNode.collapsed="";
-		collapsedArray[label]=0;
-	}
-	if (clickedTreeNode.sons.length>0) {
-		clickedTreeNode.tags= new Array();
-		    var i=0;
-			for (i = 0; i < colorArray.length; i++) {
-				clickedTreeNode.tags[i]=0;
-			}
-		clickedTreeNode.fillInternalTags(clickedTreeNode);
-	    /*var i=0;
-	    var s="";
-		for (i = 0; i < clickedTreeNode.tags.length; i++) {
-			s = s + " " + clickedTreeNode.tags[i];
-
+	if (annotebranchestool=="collapse") {
+		if (collapsedArray[label]==0) {
+			var labelMaj=label;
+			clickedTreeNode.collapsed=labelMaj.toUpperCase() + " (" + clickedTreeNode.fullNbLeaves() + ")";
+			collapsedArray[label]=1;
+		} else {
+			clickedTreeNode.collapsed="";
+			collapsedArray[label]=0;
 		}
-		alert(s);*/
+		if (clickedTreeNode.sons.length>0) {
+			clickedTreeNode.tags= new Array();
+				var i=0;
+				for (i = 0; i < colorArray.length; i++) {
+					clickedTreeNode.tags[i]=0;
+				}
+			clickedTreeNode.fillInternalTags(clickedTreeNode);
+			/*var i=0;
+			var s="";
+			for (i = 0; i < clickedTreeNode.tags.length; i++) {
+				s = s + " " + clickedTreeNode.tags[i];
+
+			}
+			alert(s);*/
+		}
+	} else if (annotebranchestool=="color") {
+		if (clickedTreeNode.line!=null && clickedTreeNode.line.getAttribute("stroke")==lineColor) {
+			clickedTreeNode.colorizeSubtree(0);
+			clickedTreeNode.isColoringRoot=1;
+		} else if (clickedTreeNode.isColoringRoot==1) {
+			clickedTreeNode.isColoringRoot=0;
+			clickedTreeNode.colorizeSubtree(1);
+		} else {
+			clickedTreeNode.colorizeSubtree(0);	
+			clickedTreeNode.isColoringRoot=1;	
+		}	
+	} else {
+		clickedTreeNode.toneDown();	
 	}
 	reinitCoordinateSVG();
 	//clickedTreeNode.refreshCollapse(1);

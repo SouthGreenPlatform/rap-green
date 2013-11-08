@@ -920,6 +920,56 @@ public class ReconciliationDatabaseDaemon {
 
 						}
 					}
+				} else if (s.equals("patternNewickPost")) {
+					String databank=in.readLine();
+					String id=in.readLine();
+					Tree tree= (Tree)(speciesTreeStructures.get(databank));
+
+					Hashtable trees= (Hashtable)(geneTreeStructures.get(databank));
+					Hashtable ind= (Hashtable)(speciesTreeIndex.get(databank));
+					SpeciesDictionary dic= (SpeciesDictionary)(speciesTreeDictionaries.get(databank));
+					//Hashtable refTrees= (Hashtable)(referenceTreeStructures.get(databank));
+
+
+					String patternString=in.readLine();
+
+					//System.out.println(patternString);
+					Tree pattern= new Tree(patternString);
+					pattern.patternPretreatment(tree,dic);
+					Tree geneTree= new Tree((Tree)(trees.get(id)));
+					geneTree.taxonomicPretreatment();
+					Vector colored= new Vector();
+					Hashtable stickers= new Hashtable();
+					geneTree.colorPattern(pattern,pattern,ind,dic,colored,stickers);
+					//GeneTree refTree= (GeneTree)(refTrees.get(id));
+					//Tree copyCat= new Tree(geneTree);
+					//System.out.println(colored.size());
+
+
+					for (int i=0;i<colored.size();i++) {
+						Tree localTree= (Tree)(colored.elementAt(i));
+						//System.out.println("\n" + localTree);
+						localTree.label= "COLORED_" + localTree.label;
+					}
+					StringBuffer sb= new StringBuffer();
+					for (int i=0;i<colored.size();i++) {
+						Tree localTree= (Tree)(colored.elementAt(i));
+						if (localTree.isLeaf()) {
+							sb.append(localTree.label.substring(8,localTree.label.length()) + "\t");
+							int countD=0;
+							while (localTree.father!=null && localTree.father.label.startsWith("COLORED_")) {
+								localTree=localTree.father;
+								countD++;
+							}
+							sb.append(countD + "\t");
+						}
+						//System.out.println("\n" + localTree);
+					}
+					//out.println(geneTree.getNewick());
+					out.println(sb.toString());
+
+
+
 				} else if (s.equals("patternNewick")) {
 					String databank=in.readLine();
 					String id=in.readLine();

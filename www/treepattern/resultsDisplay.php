@@ -5,7 +5,9 @@
 <head>
 <!-- Standard headers (CSS...) -->
 <?php
+
  include('header.php');
+
 ?>
 </head>
 <body>
@@ -22,6 +24,7 @@
 
 <form name="research" action="http://gohelle.cirad.fr/phylogeny/treedisplay/index.php" method="post">
 <input type="hidden" name="hiddenfield" value="PLOUF">
+<input type="hidden" name="complementary" value="PLOUF">
 </form>
 <?php
 
@@ -51,6 +54,7 @@ while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
 	$families=split("\n", $reception);
 	//echo $reception;
+
 	for ($i=0;$i<count($families);$i++) {
 		$treeNewick=$treeNewick.$families[$i];
 	}
@@ -69,7 +73,14 @@ while ($reception = socket_read($socket, 2048)) {
 </html>
 
 
+
+
+
 <?php
+
 //header("Location: http://phylariane.univ-lyon1.fr/display/tree/reconciled/".$_REQUEST['id']."?idList=".$treeNewick."&analysis=".$_REQUEST['databank']);
+
 //exit;
+
 ?>
+

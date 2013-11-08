@@ -9,4 +9,8 @@ $server="localhost";
 $port=1666;
 /* path to the result directory */
 $resdir="";
+/* link to the secondary visualisator, can contains the FAMID word to be replaced in the address by the family id contained in the database */
+$displayadress=Array("My base" => "My address");
+/* name of the secondary visualisator */
+$displaytag=Array("My base" => "My tag");
 ?>

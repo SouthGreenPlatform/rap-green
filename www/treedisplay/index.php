@@ -27,7 +27,15 @@
  include('annotations.php');
 
 ?>
-
+<?php 
+//echo $_SERVER['HTTP_USER_AGENT'];
+if ($_REQUEST['ie']==1 || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== FALSE ) {
+	include("trees_ie.php"); 
+} else {
+	
+	include("trees_standard.php");
+}
+?>
 <?php
 
  include('menu.php');
@@ -95,19 +103,18 @@ function collapseType(val) {
 
 
 </div>
-
+<?php	
+	if (isSet($_POST['hiddenfield'])) {
+		//echo $_POST['hiddenfield'];
+		
+	}
+		
+		
+?>
 <div id="treeDivId" style="overflow:scroll; width : 100% ; height : 800px ;">
 <table id="organise"><tr><td id="treePanel" name="treePanel">
 
-<?php 
-//echo $_SERVER['HTTP_USER_AGENT'];
-if ($_REQUEST['ie']==1 || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== FALSE ) {
-	include("trees_ie.php"); 
-} else {
-	
-	include("trees_standard.php");
-}
-?>
+
 
 
 
@@ -116,7 +123,7 @@ var tree= <?php
 	if (isSet($_POST['hiddenfield'])) {
 		echo 'new Node("';
 
-		echo $_POST['hiddenfield'];
+		echo substr($_POST['hiddenfield'],0,strpos($_POST['hiddenfield'],";")+1);
 	
 		echo '");';
 	} else {

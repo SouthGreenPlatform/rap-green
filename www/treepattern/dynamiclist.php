@@ -77,7 +77,14 @@ socket_close($socket);
 		echo "</td></tr>";
 
 		for ($i=0;$i<count($resfiles);$i++) {
-			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>display</a></td></tr>";
+			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>display</a>";
+			
+			if ($displayadress[$_REQUEST['databank']]!="")	{
+				echo "&nbsp;&nbsp;<a href='resultsSecondaryDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
+			
+			}	
+			
+			echo "</td></tr>";
 		}
 		
 	}
