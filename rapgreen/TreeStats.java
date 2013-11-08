@@ -30,8 +30,11 @@ public class TreeStats {
 	public static File speciesFile;
 	
 	public static int minSeqNumber;
+	public static double minSupport;
 
 	public static String key;
+	
+	public static String rootTaxa;
 
 	public static Vector subspecies;
 	public static Vector subspeciesTags;
@@ -40,12 +43,13 @@ public class TreeStats {
 	public static boolean nbleaves=false;
 	public static boolean speciesRepresentation=false;
 	public static boolean fullRepresentation=false;
-	public static boolean duplications=false;
-	public static boolean losses=false;
+	public static boolean allStats=false;
+	//public static boolean losses=false;
 	public static boolean ultraparalogs=false;
 	public static boolean orthologs=false;
 	public static boolean aeluropus=false;
 	public static boolean banana=false;
+	public static boolean monodic=false;
 
 
    private static final String NORMAL     = "\u001b[0m";
@@ -90,9 +94,9 @@ public class TreeStats {
 					System.out.println(BOLD);
 					System.out.println("-orthologs" + NORMAL + " " + UNDERLINE + "output_orthologs_file" + NORMAL + " " + UNDERLINE + "min_number\n\t" + NORMAL +  "number of orthologous clusters in the output file, and the list of sequence and depth for each cluster in the output orthologs file.");					
 					System.out.println(BOLD);
-					System.out.println("-duplications" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "Count the number of duplication for each node of the species tree");					
+					System.out.println("-orthologsClade" + NORMAL + " " + UNDERLINE + "species_tree" + NORMAL + " " + UNDERLINE + "clade_id" + NORMAL + " " + UNDERLINE + "min_number" + NORMAL + " " + UNDERLINE + "min_support\n\t" + NORMAL +  "complete stats for ortholog groups around a specific clade with a minimum number of species under each subclade, and the minimum support to consider clades and duplications.");					
 					System.out.println(BOLD);
-					System.out.println("-losses" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "Count the number of losses for each node of the species tree\n");
+					System.out.println("-allstats" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "Count the number of duplications, losses, and ancestral copies for each node of the species tree");
 					System.out.println(BOLD);
 					System.out.println("OPTIONS:");
 					System.out.println(BOLD);
@@ -115,11 +119,8 @@ public class TreeStats {
 				} else if (args[i].equalsIgnoreCase("-fullRepresentation")) {
 					fullRepresentation= true;
 					speciesFile= new File(args[i+1]);
-				} else if (args[i].equalsIgnoreCase("-losses")) {
-					losses= true;
-					speciesFile= new File(args[i+1]);
-				} else if (args[i].equalsIgnoreCase("-duplications")) {
-					duplications= true;
+				} else if (args[i].equalsIgnoreCase("-allStats")) {
+					allStats= true;
 					speciesFile= new File(args[i+1]);
 				} else if (args[i].equalsIgnoreCase("-orthologs")) {
 					orthologs= true;
@@ -131,6 +132,13 @@ public class TreeStats {
 					ultraFile= new File(args[i+1]);
 					minSeqNumber= (new Integer(args[i+2])).intValue();
 					i+=1;
+				} else if (args[i].equalsIgnoreCase("-orthologsOnClade")) {
+					monodic= true;
+					speciesFile= new File(args[i+1]);
+					rootTaxa=args[i+2];
+					minSeqNumber= (new Integer(args[i+3])).intValue();
+					minSupport= (new Double(args[i+4])).doubleValue();
+					i+=3;
 				} else if (args[i].equalsIgnoreCase("-aeluropus")) {
 					aeluropus= true;
 					i--;
@@ -155,7 +163,7 @@ public class TreeStats {
 
 			}
 
-			if (losses) {
+			if (allStats) {
 			
 	        	File[] treeFiles = treeFile.listFiles();	
 
@@ -199,7 +207,442 @@ public class TreeStats {
 	        				Tree g= (Tree)(duplicationsVector.elementAt(j));
 							Tree s=g.speciesMapping(speciesTree);
 	        				
-	        				if (!taxaTable.containsKey(s.label)) {
+	        				Tree runner= g;
+	        				while (runner.label.indexOf("DUPLICATION")==-1) {
+	        					runner=runner.father;
+	        				}
+	        				Vector allSp= runner.speciesVector();
+	        				Vector traceSp= runner.traceVector();
+	        				if (allSp.size()<=2 || traceSp.size()>=2) {
+	        				
+								if (!taxaTable.containsKey(s.label)) {
+									//System.out.println(s.label);
+									taxaTable.put(s.label,"1");
+									taxaVector.addElement(s.label);
+								}
+							
+								if (!localRes.containsKey(s.label)) {
+								
+									localRes.put(s.label,new Integer(1));
+							
+								} else {
+									int localInt= (    (Integer)(localRes.get(s.label))     ).intValue();
+									localInt++;
+									localRes.put(s.label,new Integer(localInt));
+								
+								}
+							}
+	        			}
+	        		}   	
+	        		res.addElement(localRes);		        		
+	        	}	
+	        	
+	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+	       		write.write("Losses");
+	       		
+	       		
+	       		Vector nodeVector=speciesTree.getNodes();
+	       		taxaVector=new Vector();
+	        	for (int j=0;j<nodeVector.size();j++) {
+	        		Tree localNode= (Tree)(nodeVector.elementAt(j));
+	        		taxaVector.addElement(localNode.label);
+	        	}	       
+	        	
+	        			
+	        	for (int j=0;j<taxaVector.size();j++) {
+	        		write.write("\t");	
+	        		write.write((String)(taxaVector.elementAt(j)));	
+	        	}
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= (Hashtable)(res.elementAt(i));
+	        		if (treeFiles[i].getName().contains(key)) {
+	       				write.write(treeFiles[i].getName());
+		        		for (int j=0;j<taxaVector.size();j++) {
+		        			String taxa= (String)(taxaVector.elementAt(j));
+	        				int localInt= 0;
+	        				if (localRes.containsKey(taxa)) {
+	        					localInt = ((Integer)(localRes.get(taxa))).intValue();
+	        				}
+	        				write.write("\t");	
+	        				write.write((new Integer(localInt)).toString());
+	   						write.flush();	
+		        			
+		        		}
+	   					write.write("\n");
+	   					write.flush();
+	        		}
+	        	}		
+
+				Vector lossesRes= res;
+
+				res= new Vector();
+				taxaVector= new Vector();
+				taxaTable= new Hashtable();    	
+				buf= new BufferedReader(new FileReader(speciesFile));
+				test= buf.readLine();
+				buf.close();
+				if (test.endsWith(";")) {
+					read= new TreeReader(speciesFile,TreeReader.NEWICK);
+				} else {
+					read= new TreeReader(speciesFile,TreeReader.XML);
+				}
+				Tree speciesTree2= read.nextTree();
+				speciesTree2.pretreatment();	        	
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= new Hashtable();
+	        		if (treeFiles[i].getName().contains(key)) {
+						read= null;
+						buf= new BufferedReader(new FileReader(treeFiles[i]));
+						test= buf.readLine();
+						buf.close();
+						if (test.endsWith(";")) {
+							read= new TreeReader(treeFiles[i],TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(treeFiles[i],TreeReader.XML);
+						}
+						Tree tree= read.nextTree();
+						tree.pretreatment();	        			
+	        			
+	        			Vector duplicationsVector= new Vector();
+	        			tree.getDuplications(duplicationsVector);
+	        			
+	        			System.out.println(treeFiles[i].getName() + " : " + duplicationsVector.size());
+	        			
+	        			for (int j=0;j<duplicationsVector.size();j++) {
+	        				Tree g= (Tree)(duplicationsVector.elementAt(j));
+							Tree s=g.speciesMapping(speciesTree2);
+	        				Tree runner= g;
+	        				Vector allSp= runner.speciesVector();
+	        				Vector traceSp= runner.traceVector();
+	        				if (allSp.size()<=2 || traceSp.size()>=2) {	        				
+								if (!taxaTable.containsKey(s.label)) {
+									//System.out.println(s.label);
+									taxaTable.put(s.label,"1");
+									taxaVector.addElement(s.label);
+								}
+							
+								if (!localRes.containsKey(s.label)) {
+								
+									localRes.put(s.label,new Integer(1));
+							
+								} else {
+									int localInt= (    (Integer)(localRes.get(s.label))     ).intValue();
+									localInt++;
+									localRes.put(s.label,new Integer(localInt));
+								
+								}
+							}
+	        			}
+	        		}   	
+	        		res.addElement(localRes);		        		
+	        	}	
+	        	
+	       		write.write("Duplications");
+	       		nodeVector=speciesTree2.getNodes();
+	       		taxaVector=new Vector();
+	        	for (int j=0;j<nodeVector.size();j++) {
+	        		Tree localNode= (Tree)(nodeVector.elementAt(j));
+	        		taxaVector.addElement(localNode.label);
+	        	}	       		
+	        	for (int j=0;j<taxaVector.size();j++) {
+	        		write.write("\t");	
+	        		write.write((String)(taxaVector.elementAt(j)));	
+	        	}
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= (Hashtable)(res.elementAt(i));
+	        		if (treeFiles[i].getName().contains(key)) {
+	       				write.write(treeFiles[i].getName());
+		        		for (int j=0;j<taxaVector.size();j++) {
+		        			String taxa= (String)(taxaVector.elementAt(j));
+	        				int localInt= 0;
+	        				if (localRes.containsKey(taxa)) {
+	        					localInt = ((Integer)(localRes.get(taxa))).intValue();
+	        				}
+	        				write.write("\t");	
+	        				write.write((new Integer(localInt)).toString());
+	   						write.flush();	
+		        			
+		        		}
+	   					write.write("\n");
+	   					write.flush();
+	        		}
+	        	}		
+	        	
+	        	
+	       		write.write("Ancestral");	
+	        	for (int j=0;j<taxaVector.size();j++) {
+	        		write.write("\t");	
+	        		write.write((String)(taxaVector.elementAt(j)));	
+	        	}
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();	        	
+
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localResLosses= (Hashtable)(lossesRes.elementAt(i));
+	        		Hashtable localResDuplications= (Hashtable)(res.elementAt(i));
+	        		if (treeFiles[i].getName().contains(key)) {
+	        		
+	       				write.write(treeFiles[i].getName());
+				
+						/*for (int j=0;j<taxaVector.size();j++) {
+							String taxa= (String)(taxaVector.elementAt(j));
+							copies.put(taxa,new Integer(1));
+						}	        			*/
+	        			Hashtable copies = speciesTree2.countCopies(localResDuplications,localResLosses);
+	        			
+						for (int j=0;j<taxaVector.size();j++) {
+							String taxa= (String)(taxaVector.elementAt(j));
+							int localInt= ((Integer)(copies.get(taxa))).intValue();
+							
+	   						write.write("\t" + localInt);
+						}	        			
+	        			
+	       				write.flush();
+	   					write.write("\n");
+	   					write.flush();	
+	        		}
+	        	}
+	        	
+	        	
+	        	
+	        	
+	        	write.close();				
+				
+			}  else if (monodic) {
+			
+	        	File[] treeFiles = treeFile.listFiles();	
+
+				Vector res= new Vector();
+				Vector taxaVector= new Vector();
+				Hashtable taxaTable= new Hashtable();
+
+				TreeReader read= null;
+				BufferedReader buf= new BufferedReader(new FileReader(speciesFile));
+				String test= buf.readLine();
+				buf.close();
+				if (test.endsWith(";")) {
+					read= new TreeReader(speciesFile,TreeReader.NEWICK);
+				} else {
+					read= new TreeReader(speciesFile,TreeReader.XML);
+				}
+				Tree speciesTree= read.nextTree();
+				speciesTree.pretreatment();
+				int clade=0;
+				System.out.println("FILE\tCLADE\tGROUPE\tORTHOLOGS\tSEQUENCE");
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localRes= new Hashtable();
+	        		if (treeFiles[i].getName().contains(key)) {
+						System.out.println(treeFiles[i].getName());
+						read= null;
+						buf= new BufferedReader(new FileReader(treeFiles[i]));
+						test= buf.readLine();
+						buf.close();
+						if (test.endsWith(";")) {
+							read= new TreeReader(treeFiles[i],TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(treeFiles[i],TreeReader.XML);
+						}
+						Tree tree= read.nextTree();
+						tree.pretreatment();	        			
+	        			
+	        			Vector duplicationsVector= new Vector();
+	        			tree.getSpeciations(duplicationsVector);
+
+	        			for (int j=0;j<duplicationsVector.size();j++) {
+	        				Tree g= (Tree)(duplicationsVector.elementAt(j));
+							Tree s=g.speciesMapping(speciesTree);
+							if (!s.isLeaf()) {
+								Tree s1=(Tree)(s.sons.elementAt(0));
+								Tree s2=(Tree)(s.sons.elementAt(1));
+								//System.out.println(s.label);
+								if (s.label.startsWith(rootTaxa)) {
+									//System.out.println(g);
+									Tree g1= (Tree)(g.sons.elementAt(0));
+									Tree g2= (Tree)(g.sons.elementAt(1));
+								
+									int nsp1= g1.nbSpecies().size();
+									int nsp2= g2.nbSpecies().size();
+									double mainSupport=(new Double(g.label.substring(g.label.lastIndexOf("_")+1,g.label.length()-3))).doubleValue();
+									double support1=1.0;
+									if (!g1.isLeaf()) {
+										support1=(new Double(g1.label.substring(g1.label.lastIndexOf("_")+1,g1.label.length()-3))).doubleValue();
+									}
+									double support2=1.0;
+									if (!g2.isLeaf()) {
+									try {
+										support2=(new Double(g2.label.substring(g2.label.lastIndexOf("_")+1,g2.label.length()-3))).doubleValue();
+									} catch(Exception efee) {
+										System.out.println("ECHO:" + g2.label);
+										System.exit(0);
+									}
+									}
+									if (nsp1>=minSeqNumber && nsp2>=minSeqNumber && (mainSupport>=minSupport && (support1>=minSupport || support2>=minSupport))) {
+										boolean right=true;
+										boolean isOk=true;
+										for (int k=0;k<g1.leafVector.size() && isOk;k++) {
+											Tree leaf=(Tree)(g1.leafVector.elementAt(k));
+											String taxa=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+											if (k==0 && s2.leafHashtable.containsKey(taxa)) {
+												right=false;
+											}
+											/*System.out.println(taxa);
+											System.out.println(s1);
+											System.out.println("***");
+											System.out.println(s2);*/
+											if (right && !s1.leafHashtable.containsKey(taxa)) {
+												isOk=false;
+											}
+											if (!right && !s2.leafHashtable.containsKey(taxa)) {
+												isOk=false;
+											}
+								
+											//System.out.println(right + " " + isOk);
+										}
+										/*if (isOk) {
+											System.out.println(g2);
+											if (right) {
+												System.out.println(s2);
+											} else {
+												System.out.println(s1);
+											}
+										}*/
+										for (int k=0;k<g2.leafVector.size() && isOk;k++) {
+											Tree leaf=(Tree)(g2.leafVector.elementAt(k));
+											String taxa=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());								
+								
+											if (right && !s2.leafHashtable.containsKey(taxa)) {
+												isOk=false;
+											}
+											if (!right && !s1.leafHashtable.containsKey(taxa)) {
+												isOk=false;
+											}				
+										}
+											//System.out.println(isOk);
+										if (isOk) {
+											clade++;
+											String sublabel1=null;
+											String sublabel2=null;
+											System.out.print("\t" + clade);
+											
+											Tree runner=g;
+											if (g.father!=null) {
+												Tree fatherSon=(Tree)(runner.father.sons.elementAt(0));
+												if (fatherSon==runner) {
+													fatherSon=(Tree)(runner.father.sons.elementAt(1));
+												}
+												boolean isOut=true;
+												String outString="";
+												for (int k=0;k<fatherSon.leafVector.size() && isOut;k++) {
+													Tree leaf=(Tree)(fatherSon.leafVector.elementAt(k));
+													if (leaf.label.endsWith("PHYPA") || leaf.label.endsWith("SELML")) {
+														outString=outString + "\t" + leaf.label;
+													} else {
+														isOut=false;
+													}
+												}
+												if (isOut) {
+													System.out.print(outString);
+												}
+												runner=runner.father;
+												if (isOut && runner.father!=null) {
+													fatherSon=(Tree)(runner.father.sons.elementAt(0));
+													if (fatherSon==runner) {
+														fatherSon=(Tree)(runner.father.sons.elementAt(1));
+													}
+													outString="";
+													for (int k=0;k<fatherSon.leafVector.size() && isOut;k++) {
+														Tree leaf=(Tree)(fatherSon.leafVector.elementAt(k));
+														if (leaf.label.endsWith("PHYPA") || leaf.label.endsWith("SELML")) {
+															outString=outString + "\t" + leaf.label;
+														} else {
+															isOut=false;
+														}
+													}
+													if (isOut) {
+														System.out.print(outString);
+													}
+												}
+																							
+											}
+											
+											System.out.print("\n");
+											
+											if (right) {
+												System.out.println("\t\t" + s1.label);
+												sublabel1=s1.label;
+												sublabel2=s2.label;
+											} else {
+												System.out.println("\t\t" + s2.label);
+												sublabel1=s2.label;
+												sublabel2=s1.label;
+											}
+											
+											int nbOrth1=1;
+											int nbOrthMin1=1;
+											Vector dup1=new Vector();
+											g1.getDuplications(dup1);
+											for (int k=0;k<dup1.size();k++) {
+												Tree node=(Tree)(dup1.elementAt(k));
+												if (node.speciesMapping(speciesTree).label.equals(sublabel1)) {
+													nbOrth1++;
+													double supportNode=1.0;
+													if (!node.isLeaf()) {
+														supportNode=(new Double(node.label.substring(node.label.lastIndexOf("_")+1,node.label.length()-3))).doubleValue();
+													}
+													if (supportNode>=minSupport) {
+														nbOrthMin1++;
+													}
+												}
+											}
+											System.out.println("\t\t\t" + nbOrthMin1 + "\t"  + nbOrth1);
+											
+											for (int k=0;k<g1.leafVector.size() && isOk;k++) {
+												Tree leaf=(Tree)(g1.leafVector.elementAt(k));
+												System.out.println("\t\t\t\t" + leaf.label);
+											}
+											if (!right) {
+												System.out.println("\t\t" + s1.label);
+											} else {
+												System.out.println("\t\t" + s2.label);
+											}
+											
+											int nbOrth2=1;
+											int nbOrthMin2=1;
+											Vector dup2=new Vector();
+											g2.getDuplications(dup2);
+											for (int k=0;k<dup2.size();k++) {
+												Tree node=(Tree)(dup2.elementAt(k));
+												if (node.speciesMapping(speciesTree).label.equals(sublabel2)) {
+													nbOrth2++;
+													double supportNode=1.0;
+													if (!node.isLeaf()) {
+														supportNode=(new Double(node.label.substring(node.label.lastIndexOf("_")+1,node.label.length()-3))).doubleValue();
+													}
+													if (supportNode>=minSupport) {
+														nbOrthMin2++;
+													}
+													
+												}
+											}
+											System.out.println("\t\t\t" + nbOrthMin2 + "\t" + nbOrth2);											
+											for (int k=0;k<g2.leafVector.size() && isOk;k++) {
+												Tree leaf=(Tree)(g2.leafVector.elementAt(k));		
+												System.out.println("\t\t\t\t" + leaf.label);
+											}								
+								
+										}
+									}
+								}
+								
+	        				}
+	        				/*if (!taxaTable.containsKey(s.label)) {
 	        					//System.out.println(s.label);
 	        					taxaTable.put(s.label,"1");
 	        					taxaVector.addElement(s.label);
@@ -214,7 +657,7 @@ public class TreeStats {
 	        					localInt++;
 	        					localRes.put(s.label,new Integer(localInt));
 	        					
-	        				}
+	        				}*/
 	        			}
 	        		}   	
 	        		res.addElement(localRes);		        		
@@ -251,7 +694,7 @@ public class TreeStats {
 	        	write.close();
 				
 				
-			} else if (duplications) {
+			} else/* if (duplications) {
 			
 	        	File[] treeFiles = treeFile.listFiles();	
 
@@ -347,7 +790,7 @@ public class TreeStats {
 	        	write.close();
 				
 				
-			} else if (banana) {
+			} else */ if (banana) {
 	        	File[] treeFiles = treeFile.listFiles();
 	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
 	       		write.write("FILE\tRES\tSUP");

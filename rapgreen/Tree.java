@@ -337,6 +337,125 @@ public class Tree {
 			}
 		}
 	}
+	
+// ********************************************************************************************************************
+/**
+* Compute the species vector of this node 
+* @return		The species vector
+*/
+
+	public Vector speciesVector() {
+		Vector totalV = new Vector();
+		Hashtable totalH= new Hashtable();
+		Vector soloV= new Vector();
+
+		Hashtable table0= new Hashtable();
+		Vector vector0= ((Tree)(sons.elementAt(0))).leafVector;
+		Hashtable table1= new Hashtable();
+		Vector vector1= ((Tree)(sons.elementAt(1))).leafVector;
+		for (int i=0;i<vector0.size();i++) {
+			String leaf= ((Tree)(vector0.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				table0.put(taxa,"");
+			}
+		}
+		for (int i=0;i<vector1.size();i++) {
+			String leaf= ((Tree)(vector1.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				table1.put(taxa,"");
+			}
+		}
+		for (int i=0;i<vector0.size();i++) {
+			String leaf= ((Tree)(vector0.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				
+				if (!totalH.containsKey(taxa)) {
+					totalV.addElement(taxa);
+					totalH.put(taxa,"");
+					if (table1.containsKey(taxa)) {
+						soloV.addElement(taxa);
+					}
+				}
+			}
+		}
+		for (int i=0;i<vector1.size();i++) {
+			String leaf= ((Tree)(vector1.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+					if (!totalH.containsKey(taxa)) {
+					totalV.addElement(taxa);
+					totalH.put(taxa,"");
+					if (table0.containsKey(taxa)) {
+						soloV.addElement(taxa);
+					}
+				}
+			}
+		}
+		return(totalV);
+	}
+		
+// ********************************************************************************************************************
+/**
+* Compute the species intersection of this node 
+* @return		The duplication species intersection
+*/
+
+	public Vector traceVector() {
+		Vector totalV = new Vector();
+		Hashtable totalH= new Hashtable();
+		Vector soloV= new Vector();
+
+		Hashtable table0= new Hashtable();
+		Vector vector0= ((Tree)(sons.elementAt(0))).leafVector;
+		Hashtable table1= new Hashtable();
+		Vector vector1= ((Tree)(sons.elementAt(1))).leafVector;
+		for (int i=0;i<vector0.size();i++) {
+			String leaf= ((Tree)(vector0.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				table0.put(taxa,"");
+			}
+		}
+		for (int i=0;i<vector1.size();i++) {
+			String leaf= ((Tree)(vector1.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				table1.put(taxa,"");
+			}
+		}
+		for (int i=0;i<vector0.size();i++) {
+			String leaf= ((Tree)(vector0.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+				
+				if (!totalH.containsKey(taxa)) {
+					totalV.addElement(taxa);
+					totalH.put(taxa,"");
+					if (table1.containsKey(taxa)) {
+						soloV.addElement(taxa);
+					}
+				}
+			}
+		}
+		for (int i=0;i<vector1.size();i++) {
+			String leaf= ((Tree)(vector1.elementAt(i))).label;
+			String taxa= leaf.substring(leaf.lastIndexOf("_")+1,leaf.length());
+			if (!leaf.startsWith("LOSS")) {
+					if (!totalH.containsKey(taxa)) {
+					totalV.addElement(taxa);
+					totalH.put(taxa,"");
+					if (table0.containsKey(taxa)) {
+						soloV.addElement(taxa);
+					}
+				}
+			}
+		}
+		return(soloV);
+	}
+		
 // ********************************************************************************************************************
 /**
 * Compute the trace of a duplication node (intersection / union of species under the two sons)
@@ -459,11 +578,32 @@ public class Tree {
 		return res;
 
 	}
+	
+// ********************************************************************************************************************
+/**
+* Return an array of species
+* @return		The represented species
+*/
+	public Vector nbSpecies() {
+		Vector res= new Vector();
+		Hashtable table= new Hashtable();
+		for (int i=0;i<leafVector.size();i++) {
+			String leafLabel= ((Tree)(leafVector.elementAt(i))).label;
+			String taxon= leafLabel.substring(leafLabel.lastIndexOf("_")+1,leafLabel.length());
+			if (!table.containsKey(taxon)) {
+				table.put(taxon," ");
+				res.addElement(taxon);
+			}
+		}
 
+		return res;
+
+	}
+	
 // ********************************************************************************************************************
 /**
 * @param leaf	The leaf to starts from
-* @return		The number of topological incongruence duplication
+* @return		The number of speciation nodes
 */
 	public int nbSpeciations(Tree leaf) {
 		int res=0;
@@ -2323,6 +2463,39 @@ public class Tree {
 	public boolean isLeaf() {
 		return(sons==null || sons.size()==0);
 	}
+	
+// ********************************************************************************************************************
+/**
+* Return a table of the number of ancestral copies for each node of this species tree
+* @return The tree nodes
+*/
+	public Hashtable countCopies(Hashtable d, Hashtable l) {
+		Hashtable res= new Hashtable();
+		countCopies(res,d,l,0,0);
+		return(res);
+	}
+
+// ******************************
+/**
+* Fill a vector with this node and every node under this node
+* @param res	The vector to fill
+*/
+	private void countCopies(Hashtable res,Hashtable d,Hashtable l,int nd,int nl) {
+		int ndi=0;
+		if (d.containsKey(this.label)) {
+			ndi=((Integer)(d.get(this.label))).intValue();
+		}
+		int nli=0;
+		if (l.containsKey(this.label)) {
+			nli=((Integer)(l.get(this.label))).intValue();
+		}			
+		res.put(this.label,new Integer(1+nd+ndi-nl-nli));
+		if (!isLeaf()) {
+			for (int i=0;i<sons.size();i++) {
+				((Tree)(sons.elementAt(i))).countCopies(res,d,l,nd+ndi,nl+nli);
+			}
+		}
+	}
 
 // ********************************************************************************************************************
 /**
@@ -2341,12 +2514,12 @@ public class Tree {
 * @param res	The vector to fill
 */
 	private void getNodes(Vector res) {
+		res.addElement(this);
 		if (!isLeaf()) {
 			for (int i=0;i<sons.size();i++) {
 				((Tree)(sons.elementAt(i))).getNodes(res);;
 			}
 		}
-		res.addElement(this);
 	}
 
 // ********************************************************************************************************************
