@@ -80,7 +80,6 @@ public class Rootings {
 
 			TreeReader reader= new TreeReader(input,TreeReader.NEWICK);
 			Tree tree= reader.nextTree();
-
 			tree.pretreatment();
 			Tree midpointTree=null;
 			BufferedWriter write = null;
