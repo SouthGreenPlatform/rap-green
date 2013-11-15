@@ -40,6 +40,7 @@ public class Rootings {
 // ********************
 	public static void main(String[] args) {
 		String s=null;
+		boolean invert=false;
 		try {
 			for (int i=0;i<args.length;i=i+2) {
 				
@@ -59,6 +60,8 @@ public class Rootings {
 					System.out.println(BOLD);
 					System.out.println("-output" + NORMAL + " "  + UNDERLINE + "rootings_file\n\t" + NORMAL + "The output file containing input tree rootings");
 					System.out.println(BOLD);
+					System.out.println("-invert\n\t" + NORMAL + "Activate this option if your taxa identifier is in front of the sequence identifier");
+					System.out.println(BOLD);
 					System.out.println("-redundancy" + NORMAL + " "  + UNDERLINE + "redundancy_file\n\t" + NORMAL + "The output file containing the rooted by redundancy tree");
 					System.out.println(BOLD);
 					System.out.println("-midpoint" + NORMAL + " "  + UNDERLINE + "midpoint_file\n\t" + NORMAL + "The output file containing the midpoint rooted input tree\n\n");
@@ -75,12 +78,26 @@ public class Rootings {
 				}
 				if (args[i].equalsIgnoreCase("-redundancy")) {
 					redundancy= new File(args[i+1]);
+				} 
+				if (args[i].equalsIgnoreCase("-invert")) {
+					invert=true;
+					i--;
 				}
 			}
 
 			TreeReader reader= new TreeReader(input,TreeReader.NEWICK);
 			Tree tree= reader.nextTree();
 			tree.pretreatment();
+					Vector vect= tree.leafVector;
+					if (invert) {
+						//geneTree.pretreatment();
+						//vect= geneTree.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));	
+							leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
+						}
+						
+					}				
 			Tree midpointTree=null;
 			BufferedWriter write = null;
 			//System.out.println(tree);
