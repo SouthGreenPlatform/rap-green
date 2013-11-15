@@ -93,7 +93,7 @@ public class TreeReconciler {
 		//Remove useless parts of the species tree
 		//System.out.println(speciesTree);
 		removeUselessSubtrees(speciesTree,geneTree.leafVector);
-		System.out.println(speciesTree);
+		//System.out.println(speciesTree);
 		//System.out.println(geneTree);
 		//Reinitialize the pretreatment of the species tree
 		speciesTree.pretreatment();
@@ -110,7 +110,7 @@ public class TreeReconciler {
 			}
 			Tree rootedGeneTree= (Tree)(roots.elementAt(i));
 			rootedGeneTree.pretreatment();
-			//System.out.println("gene:\n" + rootedGeneTree);
+			//System.out.println("gene:\n" + rootedGeneTree.getNewick());
 			double localMid=rootedGeneTree.midpoint();
 			//Refine pretreatment tables with parsed taxa labels for gene tree
 			parseSpecies(rootedGeneTree);
@@ -305,9 +305,10 @@ public class TreeReconciler {
 			if (areCongruent(g,r,congruentGeneNodes,congruentReconciledNodes,congruentReconciledLengths)) {
 				//Congruence case, replace sons and sons lengths, then pursue the reconciliation
 				for (int i=0;i<congruentGeneNodes.size();i++) {
-					res+=reconciliation((Tree)(congruentGeneNodes.elementAt(i)),advanceInLosses((Tree)(congruentReconciledNodes.elementAt(i))));
+					res+=reconciliation((Tree)(congruentGeneNodes.elementAt(i)),advanceInLosses((Tree)(congruentReconciledNodes.elementAt(i)),(Tree)(congruentGeneNodes.elementAt(i))));
 				}
 			} else {
+				//System.out.println("MARKKK\n" + g );
 				//Incongruence case, duplicate the reconciliation structure, then pursue the reconciliation
 				g.label="'DUPLICATION"+g.label+"'";
 				double newLength=-1.0;
@@ -342,8 +343,8 @@ public class TreeReconciler {
 							leaf.label="LOSS_" + leaf.label;
 					}
 				}
-				res+=reconciliation(genenode0,advanceInLosses(node0));
-				res+=reconciliation(genenode1,advanceInLosses(node1));
+				res+=reconciliation(genenode0,advanceInLosses(node0,genenode0));
+				res+=reconciliation(genenode1,advanceInLosses(node1,genenode1));
 				res++;
 			}
 		}
@@ -641,7 +642,7 @@ public class TreeReconciler {
 * @param r	The tree
 * @return	The next not-loss event.
 */
-	public Tree advanceInLosses(Tree r) {
+	public Tree advanceInLosses(Tree r,Tree g) {
 		boolean founded=false;
 		while (!founded) {
 			//System.out.println("---\n" + r);
@@ -664,8 +665,10 @@ public class TreeReconciler {
 				if (count>1) {
 					founded=true;
 				} else {
-					if (last==-1)
-						System.out.println(r);
+					if (last==-1) {
+						//System.out.println(r + "\n\nand the global gene tree\n" + this.geneTree);
+						
+					}
 					r=(Tree)(r.sons.elementAt(last));
 				}
 				//System.out.println(count);

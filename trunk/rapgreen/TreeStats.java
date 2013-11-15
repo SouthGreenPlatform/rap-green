@@ -32,7 +32,7 @@ public class TreeStats {
 	public static int minSeqNumber;
 	public static double minSupport;
 
-	public static String key;
+	public static String key=null;
 	
 	public static String rootTaxa;
 
@@ -41,6 +41,7 @@ public class TreeStats {
 	public static Hashtable globalTable;
 	
 	public static boolean nbleaves=false;
+	public static boolean depths=false;
 	public static boolean speciesRepresentation=false;
 	public static boolean fullRepresentation=false;
 	public static boolean allStats=false;
@@ -86,6 +87,8 @@ public class TreeStats {
 					System.out.println(BOLD);
 					System.out.println("-leaves\n\t" + NORMAL + "count the number of leaves of each tree");
 					System.out.println(BOLD);
+					System.out.println("-depths\n\t" + NORMAL + "compute average, median and standard deviation of every root to leaf depths in each tree");
+					System.out.println(BOLD);
 					System.out.println("-representation\n\t" + NORMAL + "count the number of sequences representing each species in each tree");
 					System.out.println(BOLD);
 					System.out.println("-fullRepresentation" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "count the number of sequences representing each species, and each internal taxon, in each tree");
@@ -112,6 +115,9 @@ public class TreeStats {
 					key= args[i+1];
 				} else if (args[i].equalsIgnoreCase("-leaves")) {
 					nbleaves= true;
+					i--;
+				}  else if (args[i].equalsIgnoreCase("-depths")) {
+					depths= true;
 					i--;
 				} else if (args[i].equalsIgnoreCase("-representation")) {
 					speciesRepresentation= true;
@@ -881,6 +887,69 @@ public class TreeStats {
 	        	}
 	        	
 	        	
+			} else if (depths) {
+	        	File[] treeFiles = treeFile.listFiles();
+	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+	       		write.write("FILE\tNBSEQ\tAVERAGE\tMEDIAN\tDEVIATION");
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();
+
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		if (key==null || treeFiles[i].getName().contains(key)) {
+						TreeReader read= null;
+						BufferedReader buf= new BufferedReader(new FileReader(treeFiles[i]));
+						String test= buf.readLine();
+						buf.close();
+						if (test.endsWith(";")) {
+							read= new TreeReader(treeFiles[i],TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(treeFiles[i],TreeReader.XML);
+						}
+						Tree tree= read.nextTree();
+						tree.pretreatment();
+						Vector depthsVect=new Vector();
+						tree.getDepths(depthsVect,0.0);
+						int nbL= tree.nbLeaves();
+						double[] dAr= new double[depthsVect.size()];
+						double sum=0.0;
+						for (int j=0;j<depthsVect.size();j++) {
+							dAr[j]= ((Double)(depthsVect.elementAt(j))).doubleValue();
+							sum+=dAr[j];
+						}
+						Arrays.sort(dAr);
+						
+						write.write(treeFiles[i].getName());
+						write.write("\t");
+		        		write.write(nbL + "\t");
+		        		double average=sum/(double)(nbL);
+		        		write.write(average + "\t");
+		        		double med=0;
+		        		if (nbL%2==0) {
+		        			med=(dAr[nbL/2]+dAr[nbL/2-1])/2.0;      		
+		        		} else {
+		        			med=dAr[nbL/2]; 
+		        		}
+		        		write.write(med + "\t");
+		        		double stand=0.0;
+						for (int j=0;j<dAr.length;j++) {
+							if (dAr[j]<average) {
+								stand+=average-dAr[j];
+							} else {						
+								stand+=dAr[j]-average;
+							}
+						}
+						stand=stand/(double)nbL;
+		        		write.write(stand + "\t");
+		           		write.flush();
+			   			write.write("\n");
+			   			write.flush();
+
+	        		}
+
+
+	        	}
+	        	write.close();
 			} else if (nbleaves) {
 	        	File[] treeFiles = treeFile.listFiles();
 	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
