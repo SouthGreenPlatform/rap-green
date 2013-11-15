@@ -639,15 +639,19 @@ public class Tree {
 
 // ********************************************************************************************************************
 /**
-* Collapse branches strictly under the support threshold
-* @param sup	the support threshold
-*
-	public Tree collapseSupport(double sup) {
+* Fill a vector with every depths of each leaf of the tree, from this node, adding save
+* @param res	the vector to fill
+* @param save	the value to add, 0.0 if executed from the root
+*/
+	public void getDepths(Vector res,double save) {
 		if (!isLeaf()) {
-
+			for (int i=0;i<sons.size();i++) {
+				Tree son= (Tree)(sons.elementAt(i));
+				son.getDepths(res,save+son.length);
+			}
+		} else {
+			res.addElement(new Double(save));
 		}
-
-		return res;
 	}
 // ********************************************************************************************************************
 /**
@@ -2632,7 +2636,7 @@ public class Tree {
 					}
 				}
 			}
-			//this.label=sourceSon.label;
+			this.label=sourceSon.label;
 			this.sons=newSons;
 
 		} else {
