@@ -1715,26 +1715,33 @@ public class Tree {
 			Tree tb=(Tree)(sons.elementAt(1));
 			double a= ta.maxDepth-ta.length;
 			double b= tb.maxDepth-tb.length;
-			if (a>b) {
-				res=a-b;
-				double marge=ta.length+tb.length;
-				if (res<marge*0.95) {
-					ta.length=marge/2.0-res/2.0;
-					tb.length=marge/2.0+res/2.0;
-				} else {
+			//System.out.println(a +" "+b);
+			double marge=ta.length+tb.length;
+			if (Math.abs(a-b)>marge) {
+				if (a>b) {
+					res=a-b-marge;
 					tb.length=marge*0.95;
 					ta.length=marge*0.05;
-				}
-			} else {
-				res=b-a;
-				double marge=ta.length+tb.length;
-				if (res<marge*0.95) {
-					tb.length=marge/2.0-res/2.0;
-					ta.length=marge/2.0+res/2.0;
 				} else {
+					res=b-a-marge;
 					ta.length=marge*0.95;
 					tb.length=marge*0.05;
-				}
+				}				
+			} else {
+			//System.out.println("a:" + a + " b:" + b + " ta:" + ta.length + " tb:" + tb.length);
+			ta.length=(b+marge-a)/2;
+			tb.length=(a+marge-b)/2;
+				/*if (a>b) {
+					tb.length=a-b;
+					ta.length=marge-(a-b);
+					//ta.length=marge/2.0-res/2.0;
+					//tb.length=marge/2.0+res/2.0;
+				} else {
+					ta.length=b-a;
+					tb.length=marge-(b-a);
+					//tb.length=marge/2.0-res/2.0;
+					//ta.length=marge/2.0+res/2.0;
+				}*/			
 			}
 			//res=Math.abs((a+ta.length)-(b+tb.length));
 		}
@@ -2441,7 +2448,7 @@ public class Tree {
 			Tree son2= (Tree)(sons.elementAt(1));
 			boolean isRedundant=false;
 			int i=0;
-			while (isRedundant && i<son1.leafVector.size()) {
+			while (!isRedundant && i<son1.leafVector.size()) {
 				Tree son= (Tree)(son1.leafVector.elementAt(i));
 				String localLabel=son.label.substring(son.label.lastIndexOf("_")+1,son.label.length());
 				if (son2.leafHashtable.containsKey(localLabel)) {

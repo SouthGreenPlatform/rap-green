@@ -116,17 +116,23 @@ public class Rootings {
 				double maxMidpoint=10000000.0;
 				int minRedundancy=0;
 				for (int i=0;i<roots.size();i++) {
+				
+					//System.out.println(midpointTree);
 					Tree root= (Tree)(roots.elementAt(i));
 					root.taxonomicPretreatment();
 					double localMidpoint= root.midpoint();
 					if (redundancy!=null) {
 						int localRedundancy= root.getNbRedundancy();
-						if (localRedundancy<minRedundancy || (localRedundancy==minRedundancy && localMidpoint<=maxMidpoint)) {
+						//System.out.println(root.getNewick());
+						//System.out.println(localRedundancy);
+						if (midpointTree==null || localRedundancy<minRedundancy || (localRedundancy==minRedundancy && localMidpoint<=maxMidpoint)) {
 							maxMidpoint=localMidpoint;
 							midpointTree= root;	
 							minRedundancy=localRedundancy;
 						}
 					}
+					//System.out.println(localMidpoint);
+					//System.out.println(root.getNewick());
 					if (redundancy==null && localMidpoint<maxMidpoint) {
 						maxMidpoint=localMidpoint;
 						midpointTree= root;	
@@ -142,6 +148,7 @@ public class Rootings {
 					write.close();
 				}
 			}
+					//System.out.println("final: " + midpointTree);
 			if (invert) {
 				vect= midpointTree.leafVector;
 				for (int x=0;x<vect.size();x++) {
