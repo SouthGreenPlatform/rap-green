@@ -88,16 +88,16 @@ public class Rootings {
 			TreeReader reader= new TreeReader(input,TreeReader.NEWICK);
 			Tree tree= reader.nextTree();
 			tree.pretreatment();
-					Vector vect= tree.leafVector;
-					if (invert) {
-						//geneTree.pretreatment();
-						//vect= geneTree.leafVector;
-						for (int x=0;x<vect.size();x++) {
-							Tree leaf= (Tree)(vect.elementAt(x));	
-							leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
-						}
-						
-					}				
+			Vector vect= tree.leafVector;
+			if (invert) {
+				//geneTree.pretreatment();
+				//vect= geneTree.leafVector;
+				for (int x=0;x<vect.size();x++) {
+					Tree leaf= (Tree)(vect.elementAt(x));	
+					leaf.label=leaf.label.substring(leaf.label.indexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.indexOf("_"));
+				}
+				
+			}				
 			Tree midpointTree=null;
 			BufferedWriter write = null;
 			//System.out.println(tree);
@@ -141,6 +141,14 @@ public class Rootings {
 				if (output!=null) {
 					write.close();
 				}
+			}
+			if (invert) {
+				vect= midpointTree.leafVector;
+				for (int x=0;x<vect.size();x++) {
+					Tree leaf= (Tree)(vect.elementAt(x));	
+					leaf.label=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length()) + "_" + leaf.label.substring(0,leaf.label.lastIndexOf("_"));
+				}	
+							
 			}
 			//System.out.println("FINAL:" + midpointTree);
 			if (midpoint!=null) {
