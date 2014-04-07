@@ -176,6 +176,7 @@ public class TreeStats {
 				Vector res= new Vector();
 				Vector taxaVector= new Vector();
 				Hashtable taxaTable= new Hashtable();
+				Vector trees= new Vector();
 
 				TreeReader read= null;
 				BufferedReader buf= new BufferedReader(new FileReader(speciesFile));
@@ -202,7 +203,8 @@ public class TreeStats {
 							read= new TreeReader(treeFiles[i],TreeReader.XML);
 						}
 						Tree tree= read.nextTree();
-						tree.pretreatment();	        			
+						tree.pretreatment();	   
+						trees.addElement(tree);     			
 	        			
 	        			Vector duplicationsVector= new Vector();
 	        			tree.getLosses(duplicationsVector);
@@ -402,6 +404,7 @@ public class TreeStats {
 							copies.put(taxa,new Integer(1));
 						}	        			*/
 	        			Hashtable copies = speciesTree2.countCopies(localResDuplications,localResLosses);
+	        			//Hashtable expansion = speciesTree2.computeExpansion(copies);
 	        			
 						for (int j=0;j<taxaVector.size();j++) {
 							String taxa= (String)(taxaVector.elementAt(j));
@@ -416,6 +419,70 @@ public class TreeStats {
 	        		}
 	        	}
 	        	
+
+
+	       		write.write("Expansion");	
+	        	for (int j=0;j<taxaVector.size();j++) {
+	        		write.write("\t");	
+	        		write.write((String)(taxaVector.elementAt(j)));	
+	        	}
+	       		write.flush();
+	   			write.write("\n");
+	   			write.flush();	        	
+				int localRunner=0;
+	        	for (int i=0;i<treeFiles.length;i++) {
+	        		Hashtable localResLosses= (Hashtable)(lossesRes.elementAt(i));
+	        		Hashtable localResDuplications= (Hashtable)(res.elementAt(i));
+	        		if (treeFiles[i].getName().contains(key)) {
+	        		//System.out.println(treeFiles[i].getName());
+	        			Tree tree= (Tree)(trees.elementAt(localRunner));
+	        			localRunner++;
+	        			
+	        			// find nodes that are not represented in the species tree
+	        			Hashtable crossed= new Hashtable();
+	        			for (int k=0;k<tree.leafVector.size();k++) {
+	        				Tree leaf=(Tree)(tree.leafVector.elementAt(k));
+	        				String taxa=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+	        					//System.out.println(taxa);
+	        				if (speciesTree2.leafHashtable.containsKey(taxa)) {
+	        					Tree runner= (Tree)(speciesTree2.leafHashtable.get(taxa));
+	        					//System.out.println("founded " + runner.label);
+	        					if (!crossed.containsKey(runner.label)) {	 
+	        						crossed.put(runner.label," "); 
+	        					}
+	        					while (runner.father!=null) {
+	        						runner=runner.father;
+	        						if (!crossed.containsKey(runner.label)) {	 
+	        							crossed.put(runner.label," "); 
+	        						}
+	        						//System.out.println("jog " + runner.label);
+	        					}      				
+	        				}
+	        			}
+	        			Hashtable resCrossed=new Hashtable();
+	        			fillRepresented(speciesTree2,crossed,resCrossed);
+	        			
+	       				write.write(treeFiles[i].getName());
+				
+						/*for (int j=0;j<taxaVector.size();j++) {
+							String taxa= (String)(taxaVector.elementAt(j));
+							copies.put(taxa,new Integer(1));
+						}	        			*/
+	        			Hashtable copies = speciesTree2.countCopies(localResDuplications,localResLosses);
+	        			Hashtable expansion = speciesTree2.computeExpansion(copies,resCrossed);
+	        			
+						for (int j=0;j<taxaVector.size();j++) {
+							String taxa= (String)(taxaVector.elementAt(j));
+							double localInt= ((Double)(expansion.get(taxa))).doubleValue();
+							
+	   						write.write("\t" + localInt);
+						}	        			
+	        			
+	       				write.flush();
+	   					write.write("\n");
+	   					write.flush();	
+	        		}
+	        	}
 	        	
 	        	
 	        	
@@ -1357,7 +1424,31 @@ public class TreeStats {
 	}
 
 
-
+	private static void fillRepresented(Tree tree,Hashtable ref,Hashtable table) {
+		if (tree.isLeaf()) {
+			if (!ref.containsKey(tree.label)) {
+				table.put(tree.label," ");
+				//System.out.println("ex:" + tree.label);
+			}
+		} else {
+			int count=0;
+			int jog=-1;
+			for (int i=0;i<tree.sons.size();i++) {
+				Tree son=(Tree)(tree.sons.elementAt(i));
+				if (ref.containsKey(son.label)) {
+					count++;
+					jog=i;
+				}
+				
+			}
+			if (count==1) {
+				table.put(tree.label," ");
+				//System.out.println("ex:" + tree.label);
+				fillRepresented((Tree)(tree.sons.elementAt(jog)),ref,table);
+			}
+			//System.out.println(tree.label + " " + count);
+		}
+	}
 
 
 

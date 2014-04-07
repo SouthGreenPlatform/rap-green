@@ -35,7 +35,12 @@ public class ReconciliationDatabaseDaemon {
 
 // *******************************************************************************
 
-
+	/**
+	* Configuration file
+	*/
+	static File configFile=null;
+	static Hashtable examples;
+	
 	/**
 	* List of species trees
 	*/
@@ -179,6 +184,9 @@ public class ReconciliationDatabaseDaemon {
 				//System.out.println("-results" + NORMAL + " " + UNDERLINE + "directory\n\t" + NORMAL + "Directory, visible from the web, to stock result files for users. Directory must exist.");
 				
 				System.out.println(BOLD);
+				System.out.println("-config" + NORMAL + " " + UNDERLINE + "config_file\n\t" + NORMAL + "Configuration file for this occurrence of the server.");
+
+				System.out.println(BOLD);
 
 				System.out.println("-quiet\n\t" + NORMAL + "Activate this option to turn off\n\n");
 
@@ -257,6 +265,13 @@ public class ReconciliationDatabaseDaemon {
 				}
 			}			
 
+			if (args[i].equalsIgnoreCase("-config")) {
+
+				configFile= new File(args[i+1]);
+
+
+			}
+			
 			if (args[i].equalsIgnoreCase("-results")) {
 
 				resultDirectory= new File(args[i+1]);
@@ -699,7 +714,42 @@ public class ReconciliationDatabaseDaemon {
 
 	        }
 		}
-
+		
+		examples= new Hashtable();
+		if (configFile!=null) {
+			try {
+				BufferedReader read= new BufferedReader(new FileReader(configFile));
+				String s=read.readLine();
+				while (s!=null && !s.startsWith("EXAMPLE")) {
+					s=read.readLine();			
+				}
+				if (s!=null) {
+					s=read.readLine();
+					while (s!=null) {
+						String[] sp= s.split("\t");
+						if (examples.containsKey(sp[0])) {
+							Vector localEx= (Vector)(examples.get(sp[0]));
+							localEx.addElement(sp[1]);
+							localEx.addElement(sp[2]);
+						} else {
+							Vector localEx= new Vector();
+							localEx.addElement(sp[1]);
+							localEx.addElement(sp[2]);
+							examples.put(sp[0],localEx);
+						
+						}
+						s=read.readLine();
+					
+					}
+				
+				}
+			
+			} catch(Exception expe) {
+				expe.printStackTrace();
+			
+			}
+		
+		}
 
         // Open the server socket, and wait for connexion
 
@@ -767,6 +817,20 @@ public class ReconciliationDatabaseDaemon {
 					for (int i=0;i<speciesTreeIds.size();i++) {
 						out.println((String)(speciesTreeIds.elementAt(i)));
 
+					}
+				} if (s.equalsIgnoreCase("examples")) {
+				// case 1: clients asks for pattern example list for this databank
+					String databank=in.readLine();
+					if (examples!=null && examples.containsKey(databank)) {
+						Vector localEx= (Vector)(examples.get(databank));
+						for (int i=0;i<localEx.size();i++) {
+							out.println((String)(localEx.elementAt(i)));
+
+						}
+					
+					
+					} else {
+						out.println("N/A");
 					}
 				} else if (s.equalsIgnoreCase("specification")) {
 				// case 1.5: clients asks for databank specification

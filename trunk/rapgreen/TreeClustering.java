@@ -33,9 +33,16 @@ public class TreeClustering {
 	public static File dictionary;
 	
 /**
+* Input alignment
+*/
+	public static File alignment;	
+	public static File sampleFile;	
+/**
 * Closer option
 */
 	public static String closer=null;
+	public static String label=null;
+	public static double length=-1.0;
 	
 	public static boolean toCut=false;
 
@@ -44,8 +51,6 @@ public class TreeClustering {
 // ********************
 	public static void main(String[] args) {
 		String s=null;
-		String label=null;
-		double length=-1.0;
 		dictionary=null;
 		try {
 			for (int i=0;i<args.length;i=i+2) {
@@ -54,6 +59,12 @@ public class TreeClustering {
 				}
 				if (args[i].equalsIgnoreCase("-output")) {
 					outputFile= new File(args[i+1]);
+				}
+				if (args[i].equalsIgnoreCase("-sample")) {
+					alignment= new File(args[i+1]);
+					sampleFile= new File(args[i+2]);
+					threshold= (new Double(args[i+3])).doubleValue();
+					i+=2;
 				}
 				if (args[i].equalsIgnoreCase("-cut")) {
 					threshold= (new Double(args[i+1])).doubleValue();
@@ -74,49 +85,137 @@ public class TreeClustering {
 					dictionary= new File(args[i+1]);
 				}
 			}
-			if (closer!=null) {
+			
+			if (alignment!=null) {
+			
+			
+				System.out.print("Reading sequences... ");
+				Hashtable ali= new Hashtable();
+				BufferedReader read= new BufferedReader(new FileReader(alignment));
+				s= read.readLine();
+				String name= s.substring(1,s.length());
+				StringBuffer seq= new StringBuffer();
+				s= read.readLine();
+				int nbSeq=1;
+				while (s!=null) {
+					if (s.startsWith(">")) {
+						ali.put(name,seq.toString());
+						seq= new StringBuffer();
+						name= s.substring(1,s.length());
+						nbSeq++;
+					} else {
+						seq.append(s);
+					}
+					s=read.readLine();
+				}
+				read.close();
+				ali.put(name,seq.toString());
+				System.out.println("Done, " + nbSeq + " sequences in the fasta file.");
+				
+				Vector samples= new Vector();
+				System.out.print("Reading samples... Groupes:");
+				read= new BufferedReader(new FileReader(sampleFile));
+				s= read.readLine();
+				while (s!=null) {
+					String[] splited=s.split(" "); 
+					Hashtable locTable= new Hashtable();
+					for (int i=0;i<splited.length;i++) {
+						locTable.put(splited[i]," ");
+					}
+					System.out.print(" " + splited.length);
+					samples.addElement(locTable);
+					s=read.readLine();
+				}
+				System.out.println(". Done.");
+				read.close();
+
+				System.out.print("Reading tree... ");
+				TreeReader reader= new TreeReader(treeFile,TreeReader.NEWICK);
+				Tree tree= reader.nextTree();
+				tree.pretreatment();				
+				System.out.println("Done.");
+	
+				
+				System.out.print("Computing clusters... ");
+				Vector trees= new Vector();
+				tree.clusteringNodes(trees,threshold);					
+				System.out.println(trees.size() + " clusters identified. Done.");
+				
+				
+				
+				
+				System.out.println("Generating sampled alignment... ");
+				BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+				int nbseq=0;
+				for (int i=0;i<trees.size();i++) {
+					Tree localTree= (Tree)(trees.elementAt(i));
+					
+					for (int j=0;j<samples.size();j++) {
+						Hashtable localTable= (Hashtable)(samples.elementAt(j));
+						int bestCand=-1;
+						double bestDist=10000000.0;
+						for (int l=0;l<localTree.leafVector.size();l++) {
+							Tree leaf= (Tree)(localTree.leafVector.elementAt(l));
+							String localTaxon= leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+							if (localTable.containsKey(localTaxon)) {
+								
+								double localDist=0.0;
+								for (int k=0;k<localTree.leafVector.size();k++) {
+									if (l!=k) {
+										Tree leaf2 = (Tree)(localTree.leafVector.elementAt(k));
+										// Find the last common ancestor of the two target leaves
+										Tree ancestor= localTree.lastCommonAncestor(leaf,leaf2);
+										// Compute the simple distance (sum of branch lengths)
+										double d= ancestor.getDepth(leaf) + ancestor.getDepth(leaf2);
+							
+										localDist+=d;
+							
+							
+							
+									}						
+								}
+								localDist= localDist / ((double)tree.leafVector.size() - 1.0);						
+							
+							
+								if (localDist<bestDist) {
+									bestDist=localDist;
+									bestCand=l;
+								}
+							}
+						
+						
+						}
+
+						if (bestCand!=-1) {
+							Tree bestLeaf=(Tree)(localTree.leafVector.elementAt(bestCand));
+							if (ali.containsKey(bestLeaf.label)) {
+								write.write(">" + bestLeaf.label + "\n" + (String)(ali.get(bestLeaf.label)) + "\n");
+								write.flush();
+								nbseq++;
+							} else {
+								System.out.println("Warning: " + bestLeaf.label + " not in the alignment file.");
+							} 
+						}						
+					}
+					
+					
+								
+				}
+				write.close();
+				System.out.println(nbseq + " sequences sampled. Done.");
+				
+				
+							
+			
+			} else if (closer!=null) {
 				System.out.println("Computing average distances :\n");
 				TreeReader reader= new TreeReader(new File(closer),TreeReader.NEWICK);
 				Tree tree= reader.nextTree();
 				tree.pretreatment();
-				if (length!=-1 || label!=null) {
-					tree=tree.getNode(length,label);
-				}
-				int bestIndex=-1;
-				double bestDist=10000.0;
-				for (int i=0;i<tree.leafVector.size();i++) {
-					Tree leaf = (Tree)(tree.leafVector.elementAt(i));
-					double localDist=0.0;
-					for (int j=0;j<tree.leafVector.size();j++) {
-						if (i!=j) {
-							Tree leaf2 = (Tree)(tree.leafVector.elementAt(j));
-							// Find the last common ancestor of the two target leaves
-							Tree ancestor= tree.lastCommonAncestor(leaf,leaf2);
-							// Compute the simple distance (sum of branch lengths)
-							double d= ancestor.getDepth(leaf) + ancestor.getDepth(leaf2);
-							
-							localDist+=d;
-							
-							
-							
-						}						
-					}
-					localDist= localDist / ((double)tree.leafVector.size() - 1.0);
-					
-					System.out.println(leaf.label + " : " + localDist);
+				Tree mostR= mostRepresentative(tree);
+
 				
-				
-				
-					if (localDist<bestDist) {
-						bestIndex=i;
-						bestDist=localDist;						
-					}
-				
-				
-					
-				}
-				
-				System.out.println("\nMost representative sequence : " + ((Tree)(tree.leafVector.elementAt(bestIndex))).label);
+				System.out.println("\nMost representative sequence : " + mostR.label);
 			} else {
 			
 			
@@ -264,7 +363,47 @@ public class TreeClustering {
 		}
 	}
 
-
+	public static Tree mostRepresentative(Tree tree) {
+		if (length!=-1 || label!=null) {
+			tree=tree.getNode(length,label);
+		}
+		int bestIndex=-1;
+		double bestDist=10000.0;
+		for (int i=0;i<tree.leafVector.size();i++) {
+			Tree leaf = (Tree)(tree.leafVector.elementAt(i));
+			double localDist=0.0;
+			for (int j=0;j<tree.leafVector.size();j++) {
+				if (i!=j) {
+					Tree leaf2 = (Tree)(tree.leafVector.elementAt(j));
+					// Find the last common ancestor of the two target leaves
+					Tree ancestor= tree.lastCommonAncestor(leaf,leaf2);
+					// Compute the simple distance (sum of branch lengths)
+					double d= ancestor.getDepth(leaf) + ancestor.getDepth(leaf2);
+					
+					localDist+=d;
+					
+					
+					
+				}						
+			}
+			localDist= localDist / ((double)tree.leafVector.size() - 1.0);
+			
+			System.out.println(leaf.label + " : " + localDist);
+		
+		
+		
+			if (localDist<bestDist) {
+				bestIndex=i;
+				bestDist=localDist;						
+			}
+		
+		
+			
+		}	
+		
+		return((Tree)(tree.leafVector.elementAt(bestIndex)));
+	
+	}
 
 
 
