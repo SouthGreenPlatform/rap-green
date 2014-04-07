@@ -22,7 +22,6 @@ public class TreeColoring {
 * Input species file
 */
 	public static File nexml;
-
 /**
 * Input species file
 */
@@ -46,6 +45,7 @@ public class TreeColoring {
 // ********************
 	public static void main(String[] args) {
 		String s=null;
+		boolean uniqueid=false;
 		try {
 			for (int i=0;i<args.length;i=i+2) {
 				if (args[i].contains("help")) {
@@ -66,6 +66,8 @@ public class TreeColoring {
 					System.out.println(BOLD);
 					System.out.println("-output" + NORMAL + " "  + UNDERLINE + "tree_file\n\t" + NORMAL + "The output file containing nexml colored tree");
 					System.out.println(BOLD);
+					System.out.println("-uniqueid\n\t" + NORMAL + "produce a tree with unique labels, before coloration");
+					System.out.println(BOLD);
 					System.out.println("-species" + NORMAL + " "  + UNDERLINE + "species_tree_file\n\t" + NORMAL + "The input file containing colored extended-newick tree\n\n");
 					System.exit(0);
 				}				
@@ -77,6 +79,10 @@ public class TreeColoring {
 				}				
 				if (args[i].equalsIgnoreCase("-species")) {
 					species= new File(args[i+1]);
+				}				
+				if (args[i].equalsIgnoreCase("-uniqueid")) {
+					uniqueid= true;
+					i--;
 				}
 				if (args[i].equalsIgnoreCase("-output")) {
 					output= new File(args[i+1]);
@@ -85,8 +91,21 @@ public class TreeColoring {
 
 			TreeReader reader= new TreeReader(input,TreeReader.NEWICK);
 			Tree tree= reader.nextTree();
-
 			tree.pretreatment();
+			if (uniqueid) {
+				tree.addUniquePrefix();
+				
+				BufferedWriter write= new BufferedWriter(new FileWriter(output));
+				
+				write.write(tree.getNewick() + "\n");
+				write.flush();
+				
+				
+				write.close();
+				
+				
+				System.exit(0);
+			}
 
 
 			BufferedReader read= new BufferedReader(new FileReader(nexml));
@@ -229,12 +248,11 @@ public class TreeColoring {
 				
 				//System.out.println("\n" + label + " " + length);
 				
-				codingForMeta.put(label+"#"+length,index+1);
+				codingForMeta.put(label/*+"#"+length*/,index+1);
 				codingForMetaAlt.put(length,index+1);
 				//System.out.println("\n" + label+"#"+length + " " + (index+1));
 			}
 			System.out.println("Done.");	
-
 			
 			
 			
@@ -243,7 +261,6 @@ public class TreeColoring {
 
 			reader= new TreeReader(species,TreeReader.NEWICK);
 			Tree speciesTree= reader.nextTree();
-
 			speciesTree.pretreatment();
 			
 			color(tree,speciesTree);			
@@ -275,15 +292,22 @@ public class TreeColoring {
 			String taxon= g.label.substring(g.label.lastIndexOf("_")+1,g.label.lastIndexOf("_")+6);
 			Tree sNode=(Tree)(s.leafHashtable.get(taxon));
 			//System.out.println(g);
-			int index= (new Integer(codingForMeta.get(g.label+"#"+(new Double(g.length))).toString())).intValue();
-			String line= (String)(lines.elementAt(index));
-			//System.out.println(sNode.nhx);
-			String color= sNode.nhx.substring(sNode.nhx.lastIndexOf("=")+1,sNode.nhx.length());
-			color=color.replace("."," ");
-			//System.out.println(color);
-			if (line.indexOf("fg")==-1) {
-				line= line.substring(0,line.indexOf("\"")+1) + " fg=" + color + line.substring(line.indexOf("\"")+1,line.length()) ;
-				lines.setElementAt(line,index);
+			if (codingForMeta.containsKey(g.label/*+"#"+(new Double(g.length))*/)) {
+				int index= (  new Integer(    codingForMeta.get(g.label/*+"#"+(new Double(g.length))*/).toString()   )   ).intValue();
+				String line= (String)(lines.elementAt(index));
+				//System.out.println(sNode.nhx);
+				String color= sNode.nhx.substring(sNode.nhx.lastIndexOf("=")+1,sNode.nhx.length());
+				if (color!=null) {
+					color=color.replace("."," ");
+			
+				} else {
+					color="158 253 56";
+				}
+				//System.out.println(color);
+				if (line.indexOf("fg")==-1) {
+					line= line.substring(0,line.indexOf("\"")+1) + " fg=" + color + line.substring(line.indexOf("\"")+1,line.length()) ;
+					lines.setElementAt(line,index);
+				}
 			}
 		} else {
 			//System.out.println("echo");
@@ -298,14 +322,14 @@ public class TreeColoring {
 				//System.out.println("\npost\n" + sNode);
 				//System.out.println(sNode.nhx);
 				int index=-1;
-				if (!codingForMeta.containsKey(g.label+"#"+g.stringLength)) {
+				if (!codingForMeta.containsKey(g.label/*+"#"+g.stringLength*/)) {
 					if (!codingForMetaAlt.containsKey(g.stringLength)) {
 						System.out.println("warning, unknown length " + g.label);
 					} else {
 						index=((Integer)(codingForMetaAlt.get(g.stringLength))).intValue();
 					}
 				} else {
-					Integer stringIndex=(Integer)(codingForMeta.get(g.label+"#"+g.stringLength));
+					Integer stringIndex=(Integer)(codingForMeta.get(g.label/*+"#"+g.stringLength*/));
 					index= (stringIndex).intValue();
 				}
 				if (index!=-1) {

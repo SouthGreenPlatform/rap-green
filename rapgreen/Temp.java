@@ -219,7 +219,7 @@ public class Temp {
 				
 				while (s!=null) {
 					String[] splited= s.split("\t");
-					table.put(splited[0].substring(0,splited[0].lastIndexOf("_")),splited[1]);
+					table.put(splited[0].substring(0,splited[0].indexOf("_")),splited[1]);
 					
 					s= read.readLine();
 				}
@@ -237,10 +237,15 @@ public class Temp {
 					} else {
 						id=leaf.label.substring(0,leaf.label.lastIndexOf("_"));
 					}
+					String trans="";
+					if (id.indexOf(".")!=-1) {
+						trans=id.substring(id.lastIndexOf("."),id.length());
+						id= id.substring(0,id.lastIndexOf("."));
+					}
 					//System.out.println(id);
 					if (table.containsKey(id)) {
-						leaf.label=id + "_" + table.get(id) + "_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1, leaf.label.length());
-						//System.out.println(leaf.label);
+						leaf.label=id + trans +  "_" + table.get(id) + "_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1, leaf.label.length());
+						//System.out.println("ok" + leaf.label);
 						
 					}				
 				}
