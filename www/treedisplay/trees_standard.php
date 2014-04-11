@@ -41,6 +41,12 @@ var typeAnnot= new Array();
 var annotXArray= new Array();
 var annotArray= new Array();
 
+//State saving facilities
+var operatingSteps;
+//colorword;#XXXXXX;keyword
+//color;
+
+var selection="";
 
 function addAnnot(tag,defaultValue,defaultType) {
 	annotX=10;
@@ -101,6 +107,7 @@ var clickedTreeNodes;
 
 // Legend objects
 var legendTexts;
+var legendLabels=new Array();
 
 // the SVG objects
 var svg;
@@ -296,6 +303,7 @@ function resizeSVG() {
 			drawSplits();
 		}
 
+		document.getElementById('hiddenfield').value = tree.getNewick() + ";";
 	   	refreshSVG();
 	}
 
@@ -406,6 +414,15 @@ function drawAll() {
 	   	clickedTreeNodes= new Array();
 	   	tree.drawTree(taxaMargin,1);
 		document.getElementsByName("treePanel")[0].appendChild(svg);
+    
+		document.getElementById('hiddenfield').value = tree.getNewick() + ";";
+        /*var selection = window.getSelection();            
+        var range = document.createRange();
+        range.selectNodeContents(selection);
+        selection.removeAllRanges();
+        selection.addRange(range);*/
+        
+		selection.focus();
 	}
 }
 
@@ -486,6 +503,9 @@ function Node(newick) {
 
 	// Coloration of pattern matching
 	this.colored=0;
+	
+	// general color
+	this.color="";
 
 	// Collapse of the tree
 	this.collapsed="";
@@ -605,7 +625,107 @@ function fmaxTaxaString() {
 		return this.taxon.length;
 	}
 }
+// ************************
+// Colorize the leaf regarding annotations and colors
+function fannoteValues(size,colorLocal,labelExpress,maxExpress,express,modif) {
+	if (legendSvg==null) {
+		legendTexts= new Array();
+		changeVisibilite2("legend",1);
+		// Build the main SVG object
 
+		//var canvas = Raphael('legendPanel', 20, 20);
+		legendSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		legendSvg.setAttribute('width', localWidth());
+		legendSvg.setAttribute('height', legendHeight);
+		legendBack = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		legendBack.setAttribute('x', 0);
+		legendBack.setAttribute('y', 0);
+		legendBack.setAttribute('width', localWidth());
+		legendBack.setAttribute('height', legendHeight);
+		legendBack.setAttribute('stroke', "none");
+		legendBack.setAttribute('fill', backColor);
+		legendSvg.appendChild(legendBack);
+		document.getElementsByName("legendPanel")[0].appendChild(legendSvg);
+	}
+
+	// Counting the number of sons
+	var count = this.sons.length;
+	var loc=0;
+	if (count>0) {
+		// It's a node
+		var i = 0;
+		for (i = 0; i < count; i++) {
+			if (this.collapsed=="") {
+				loc+= this.sons[i].annoteValues(size,colorLocal,labelExpress,maxExpress,express,modif);
+			} else {
+				loc+= this.sons[i].annoteValues(size,colorLocal,labelExpress,maxExpress,express,modif);
+				
+			}
+		}
+	} else {	
+		// It's a leaf
+
+		//alert(colorLocal);
+		//this.text.setAttributeNS(null, "fill",colorparam);
+		
+		var i = 0;
+		for (i = 0; i < labelExpress.length; i++) {
+			var nbtags= this.tags.length;
+			if (legendLabels.length<size) {	
+				var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+				text1.setAttribute("x", (12+width + annotX - margin - annotMargin + (nbtags*tagWidth)));
+				text1.setAttribute("y", (legendHeight));
+				text1.setAttribute("font-family", fontFamily);
+				text1.setAttribute("font-size", legendFontSize);
+				text1.setAttribute("fill", fontColor);
+				text1.appendChild(document.createTextNode(labelExpress[i]));
+				legendSvg.appendChild(text1);
+				text1.setAttribute("transform", "rotate(-90 " + (12+width + annotX - margin - annotMargin + (nbtags*tagWidth)) + " " + (legendHeight) + ")");
+				//legendX+=parseInt(legendFontSize)*labelExpress[i].length/2;
+				legendLabels[legendLabels.length]=text1;
+			}	
+			this.tags[nbtags]= document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+			var localValue=0.0;
+			if (express[this.taxon]!=null) {
+				localValue=express[this.taxon][i];
+				localValue=localValue+modif;
+			}
+
+			this.tags[nbtags].setAttribute('points', (width + annotX - margin - annotMargin + (nbtags*tagWidth)) + "," + (this.y - (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (nbtags*tagWidth) + tagWidth - 1) + "," + (this.y - (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (nbtags*tagWidth) + tagWidth - 1) + "," + (this.y + (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (nbtags*tagWidth)) + "," + (this.y + (parseInt(fontSize))/2));
+			//this.tags[nbtags].setAttribute('stroke', lineColor);
+
+			this.tags[nbtags].setAttribute("stroke-width", 0);
+			
+			var colorValue="white";
+			var colorInt= "0";
+			if (localValue<maxExpress) {
+				colorInt=(parseInt(255.0-(255/maxExpress*localValue))).toString(16);
+			}
+			if (colorInt.length==1) {
+				colorInt="0"+colorInt;
+			}
+			//alert(colorInt);
+			if (colorLocal=="red") {
+				colorValue="#ff"+colorInt+colorInt;
+			} else {
+				colorValue="#"+colorInt+colorInt+"ff";
+			
+			}
+			//alert(localValue + " "  + colorValue);
+			this.tags[nbtags].setAttribute('fill', colorValue);
+
+			//if (this.addText==1 && hide==0) {
+				svg.appendChild(this.tags[nbtags]);
+			//}
+			loc++;
+		}
+	}
+
+
+
+	
+	return loc;
+}
 // ************************
 // Colorize the leaf regarding annotations and colors
 function fcolorizeArbitrarly(colorparam,hide) {
@@ -2016,6 +2136,7 @@ function fdrawTree(taxaMargin,isRoot) {
 			this.text=text1;
 			this.addText=1;
 			svg.appendChild(text1);
+			selection=text1;
 
 			var z=0;
 			for (z=0;z<annotArray.length;z++) {
@@ -2494,6 +2615,11 @@ function ftoneDown() {
 
 function fcolorizeSubtree(erasor) {
 	if (this.isColoringRoot==0) {
+		if (erasor==1) {
+			this.color="";
+		} else {	
+			this.color=colorbranchannote;
+		}	
 		if (this.round!=null) { 
 			if (erasor==1) {		
 				this.round.setAttribute("stroke",lineColor);		
@@ -2556,8 +2682,42 @@ function fcolorizeSubtree(erasor) {
 	}
 }
 
+// ************************
+// Translate the gene tree
+function fgetNewick() {
+	var res="";
+	var count = this.sons.length;
+	if (count>0) {
+		res=res+"(";
+		res=res+this.sons[0].getNewick();
+		var i=1;
+		for (i = 1; i < count; i++) {
+			res=res+","+this.sons[i].getNewick();
+		}
+		res=res+")";
+		res=res + this.support+":"+this.length;
+	} else {
+		
+		res=res + this.taxon+":"+this.length;
+	}
+
+	//if () {
+		res=res + "[&&NHX:";
+		if (this.color!="") {
+			res=res+"C="+this.color+":";
+		}
+
+
+		res=res + "]";
+
+	//}
+
+	return res;
+}
+
 Node.prototype.printTree = fprintTree;
 Node.prototype.maxTaxaString = fmaxTaxaString;
+Node.prototype.annoteValues=fannoteValues;
 Node.prototype.colorizeArbitrarly=fcolorizeArbitrarly;
 Node.prototype.colorizeByAnnotation=fcolorizeByAnnotation;
 Node.prototype.resetAnnotationColors=fresetAnnotationColors;
@@ -2577,6 +2737,7 @@ Node.prototype.fillSplit=ffillSplit;
 Node.prototype.toneDownUndocumented=ftoneDownUndocumented;
 Node.prototype.toneDown=ftoneDown;
 Node.prototype.colorizeSubtree=fcolorizeSubtree;
+Node.prototype.getNewick=fgetNewick;
 
 
 
@@ -2985,7 +3146,7 @@ function saveSVG() {
 	var s = new XMLSerializer();
 	var json = s.serializeToString(svg);
 
-json='<?xml version="1.0" standalone="yes"?><svg version="1.1" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + json.substring(4,json.length);
+	json='<\?xml version="1.0" standalone="yes"?><svg version="1.1" fill="none" stroke="none" stroke-linecap="square" stroke-miterlimit="10" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' + json.substring(4,json.length);
 
 
 

@@ -105,7 +105,7 @@ function annoteSpecific(id,tag) {
 </td>
 
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popload',1);changeVisibiliteOnName('popadv',0);changeVisibiliteOnName('popcoloration',0);changeVisibiliteOnName('popzoom',0);changeVisibiliteOnName('popcollapse',0);changeVisibiliteOnName('popdata',0);changeVisibiliteOnName('popdisplay',0);">
-LOAD
+FILE
 </td>
 
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popload',0);changeVisibiliteOnName('popadv',0);changeVisibiliteOnName('popcoloration',1);changeVisibiliteOnName('popzoom',0);changeVisibiliteOnName('popcollapse',0);changeVisibiliteOnName('popdata',0);changeVisibiliteOnName('popdisplay',0);">
@@ -116,10 +116,15 @@ ANNOTE LEAVES
 ANNOTE BRANCHES
 </td>
 
-
+<?php 
+if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) {
+?>
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popload',0);changeVisibiliteOnName('popadv',0);changeVisibiliteOnName('popcollapse',0);changeVisibiliteOnName('popzoom',0);changeVisibiliteOnName('popcoloration',0);changeVisibiliteOnName('popdata',1);changeVisibiliteOnName('popdisplay',0);">
 DATA
 </td>
+<?php
+}
+?>
 
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popload',0);changeVisibiliteOnName('popadv',0);changeVisibiliteOnName('popdisplay',1);changeVisibiliteOnName('popzoom',0);changeVisibiliteOnName('popcollapse',0);changeVisibiliteOnName('popcoloration',0);changeVisibiliteOnName('popdata',0);">
 DISPLAY OPTIONS
@@ -211,7 +216,7 @@ GRAPHICAL RENDERING
 
 
 <?php 
-if (isSet($_REQUEST['data'])) {
+if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) {
 ?>
 <?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popcollapse',1)">

@@ -12,6 +12,7 @@
 </head>
 <body>
 <div id="content"></div>
+
 <?php
 
  include('database.php');
@@ -30,7 +31,8 @@
 <?php 
 //echo $_SERVER['HTTP_USER_AGENT'];
 if ($_REQUEST['ie']==1 || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== FALSE ) {
-	include("trees_ie.php"); 
+	//deprecated include("trees_ie.php"); 
+	include("trees_standard.php");
 } else {
 	
 	include("trees_standard.php");
@@ -147,6 +149,17 @@ addAnnot("primTypeN",0,"plain");
 <script type="text/javascript">
 
 drawAll();
+
+<?php
+if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['data']=="EBF_banana")) {
+?>
+
+
+	tree.annoteValues(6,"red",labelExpress1,maxExpress1,express1,0);
+	tree.annoteValues(18,"blue",labelExpress2,maxExpress2,express2,9.45);
+<?php
+}
+?>
 </script>
 
 </td></tr></table>
