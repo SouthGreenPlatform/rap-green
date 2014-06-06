@@ -135,6 +135,13 @@ function Node(newick) {
 	// Taxonomical informations
 	this.leftConstraint= new Array();
 	this.rightConstraint= new Array();
+	
+	// Cardinality informations
+	this.minLeft=-1;
+	this.minRight=-1;
+	this.maxLeft=-1;
+	this.maxRight=-1;
+
 
 	// The newick extented label
 	this.nhx="";
@@ -158,6 +165,8 @@ function Node(newick) {
 	this.leftTextLabel="";
 	this.spot="";
 	this.branchConstraint="";
+	this.rightCardLabel="";
+	this.leftCardLabel="";
 
 	// Node or leaf conditionnal
 	if (newick.charAt(index)=="(") {
@@ -229,7 +238,7 @@ function Node(newick) {
 		//alert(this.label);
 	
 		// The leaf case
-		while (newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+		while (index<newick.length && newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			this.label = this.label + newick.charAt(index);
 			index++;
 		}
@@ -252,8 +261,21 @@ function Node(newick) {
 			index++;
 			//echo this.length;
 		}
+		
 	}
 	if (this.nhx.length>1) {
+		if (this.nhx.indexOf("<AR>")!=-1) {
+			this.maxRight= parseInt((this.nhx.substring(this.nhx.indexOf("<AR>")+4,this.nhx.indexOf("</AR>"))));
+		}
+		if (this.nhx.indexOf("<IR>")!=-1) {
+			this.minRight= parseInt((this.nhx.substring(this.nhx.indexOf("<IR>")+4,this.nhx.indexOf("</IR>"))));
+		}
+		if (this.nhx.indexOf("<AL>")!=-1) {
+			this.maxLeft= parseInt((this.nhx.substring(this.nhx.indexOf("<AL>")+4,this.nhx.indexOf("</AL>"))));
+		}
+		if (this.nhx.indexOf("<IL>")!=-1) {
+			this.minLeft= parseInt((this.nhx.substring(this.nhx.indexOf("<IL>")+4,this.nhx.indexOf("</IL>"))));
+		}
 		if (this.nhx.indexOf("<L>")!=-1) {
 			this.leftConstraint= (this.nhx.substring(this.nhx.indexOf("<L>")+3,this.nhx.indexOf("</L>"))).split(";");
 			for (var i=0;i<this.leftConstraint.length;i++) {
@@ -449,6 +471,19 @@ function fdeleteSubparts() {
 		this.textSticker.remove();
 		this.textSticker="";
 	}
+	if (this.rightCardLabel!="") {
+		this.rightCardLabel.remove();
+		this.rightCardLabel="";
+	
+	}
+
+	this.label="";
+	this.leftConstraint= new Array();
+	this.rightConstraint= new Array();
+	this.minLeft=-1;
+	this.minRight=-1;
+	this.maxLeft=-1;
+	this.maxRight=-1;
 
 	var count = this.sons.length;
 	if (count>0) {
@@ -762,7 +797,51 @@ function fdrawTree(taxaMargin,isRoot) {
 		}
 		path3.attr({"fill": "none"});
 		path3.attr({"stroke": lineColor});
-
+		
+		
+		/*if (this.minLeft!=-1 || this.maxLeft!=-1) {
+		
+		} else {
+			if (this.leftCardLabel!="") {
+				this.leftCardLabel.hide();
+			}
+		}*/
+		if (this.minRight!=-1 || this.maxRight!=-1) {
+			var text1;
+			var constraintLabel="n";
+			if (this.minRight!=-1) {
+				constraintLabel=this.minRight + " \u2264 " + constraintLabel;
+			}
+			if (this.maxRight!=-1) {
+				constraintLabel= constraintLabel + " \u2264 " + this.maxRight;
+			}
+			if (this.rightCardLabel=="") { 
+				
+				if (this.father!="" && this.father.sons[1]==this) {
+					text1= svg.text(this.x  - spotRadius -5 - constraintLabel.length*5 ,this.y  - spotRadius -5,constraintLabel);
+				} else {
+					text1= svg.text(this.x  - spotRadius -5 - constraintLabel.length*5 ,this.y  + spotRadius +5,constraintLabel);
+				} 
+				this.rightCardLabel=text1;
+			
+			} else {
+				text1= this.rightCardLabel;
+				if (this.father!="" && this.father.sons[1]==this) {
+					text1.attr({"x":this.x - spotRadius -5 - constraintLabel.length*5 ,"y":this.y  - spotRadius -5,"text":constraintLabel});
+				} else {
+					text1.attr({"x":this.x - spotRadius -5 - constraintLabel.length*5 ,"y":this.y  + spotRadius +5,"text":constraintLabel});
+				}
+			}
+			text1.attr({"font-size": fontSize,"font-family": fontFamily, 'text-anchor': 'start'});
+			text1.attr({"fill": fontColor});
+			this.rightCardLabel.show();
+		
+		} else {
+			if (this.rightCardLabel!="") {
+				this.rightCardLabel.hide();
+			}
+		}		
+		
 		// right constraints
 		if (this.rightConstraint.length>0) {
 			// *******Taxon
@@ -1172,7 +1251,7 @@ function fgetNewick() {
 		} */
 	}
 
-	if (this.sons.length==0 || this.leftConstraint.length>0 || this.rightConstraint.length>0 || this.label=="transfert") {
+	if (this.sons.length==0 || this.leftConstraint.length>0 || this.rightConstraint.length>0 || this.label=="transfert" || this.minLeft!=-1 || this.maxLeft!=-1 || this.minRight!=-1 || this.maxRight!=-1) {
 		res=res + "[";
 		if (this.leftConstraint.length>0) {
 			if (this.leftConstraint[0].indexOf("Not ")==0) {
@@ -1207,6 +1286,18 @@ function fgetNewick() {
 				}
 			}
 			res=res + "</R>";
+		}
+		if (this.minLeft!=-1) {
+			res=res+"<IL>"+this.minLeft+"</IL>";
+		}
+		if (this.maxLeft!=-1) {
+			res=res+"<AL>"+this.maxLeft+"</AL>";
+		}
+		if (this.minRight!=-1) {
+			res=res+"<IR>"+this.minRight+"</IR>";
+		}
+		if (this.maxRight!=-1) {
+			res=res+"<AR>"+this.maxRight+"</AR>";
 		}
 		if (this.label=="transfert") {
 			res=res + "<T>" + this.transfer + "</T>"
@@ -1295,6 +1386,7 @@ function lineMouseClick(evt) {
 		clickedTreeNode.length=3.0;
 	} else if (tool=="taxa") {
 		changeVisibilite2("poptaxa",1);
+		changeVisibilite2("popcard",0);
 		if (selectedNode!="" && selectedNode.hline!="")
 			selectedNode.hline.attr({"stroke-width": (lineWidth)});
 		if (selectedNode!="" && selectedNode.round!="")
@@ -1371,7 +1463,9 @@ function nodeMouseClick(evt) {
 
 		var count = clickedTreeNode.sons.length;
 		if (count==0) {
+		
 			clickedTreeNode.sons[0]= new Node(";");
+			
 			clickedTreeNode.sons[0].father=clickedTreeNode;
 			clickedTreeNode.sons[1]= new Node(";");
 			clickedTreeNode.sons[1].father=clickedTreeNode;
@@ -1428,6 +1522,12 @@ function nodeMouseClick(evt) {
 		clickedTreeNode.length=1.0;
 	} else if (tool=="taxa") {
 		changeVisibilite2("poptaxa",1);
+		if (clickedTreeNode.sons.length==0) {
+			changeVisibilite2("popcard",0);
+		} else {
+			changeVisibilite2("popcard",1);
+		
+		}
 
 
 		if (selectedNode!="" && selectedNode.hline!="")
@@ -1496,6 +1596,36 @@ function removeAllTaxon() {
 	}
 	refreshAll();
 
+}
+
+function commitCardinality(tagMin,tagMax) {
+	
+	if (rightSelection==1) {
+		if (tagMin!="") {
+			selectedNode.minRight= parseInt(tagMin);
+		} else {
+			selectedNode.minRight=-1;
+		}
+		if (tagMax!="") {
+			selectedNode.maxRight= parseInt(tagMax);
+		} else {
+			selectedNode.maxRight=-1;
+		}
+	} else {
+		if (tagMin!="") {
+			selectedNode.minLeft= parseInt(tagMin);
+		} else {
+			selectedNode.minLeft=-1;
+		}
+		if (tagMax!="") {
+			selectedNode.maxLeft= parseInt(tagMax);
+		} else {
+			selectedNode.maxLeft=-1;
+		}
+	
+	}
+
+	refreshAll();
 }
 
 function addTaxon(tag,not) {

@@ -72,10 +72,15 @@ Enter a taxa scientific name:<br>
 <div name="poplist" id="poplist" style="position: absolute;">
 
 </div><br>
-<select width="300" style="width: 300px" id="speciesselector" multiple size="10">
+<select width="300" style="width: 350px" id="speciesselector" multiple size="10">
 </select>
 <br>
 <input type="button" value="Delete all" onclick="removeAllTaxon()">
+
+<div id="popcard" style="display:none;">
+<br><br><hr><br>
+Cardinality:<br>Min:<input id="cardmin" type="text" size="4" value="" onkeyup="">&nbsp;Max:<input id="cardmax" type="text" size="4" value="" onkeyup=""><input type="button" value="Commit" onclick="commitCardinality(document.getElementById('cardmin').value,document.getElementById('cardmax').value)">
+</div>
 </div>
 
 </td>

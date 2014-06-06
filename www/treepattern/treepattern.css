@@ -312,6 +312,31 @@ table#organise td#righted {
 
 
 
+p#standard {
+	padding:5px 20px 5px 15px;
+	vertical-align: top;
+	text-align: justify;
+	font-family: Verdana,Candara,Sans-serif;
+	font-size: 12px;
+}
+
+
+div#help {
+margin: 0px 0px;
+padding:20px 20px;
+display:block;
+width:800px;
+background-color:#FFFFFF
+}
+p#legend {
+	padding: 2px 10px 2px 5px;
+	vertical-align: top;
+	text-align: justify;
+	font-style: italic;
+	font-family: Verdana,Candara,Sans-serif;
+	font-size: 10px;
+}
+
 
 p#waiting {
 	font-weight: 400;

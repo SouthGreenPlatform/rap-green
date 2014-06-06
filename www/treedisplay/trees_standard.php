@@ -412,7 +412,7 @@ function drawAll() {
 		svg.appendChild(back);
 
 	   	clickedTreeNodes= new Array();
-	   	tree.drawTree(taxaMargin,1);
+	   	tree.drawTree(taxaMargin,1,1);
 		document.getElementsByName("treePanel")[0].appendChild(svg);
     
 		document.getElementById('hiddenfield').value = tree.getNewick() + ";";
@@ -451,6 +451,8 @@ function Node(newick) {
 
 	// Specific coordinate to manage phylogram collapsing
 	this.upx=0.0;
+	
+	this.father=null;
 
 
 	// Sons are an array of SpeciesNode
@@ -506,6 +508,9 @@ function Node(newick) {
 	
 	// general color
 	this.color="";
+	
+	// intialisation of opacity
+	this.opacity="1.0";
 
 	// Collapse of the tree
 	this.collapsed="";
@@ -519,6 +524,7 @@ function Node(newick) {
 		index++;
 		var son= new Node(newick);
 		this.sons[sonIndex]= son;
+		son.father=this;
 		// While there is still a son to parse
 		while (newick.charAt(index)==",") {
 			// Parse the current son
@@ -526,10 +532,11 @@ function Node(newick) {
 			index++;
 			son= new Node(newick);
 			this.sons[sonIndex]= son;
+			son.father=this;
 		}
 		index++;
 
-		while (newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+		while (newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			this.support = this.support + newick.charAt(index);
 			index++;
 		}
@@ -540,16 +547,42 @@ function Node(newick) {
 		if (newick.charAt(index)==":") {
 			index++;
 			this.length="";
-			while (newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+			while (newick.charAt(index)!="[" && newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 				this.length = this.length + newick.charAt(index);
 				index++;
 			}
 			//echo this.length;
 		}
+		if (newick.charAt(index)=="[") {
+			var ends= newick.substring(index,newick.length);
+			var ext= ends.substring(0,ends.indexOf("]"));
+			
+			if (ext.indexOf(":C=")!=-1) {
+				var colorLocalPrev=ext.substring(ext.indexOf(":C=")+3,ext.length);
+				this.color=colorLocalPrev.substring(0,colorLocalPrev.indexOf(":"));
+				//alert(this.color);
+			}
+			if (ext.indexOf(":L=")!=-1) {
+				var collapseLocalPrev=ext.substring(ext.indexOf(":L=")+3,ext.length);
+				this.collapsed=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
+				//alert(this.color);
+			}
+			if (ext.indexOf(":O=")!=-1) {
+				var collapseLocalPrev=ext.substring(ext.indexOf(":O=")+3,ext.length);
+				this.opacity=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
+				//alert(this.color);
+			}
+			
+			while (newick.charAt(index)!="]") {
+				index++;
+			}
+			index++;	
+		
+		}	
 	} else {
 
 		// The leaf case
-		while (newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+		while (newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			this.taxon = this.taxon + newick.charAt(index);
 			index++;
 		}
@@ -562,7 +595,7 @@ function Node(newick) {
 		if (newick.charAt(index)==":") {
 			index++;
 			this.length="";
-			while (newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+			while (newick.charAt(index)!="[" && newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 				this.length = this.length + newick.charAt(index);
 				index++;
 			}
@@ -572,9 +605,28 @@ function Node(newick) {
 			this.colored=1;
 			index++;
 		}
-		while (newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
+		while (newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")"  && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			index++;
 		}
+		if (newick.charAt(index)=="[") {
+			var ends= newick.substring(index,newick.length);
+			var ext= ends.substring(0,ends.indexOf("]"));
+			if (ext.indexOf(":C=")!=-1) {
+				var colorLocalPrev=ext.substring(ext.indexOf(":C=")+3,ext.length);
+				this.color=colorLocalPrev.substring(0,colorLocalPrev.indexOf(":"));
+				//alert(this.color);
+			}
+			if (ext.indexOf(":O=")!=-1) {
+				var collapseLocalPrev=ext.substring(ext.indexOf(":O=")+3,ext.length);
+				this.opacity=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
+				//alert(this.color);
+			}
+			while (newick.charAt(index)!="]") {
+				index++;
+			}
+			index++;	
+		
+		}			
 	}
 
 
@@ -1830,9 +1882,10 @@ function fresizeTree(normalMod) {
 
 // ************************
 // Print the tree in an SVG frame, inside the species tree
-function fdrawTree(taxaMargin,isRoot) {
-
-
+function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
+	if (this.father!=null && this.father.color!=this.color) {
+		this.isColoringRoot=1;
+	}
 	if (this.collapsed!="") {
 		// The collapse case
 		var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -1851,8 +1904,14 @@ function fdrawTree(taxaMargin,isRoot) {
 		text1.appendChild(document.createTextNode(this.collapsed));
 		text1.addEventListener("mouseover", textMouseOver, false);
 		text1.addEventListener("mouseout", textMouseOut, false);
-		this.col=text1;
-		svg.appendChild(text1);
+		
+		text1.setAttribute("opacity", this.opacity);
+		text1.setAttribute("fill-opacity", this.opacity);
+		if (drawTheEnd==1) {
+			this.addCol=1;
+			this.col=text1;
+			svg.appendChild(text1);
+		}
 
 		// display support case
 		var textSupport = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -1872,6 +1931,9 @@ function fdrawTree(taxaMargin,isRoot) {
 		}
 		textSupport.setAttribute("fill", fontColor);
 
+		textSupport.setAttribute("opacity", this.opacity);
+		textSupport.setAttribute("fill-opacity", this.opacity);
+		
 		textSupport.appendChild(document.createTextNode(sup));
 		textSupport.addEventListener("mouseover", supportMouseOver, false);
 		textSupport.addEventListener("mouseout", supportMouseOut, false);
@@ -1882,13 +1944,14 @@ function fdrawTree(taxaMargin,isRoot) {
 		textSupport.setAttribute("indexNode", clickedIndex);
 		textSupport.addEventListener("click",supMouseClick, false);
 
-		if (displaySupport!=0) {
+		if (drawTheEnd==1 && displaySupport!=0) {
 			this.addSup=1;
 			svg.appendChild(textSupport);
 
 		}
+		drawTheEnd=0;
 
-	} else {
+	}// else {
 		// Counting the number of sons
 		var count = this.sons.length;
 		if (count>0) {
@@ -1897,16 +1960,20 @@ function fdrawTree(taxaMargin,isRoot) {
 			var lineLeft = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			if (this.sons[0].colored==1 && this.colored==1) {
 				lineLeft.setAttribute("stroke", tagColor);
+			} else if (this.sons[0].color!="") {
+				lineLeft.setAttribute("stroke", this.sons[0].color);			
 			} else {
 				lineLeft.setAttribute("stroke", lineColor);
 			}
 			lineLeft.setAttribute("stroke-width", lineWidth);
 			lineLeft.setAttribute("x1", this.x);
 			lineLeft.setAttribute("y1", this.sons[0].y + roundray);
+			lineLeft.setAttribute("opacity", this.sons[0].opacity);
+			lineLeft.setAttribute("fill-opacity", this.sons[0].opacity);
 			lineLeft.setAttribute("x2", this.x);
 			lineLeft.setAttribute("y2", this.y);
 			this.left1=lineLeft;
-			if ((this.sons[0].y+roundray)<this.y) {
+			if (drawTheEnd==1 && (this.sons[0].y+roundray)<this.y) {
 				this.addLeft=1;
 				svg.appendChild(lineLeft);
 			}
@@ -1914,16 +1981,20 @@ function fdrawTree(taxaMargin,isRoot) {
 			lineLeft = document.createElementNS("http://www.w3.org/2000/svg", "line");
 			if (this.sons[count-1].colored==1 && this.colored==1) {
 				lineLeft.setAttribute("stroke", tagColor);
+			}  else if (this.sons[count-1].color!="") {
+				lineLeft.setAttribute("stroke", this.sons[count-1].color);			
 			} else {
 				lineLeft.setAttribute("stroke", lineColor);
 			}
 			lineLeft.setAttribute("stroke-width", lineWidth);
 			lineLeft.setAttribute("x1", this.x);
 			lineLeft.setAttribute("y1", this.y);
+			lineLeft.setAttribute("opacity", this.sons[count-1].opacity);
+			lineLeft.setAttribute("fill-opacity", this.sons[count-1].opacity);
 			lineLeft.setAttribute("x2", this.x);
 			lineLeft.setAttribute("y2", this.sons[count-1].y - roundray);
 			this.left2=lineLeft;
-			if ((this.sons[0].y+roundray)<this.y) {
+			if (drawTheEnd==1 && (this.sons[0].y+roundray)<this.y) {
 				this.addLeft=1;
 				svg.appendChild(lineLeft);
 			}
@@ -1932,6 +2003,8 @@ function fdrawTree(taxaMargin,isRoot) {
 			var path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			if (this.sons[0].colored == 1) {
 				path2.setAttribute("stroke", tagColor);
+			}  else if (this.sons[0].color!="") {
+				path2.setAttribute("stroke", this.sons[0].color);			
 			} else {
 				path2.setAttribute("stroke", lineColor);
 			}
@@ -1953,6 +2026,8 @@ function fdrawTree(taxaMargin,isRoot) {
 				}
 			}
 			path2.setAttribute("d", d2);
+			path2.setAttribute("opacity", this.sons[0].opacity);
+			path2.setAttribute("fill-opacity", this.sons[0].opacity);
 			path2.addEventListener("mouseover", lineMouseOver, false);
 			path2.addEventListener("mouseout", lineMouseOut, false);
 			var clickedIndex=clickedTreeNodes.length;
@@ -1960,17 +2035,23 @@ function fdrawTree(taxaMargin,isRoot) {
 			path2.setAttribute("indexNode", clickedIndex);
 			path2.addEventListener("click",lineMouseClick, false);
 			this.sons[0].round=path2;
-			this.sons[0].addRound=1;
-			svg.appendChild(path2);
+			if (drawTheEnd==1) {
+				this.sons[0].addRound=1;
+				svg.appendChild(path2);
+			}
 
 			var path3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			if (this.sons[count-1].colored == 1) {
 				path3.setAttribute("stroke", tagColor);
+			}  else if (this.sons[count-1].color!="") {
+				path3.setAttribute("stroke", this.sons[count-1].color);			
 			} else {
 				path3.setAttribute("stroke", lineColor);
 			}
 			path3.setAttribute("stroke-width", lineWidth);
 			path3.setAttribute("fill", "none");
+			path3.setAttribute("opacity", this.sons[count-1].opacity);
+			path3.setAttribute("fill-opacity", this.sons[count-1].opacity);
 			var d3 = "";
 			if ((this.sons[count-1].y-roundray)>this.y) {
 				if (this.sons[count-1].x< (this.x + roundray)) {
@@ -1993,31 +2074,57 @@ function fdrawTree(taxaMargin,isRoot) {
 			path3.setAttribute("indexNode", clickedIndex);
 			path3.addEventListener("click",lineMouseClick, false);
 			this.sons[count-1].round=path3;
-			this.sons[count-1].addRound=1;
-			svg.appendChild(path3);
+			if (drawTheEnd==1) {
+				this.sons[count-1].addRound=1;
+				svg.appendChild(path3);
+			}
 
 			// display duplication case
 			if (this.support.indexOf("D_",0)!=-1) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-lineWidth) + "," + (this.y -lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y - lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y + lineWidth) + " " + (this.x-2*lineWidth  - lineWidth) + "," + (this.y + lineWidth));
-				polyDup.setAttribute('stroke', lineColor);
+				if (this.color!="") {
+					polyDup.setAttribute("stroke", this.color);			
+				} else {
+					polyDup.setAttribute('stroke', lineColor);
+				}
 				polyDup.setAttribute("stroke-width", 0);
-				polyDup.setAttribute('fill', lineColor);
+				if (this.color!="") {
+					polyDup.setAttribute("fill", this.color);			
+				} else {
+					polyDup.setAttribute('fill', lineColor);
+				}
+				polyDup.setAttribute("opacity", this.opacity);
+				polyDup.setAttribute("fill-opacity", this.opacity);
 				this.nodeType=polyDup;
-				this.addNodeType=1;
-				svg.appendChild(polyDup)
+				if (drawTheEnd==1) {
+					this.addNodeType=1;
+					svg.appendChild(polyDup);
+				}
 			}
 
 			// display transfert case
 			if (this.support.indexOf("T_",0)!=-1) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
-				polyDup.setAttribute('stroke', lineColor);
+				if (this.color!="") {
+					polyDup.setAttribute("stroke", this.color);			
+				} else {
+					polyDup.setAttribute('stroke', lineColor);
+				}
 				polyDup.setAttribute("stroke-width", 0);
-				polyDup.setAttribute('fill', lineColor);
+				if (this.color!="") {
+					polyDup.setAttribute("fill", this.color);			
+				} else {
+					polyDup.setAttribute('fill', lineColor);
+				}
+				polyDup.setAttribute("opacity", this.opacity);
+				polyDup.setAttribute("fill-opacity", this.opacity);
 				this.nodeType=polyDup;
-				this.addNodeType=1;
-				svg.appendChild(polyDup)
+				if (drawTheEnd==1) {
+					this.addNodeType=1;
+					svg.appendChild(polyDup);
+				}
 			}
 			// display support case
 			var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -2032,6 +2139,8 @@ function fdrawTree(taxaMargin,isRoot) {
 			text1.setAttribute("y", this.y- parseInt(supportSize)/3 - 4);
 			text1.setAttribute("font-family", fontFamily);
 			text1.setAttribute("font-size", parseInt(supportSize));
+			text1.setAttribute("opacity", this.opacity);
+			text1.setAttribute("fill-opacity", this.opacity);
 			if (this.support.indexOf("D") == 0) {
 				text1.setAttribute("fill", tagColor);
 			} else {
@@ -2041,7 +2150,7 @@ function fdrawTree(taxaMargin,isRoot) {
 			text1.addEventListener("mouseover", supportMouseOver, false);
 			text1.addEventListener("mouseout", supportMouseOut, false);
 			this.sup=text1;
-			if (displaySupport!=0) {
+			if (drawTheEnd==1 && displaySupport!=0) {
 				this.addSup=1;
 				svg.appendChild(text1);
 
@@ -2055,6 +2164,8 @@ function fdrawTree(taxaMargin,isRoot) {
 					var lineRight = document.createElementNS("http://www.w3.org/2000/svg", "line");
 					if (this.sons[i].colored == 1) {
 						lineRight.setAttribute("stroke", tagColor);
+					}  else if (this.sons[i].color!="") {
+						lineRight.setAttribute("stroke", this.sons[i].color);			
 					} else {
 						lineRight.setAttribute("stroke", lineColor);
 					}
@@ -2069,13 +2180,15 @@ function fdrawTree(taxaMargin,isRoot) {
 					lineRight.setAttribute("y2", this.sons[i].y);
 					lineRight.addEventListener("mouseover", lineMouseOver, false);
 					lineRight.addEventListener("mouseout", lineMouseOut, false);
+					lineRight.setAttribute("opacity", this.sons[i].opacity);
+					lineRight.setAttribute("fill-opacity", this.sons[i].opacity);
 
 					var clickedIndex=clickedTreeNodes.length;
 					clickedTreeNodes[clickedIndex]=this.sons[i];
 					this.sons[i].line=lineRight;
 					lineRight.setAttribute("indexNode", clickedIndex);
 					lineRight.addEventListener("click",lineMouseClick, false);
-					if (this.sons[i].x> (this.x + roundray)) {
+					if (drawTheEnd==1 && this.sons[i].x> (this.x + roundray)) {
 						this.sons[i].addLine=1;
 
 						svg.appendChild(lineRight);
@@ -2090,12 +2203,18 @@ function fdrawTree(taxaMargin,isRoot) {
 					} else {
 						polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 					}
-					polyCol.setAttribute('stroke', lineColor);
+					if (this.sons[i].color!="") {
+						polyCol.setAttribute("stroke", this.sons[i].color);			
+					} else {
+						polyCol.setAttribute('stroke', lineColor);
+					}
 					polyCol.setAttribute("stroke-width", lineWidth);
 					polyCol.setAttribute('fill', collapseColor);
 
 					polyCol.addEventListener("mouseover", lineMouseOver, false);
 					polyCol.addEventListener("mouseout", lineMouseOut, false);
+					polyCol.setAttribute("opacity", this.sons[i].opacity);
+					polyCol.setAttribute("fill-opacity", this.sons[i].opacity);
 
 					var clickedIndex=clickedTreeNodes.length;
 					clickedTreeNodes[clickedIndex]=this.sons[i];
@@ -2104,12 +2223,15 @@ function fdrawTree(taxaMargin,isRoot) {
 					polyCol.addEventListener("click",lineMouseClick, false);
 
 
-					svg.appendChild(polyCol);
+					if (drawTheEnd==1) {
+						this.sons[i].addPoly=1;
+						svg.appendChild(polyCol);
+					}
 
 				}
 
 
-				this.sons[i].drawTree(taxaMargin,0);
+				this.sons[i].drawTree(taxaMargin,0,drawTheEnd);
 			}
 		} else {
 			// The leaf case
@@ -2127,6 +2249,8 @@ function fdrawTree(taxaMargin,isRoot) {
 			text1.appendChild(document.createTextNode(this.taxon));
 			text1.addEventListener("mouseover", textMouseOver, false);
 			text1.addEventListener("mouseout", textMouseOut, false);
+			text1.setAttribute("opacity", this.opacity);
+			text1.setAttribute("fill-opacity", this.opacity);
 			if (infos[this.taxon]!=null) {
 				var clickedIndex=clickedTreeNodes.length;
 				clickedTreeNodes[clickedIndex]=this;
@@ -2134,8 +2258,10 @@ function fdrawTree(taxaMargin,isRoot) {
 				text1.addEventListener("mousedown", leafLink , false);
 			}
 			this.text=text1;
-			this.addText=1;
-			svg.appendChild(text1);
+			if (drawTheEnd==1) {
+					this.addText=1;
+					svg.appendChild(text1);
+			}
 			selection=text1;
 
 			var z=0;
@@ -2147,13 +2273,20 @@ function fdrawTree(taxaMargin,isRoot) {
 					if (typeAnnot[localTag]=="plain" && infos[this.taxon][localTag]!=null && hideShowAnnot[localTag]!=null) {
 
 						var xtext=document.createElementNS("http://www.w3.org/2000/svg","text");
-						xtext.setAttribute ("x", width - margin - annotMargin + annotXArray[localTag]);
+						//alert(annotXArray[localTag]);
+						if (annotXArray[localTag]!=null) {
+							xtext.setAttribute ("x", width - margin - annotMargin + annotXArray[localTag]);
+						} else {
+							xtext.setAttribute ("x", width - margin - annotMargin);						
+						}
 						xtext.setAttribute ("y", this.y + (fontSize/3));
 						xtext.setAttribute("font-family", fontFamily);
 						xtext.setAttribute("font-size", fontSize);
+						xtext.setAttribute("opacity", this.opacity);
+						xtext.setAttribute("fill-opacity", this.opacity);
 						xtext.appendChild(document.createTextNode(infos[this.taxon][localTag]));
 						this.xtext[localTag]=xtext;
-						if (hideShowAnnot[localTag]!=0) {
+						if (drawTheEnd==1 && hideShowAnnot[localTag]!=0) {
 							this.addXtext[localTag]=1;
 							svg.appendChild(xtext);
 						} else {
@@ -2184,11 +2317,13 @@ function fdrawTree(taxaMargin,isRoot) {
 					poimg.setAttribute("annot", "PO");
 					poimg.addEventListener("mouseover", annotMouseOver, false);
 					poimg.addEventListener("mouseout", annotMouseOut, false);
+					poimg.setAttribute("opacity", this.opacity);
+					poimg.setAttribute("fill-opacity", this.opacity);
 					var clickedIndex=clickedTreeNodes.length;
 					clickedTreeNodes[clickedIndex]=this;
 					poimg.setAttribute("indexNode", clickedIndex);
 					this.poimg=poimg;
-					if (hideShowAnnot["PO"]!=0) {
+					if (drawTheEnd==1 && hideShowAnnot["PO"]!=0) {
 						this.addPoimg=1;
 						svg.appendChild(poimg);
 					} else {
@@ -2212,22 +2347,24 @@ function fdrawTree(taxaMargin,isRoot) {
 					goimg.setAttribute("annot", "GO");
 					goimg.addEventListener("mouseover", annotMouseOver, false);
 					goimg.addEventListener("mouseout", annotMouseOut, false);
+					goimg.setAttribute("opacity", this.opacity);
+					goimg.setAttribute("fill-opacity", this.opacity);
 					var clickedIndex=clickedTreeNodes.length;
 					clickedTreeNodes[clickedIndex]=this;
 					goimg.setAttribute("indexNode", clickedIndex);
 					this.goimg=goimg;
-					if (hideShowAnnot["GO"]!=0) {
+					if (drawTheEnd==1 && hideShowAnnot["GO"]!=0) {
 						svg.appendChild(goimg);
 						this.addGoimg=1;
 					} else {
-						this.addGoimg=1;
+						this.addGoimg=0;
 					}
 
 				}
 			}
 
 		}
-	}
+	//}
 
 
 
@@ -2705,6 +2842,12 @@ function fgetNewick() {
 		res=res + "[&&NHX:";
 		if (this.color!="") {
 			res=res+"C="+this.color+":";
+		}
+		if (this.collapsed!="") {
+			res=res+"L="+this.collapsed+":";
+		}
+		if (this.line!=null && (this.line.getAttribute("opacity")!=null && this.line.getAttribute("opacity")!=1.0)) {
+			res=res+"O="+this.line.getAttribute("opacity")+":";		
 		}
 
 

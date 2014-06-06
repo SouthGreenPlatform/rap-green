@@ -64,6 +64,37 @@ if (!isSet($_REQUEST['databank'])) {
 }
 socket_close($socket);
 
+
+
+// open the socket
+$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+$resultat = socket_connect($socket, $server, $port);
+// send the signal to the daemon
+$envoi="examples\n";
+$count=0;
+socket_write($socket, $envoi, strlen($envoi));
+$envoi=$_REQUEST['databank']."\n";
+socket_write($socket, $envoi, strlen($envoi));
+while ($reception = socket_read($socket, 2048)) {
+	// split the buffer
+	$examplesString=split("\n", $reception);
+	for ($i=0;$i<count($examplesString);$i++) {
+		// if the current word is significant
+		if (strlen($examplesString[$i])>0) {
+			$examples[$count]=$examplesString[$i];
+
+			$count++;
+		}
+	}
+
+}
+// select the default database if not already defined
+if (!isSet($_REQUEST['databank'])) {
+	$_REQUEST['databank']=$first;
+}
+socket_close($socket);
+
+
 ?>
 
 <script type="text/javascript">
@@ -102,7 +133,7 @@ function refreshPattern(param) {
 </td>
 
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',1);changeVisibiliteOnName('popdatabase',0);">
-FILE
+LOAD/SAVE
 </td>
 
 <td name="databaseTd" id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',0);changeVisibiliteOnName('popdatabase',1);">
@@ -111,6 +142,10 @@ DATABASE: <?php if ($_REQUEST['databank']=="") {echo "No database available";} e
 
 <td name="searchTd" id="itemtd" onmouseout="this.style.opacity = opac;" onclick="displayResults();" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',0);changeVisibiliteOnName('popdatabase',0);">
 SEARCH PATTERN
+</td>
+
+<td name="helpTd" id="itemtd" onmouseout="this.style.opacity = opac;" onclick="window.open('help.php');" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',0);changeVisibiliteOnName('popdatabase',0);">
+HELP
 </td>
 
 <td id="closing">
@@ -127,6 +162,32 @@ SEARCH PATTERN
 <p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);">Pattern string (copy to save, replace to load):</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popfile',1)" cols="50" rows="5" name="hiddenfield" id="hiddenfield"></textarea></p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node(document.getElementById('hiddenfield').value);refreshAll();">Load</p>
+
+<?php
+
+	if ($examples[0]!="N/A") {
+	
+?>
+<hr id="large" onmouseover="changeVisibiliteOnName('popfile',1)"> 	
+<p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);">Featured examples ready to load:</p>
+<?php	
+		for ($i=0;$i<count($examples);$i+=2) {
+		
+		
+		
+			?>		
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node('<?php echo $examples[$i];?>');refreshAll();"><?php echo $examples[$i+1];?></p>
+
+
+<?php
+
+
+
+	
+		}
+	}
+?>
+
 </form>
 </div>
 </td>

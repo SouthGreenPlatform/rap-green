@@ -148,6 +148,10 @@ addAnnot("primTypeN",0,"plain");
 </script>
 <script type="text/javascript">
 
+
+
+
+
 drawAll();
 
 <?php

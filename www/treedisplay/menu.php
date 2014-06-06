@@ -148,7 +148,7 @@ GRAPHICAL RENDERING
 <td id="poptd" colspan=10>
 
 <div id="popload" id="itempop" name="popload" style="display:none;" onmouseover="changeVisibiliteOnName('popload',1)" onmouseout="changeVisibiliteOnName('popload',0)">
-<form name="changeTreeForm" method="post"  action="index.php">
+<form name="changeTreeForm" method="post"  action="index.php<?php if (isSet($_REQUEST['data'])) { echo '?data='.$_REQUEST['data']; }?>">
 <p id="textual" onmouseover="changeVisibiliteOnName('popload',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popload',1)" cols="12" rows="5" name="hiddenfield" id="hiddenfield"><?php echo $_POST['hiddenfield']; ?></textarea></p>
 <?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
@@ -237,7 +237,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);"><input name="colfet7" onmouseover="changeVisibiliteOnName('popcollapse',1);" type=checkbox onclick="annoteSpecific('colorTypeVIII','TypeVIII_');">TypeVIII_&nbsp;
 <input onkeypress="changeColorCustom(event,'colorTypeVIII');" onmouseover="changeVisibiliteOnName('popcollapse',1)" type="text" size="8" id="colorTypeVIII" /><br></p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="annoteAll();">Annote all types</p> 
-<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="tree.toneDownUndocumented();">Tone down undocumented proteins</p> 
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="tree.toneDownUndocumented();resizeSVG();">Tone down undocumented proteins</p> 
 
 
 
@@ -264,7 +264,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 </tr>
 
 <tr id="poptr">
-<td id="poptd" colspan=<?php if (!isSet($_POST['hiddenfield'])) { echo "5"; } else { echo "4"; } ?>>
+<td id="poptd" colspan=<?php if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) { echo "5"; } else { echo "4"; } ?>>
 </td>
 <td id="poptd" colspan=10>
 <div id="popdisplay" id="itempop" name="popdisplay" style="display:none;" onmouseover="changeVisibiliteOnName('popdisplay',1);" onmouseout="changeVisibiliteOnName('popdisplay',0);">
@@ -280,7 +280,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 </tr>
 
 <tr id="poptr">
-<td id="poptd" colspan=<?php if (!isSet($_POST['hiddenfield'])) { echo "6"; } else { echo "5"; } ?>>
+<td id="poptd" colspan=<?php if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) { echo "6"; } else { echo "5"; } ?>>
 </td>
 <td id="poptd" colspan=10>
 <div id="popzoom" id="itempop" name="popzoom" style="display:none;" onmouseover="changeVisibiliteOnName('popzoom',1);" onmouseout="changeVisibiliteOnName('popzoom',0);">
@@ -304,7 +304,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 
 
 <tr id="poptr">
-<td id="poptd" colspan=<?php if (!isSet($_POST['hiddenfield'])) { echo "7"; } else { echo "6"; } ?>>
+<td id="poptd" colspan=<?php if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) { echo "7"; } else { echo "6"; } ?>>
 </td>
 <td id="poptd" colspan=10>
 <div id="popadv" id="itempop" name="popadv" style="display:none;" onmouseover="changeVisibiliteOnName('popadv',1);" onmouseout="changeVisibiliteOnName('popadv',0);">
