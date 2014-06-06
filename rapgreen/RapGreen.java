@@ -31,6 +31,11 @@ public class RapGreen {
 * Output gene file
 */
 	public static File outputGene=null;
+	
+/**
+* Output gene file in NHX format, storing duplications in the NHX zone
+*/
+	public static File outputNHX=null;
 
 /**
 * Output gene file
@@ -148,6 +153,8 @@ public class RapGreen {
 					System.out.println(BOLD);					
 					System.out.println("-phyloxml" + NORMAL + " "  + UNDERLINE + "gene_tree_phyloxml_file\n\t" + NORMAL + "The output tree file (annotated with duplications) in phyloXML format");
 					System.out.println(BOLD);
+					System.out.println("-nhx" + NORMAL + " "  + UNDERLINE + "gene_tree_nhx_file\n\t" + NORMAL + "The output tree file (annotated with duplications) in NHX format");
+					System.out.println(BOLD);
 					System.out.println("-os" + NORMAL + " "  + UNDERLINE + "species_tree_file\n\t" + NORMAL + "The output species tree file (limited to gene tree species)");
 					System.out.println(BOLD);
 					System.out.println("-or" + NORMAL + " "  + UNDERLINE + "reconciled_tree_file\n\t" + NORMAL + "The output reconciled tree file (consensus tree, with reductions and losses)");
@@ -208,6 +215,9 @@ public class RapGreen {
 
 				} else if (args[i].equalsIgnoreCase("-phyloxml")) {
 					outputPhyloXML= new File(args[i+1]);
+
+				} else if (args[i].equalsIgnoreCase("-nhx")) {
+					outputNHX= new File(args[i+1]);
 
 				} else if (args[i].equalsIgnoreCase("-k")) {
 					TreeReconciler.kLevel= (new Integer(args[i+1])).intValue();
@@ -382,6 +392,35 @@ public class RapGreen {
 						TreeWriter geneWriter= new TreeWriter(copyCat);
 						geneWriter.writeTree(outputGene);					
 					}
+					if (outputNHX!=null) {
+						Tree copyCat= new Tree(reconciler.geneTree);
+						copyCat.pretreatment();
+						if (((Tree)(copyCat.sons.elementAt(0))).isLeaf() && !((Tree)(copyCat.sons.elementAt(1))).isLeaf()) {
+							if (((Tree)(copyCat.sons.elementAt(1))).label.startsWith("'D")) {
+								((Tree)(copyCat.sons.elementAt(1))).label="'DUPLICATION'";;
+							} else {
+								((Tree)(copyCat.sons.elementAt(1))).label="";
+							}
+						}
+						if (((Tree)(copyCat.sons.elementAt(1))).isLeaf() && !((Tree)(copyCat.sons.elementAt(0))).isLeaf()) {
+							if (((Tree)(copyCat.sons.elementAt(0))).label.startsWith("'D")) {
+								((Tree)(copyCat.sons.elementAt(0))).label="'DUPLICATION'";
+							} else {
+								((Tree)(copyCat.sons.elementAt(0))).label="";
+							}
+						}
+						vect= copyCat.leafVector;
+						for (int x=0;x<vect.size();x++) {
+							Tree leaf= (Tree)(vect.elementAt(x));
+							if (leaf.label.startsWith("_")) {	
+								leaf.label=leaf.label.substring(1,leaf.label.length());
+							}
+						}	
+						BufferedWriter geneWriter= new BufferedWriter(new FileWriter(outputNHX));
+						geneWriter.write(copyCat.getNHXNewick(speciesTree) + "\n");	
+						geneWriter.flush();
+						geneWriter.close();				
+					}					
 					Tree copyCat=null;
 					if (outputPhyloXML!=null) {
 						copyCat= new Tree(reconciler.geneTree);

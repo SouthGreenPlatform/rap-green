@@ -303,7 +303,7 @@ public class Tree {
 
 		}
 	}
-
+		
 // ********************************************************************************************************************
 /**
 * Clean labels, in order to fit the format P/S(trace)support
@@ -2338,7 +2338,68 @@ public class Tree {
 
 		}
 	}
+	
+// ********************************************************************************************************************
+/**
+* Return the newick representation of this node
+* @return The newick standard representation of this node
+*/
+	public String getNHXNewick(Tree speciesTree) {
+		StringBuffer res= new StringBuffer();
+		getNHXNewick(res,speciesTree);
+		res.append(';');
+		return(res.toString());
+	}
 
+// ******************************
+/**
+* Standard string conversion method
+* @param lengthParam	The buffer used to store the result
+*/
+	private void getNHXNewick(StringBuffer res,Tree speciesTree) {
+		if (!isLeaf()) {
+			res.append('(');
+			((Tree)(sons.elementAt(0))).getNHXNewick(res,speciesTree);
+			for (int i=1;i<sons.size();i++) {
+				res.append(',');
+				((Tree)(sons.elementAt(i))).getNHXNewick(res,speciesTree);
+			}
+			res.append(')');
+		} else {
+			res.append(label);
+		}
+		/*if (label!=null && !label.equals("null")) {
+			if (!isLeaf() && label.startsWith("'DUPLICATION")) {
+				res.append(label.substring(12,label.length()-1));
+			} else {
+				res.append(label);
+			}
+		}*/
+		if (length!=-1.0) {
+			res.append(':');
+			res.append(length);
+		}
+		if (!isLeaf()) {
+			//System.out.println("Echo");
+			res.append("[&&NHX");
+			if (label.startsWith("'DUPLICATION")) {
+				res.append(":D=Y");
+				res.append(":SIS=");
+				res.append(trace());
+			} else {
+				res.append(":D=N");
+			} 
+			res.append(":S=");
+			//System.out.println("AAAAAAAA\n" + this.speciesMapping(speciesTree) + "\n" + "BBBBBB");
+			res.append(this.speciesMapping(speciesTree).label.replace(" ","."));
+			if (father!=null) {
+				res.append(":B=");
+				res.append(label);
+			}
+			res.append("]");
+		}
+	}
+	
 // ********************************************************************************************************************
 /**
 * Return the newick representation of this node
@@ -2565,7 +2626,7 @@ public class Tree {
 			if (label==null || label.length()==0) {
 				label=(new Integer(local)).toString();
 			} else {
-				label=(new Integer(local)).toString()+label;
+				label=(new Integer(local)).toString()+"_"+label;
 			}
 			local++;
 			for (int i=0;i<sons.size();i++) {
