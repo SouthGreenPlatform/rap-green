@@ -9,3 +9,5 @@ Here you will find several downloadable Jar archive, ready to execute with the l
 
 Stable version of RapGreen (r57):
 [http://gohelle.cirad.fr/phylogeny/rapgreen-downloads/RapGreen.jar RapGreen.jar]
+
+Other Jar files can be downloaded from the "tags" source directory.
