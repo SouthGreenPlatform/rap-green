@@ -1,0 +1,11 @@
+#Downloadable Jar files.
+
+= Introduction =
+
+Here you will find several downloadable Jar archive, ready to execute with the last 1.6 Java version.
+
+
+= Details =
+
+Stable version of RapGreen (r57):
+[http://gohelle.cirad.fr/phylogeny/rapgreen-downloads/]
