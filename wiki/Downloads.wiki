@@ -8,4 +8,4 @@ Here you will find several downloadable Jar archive, ready to execute with the l
 = Details =
 
 Stable version of RapGreen (r57):
-[http://gohelle.cirad.fr/phylogeny/rapgreen-downloads/]
+[http://gohelle.cirad.fr/phylogeny/rapgreen-downloads/RapGreen.jar RapGreen.jar]
