@@ -1,6 +1,6 @@
 === Introduction ===
 
-Here you will find several downloadable Jar archive, ready to execute with the last 1.6 Java version.
+Here you will find several downloadable Jar archives, ready to be executed with the last 1.6 Java version.
 
 
 === Details ===
