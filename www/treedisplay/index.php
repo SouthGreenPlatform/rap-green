@@ -15,11 +15,6 @@
 
 <?php
 
- include('database.php');
- 
-?>
-<?php
-
  include('utilities.php');
 
 ?>
@@ -157,8 +152,6 @@ drawAll();
 <?php
 if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['data']=="EBF_banana")) {
 ?>
-
-
 	tree.annoteValues(6,"red",labelExpress1,maxExpress1,express1,0);
 	tree.annoteValues(18,"blue",labelExpress2,maxExpress2,express2,9.45);
 <?php
