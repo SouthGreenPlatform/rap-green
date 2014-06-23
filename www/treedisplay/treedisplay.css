@@ -27,6 +27,7 @@ div#popannot {
 	padding:0ex 0;
 }
 
+
 div#legend {
 	margin:0 0 0 0;
 	padding:0px 0px 0px 0px;
@@ -34,7 +35,9 @@ div#legend {
 	border-spacing: 0px;
 	border-padding: 0px;
 	
+
 }
+
 
 
 div#treeDivId {
@@ -44,11 +47,14 @@ div#treeDivId {
 	border-spacing: 0px;
 	border-padding: 0px;
 	
+
 }
+
 
 
 /*********************/
 /* The menu full php */
+
 table#menu div {
 	display:block;
 	position: absolute;

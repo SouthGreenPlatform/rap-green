@@ -399,14 +399,14 @@ function drawAll() {
 		// Build the main SVG object
 		svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute('width', width);
-		svg.setAttribute('height', height);
+		svg.setAttribute('height', height+legendHeight);
 
 		// Build the image border
 		back = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 		back.setAttribute('x', 0);
 		back.setAttribute('y', 0);
 		back.setAttribute('width', width);
-		back.setAttribute('height', height);
+		back.setAttribute('height', height+legendHeight);
 		back.setAttribute('stroke', "none");
 		back.setAttribute('fill', backColor);
 		svg.appendChild(back);
