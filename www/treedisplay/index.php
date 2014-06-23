@@ -108,7 +108,7 @@ function collapseType(val) {
 		
 		
 ?>
-<div id="treeDivId" style="overflow:scroll; width : 100% ; height : 800px ;">
+<div id="treeDivId" style="overflow:scroll; width : 100% ; height : 880px ;">
 <table id="organise"><tr><td id="treePanel" name="treePanel">
 
 
