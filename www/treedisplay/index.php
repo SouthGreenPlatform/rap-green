@@ -148,15 +148,19 @@ addAnnot("primTypeN",0,"plain");
 
 
 drawAll();
-
 <?php
 if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['data']=="EBF_banana")) {
 ?>
 	tree.annoteValues(6,"red",labelExpress1,maxExpress1,express1,0);
 	tree.annoteValues(18,"blue",labelExpress2,maxExpress2,express2,9.45);
 <?php
+} else if (isSet($_REQUEST['data']) && $_REQUEST['data']=="genfam") {
+?>
+	tree.annoteValues(6,"blue",titlesExpress,sumExpress/nbExpress*2.5,expvalues,0);
+<?php
 }
 ?>
+
 </script>
 
 </td></tr></table>

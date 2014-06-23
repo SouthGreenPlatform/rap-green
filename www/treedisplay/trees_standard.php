@@ -8,7 +8,7 @@ var height=600;
 var margin=30;
 var annotMargin=400;
 var annotX=0;
-var legendHeight=40;
+var legendHeight=80;
 var legendX=0;
 // Computed regarding data
 var taxaMargin=0;
@@ -422,7 +422,7 @@ function drawAll() {
         selection.removeAllRanges();
         selection.addRange(range);*/
         
-		selection.focus();
+		//selection.focus();
 	}
 }
 
@@ -680,6 +680,7 @@ function fmaxTaxaString() {
 // ************************
 // Colorize the leaf regarding annotations and colors
 function fannoteValues(size,colorLocal,labelExpress,maxExpress,express,modif) {
+	//alert("echo1");
 	if (legendSvg==null) {
 		legendTexts= new Array();
 		changeVisibilite2("legend",1);
@@ -700,10 +701,13 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,express,modif) {
 		document.getElementsByName("legendPanel")[0].appendChild(legendSvg);
 	}
 
+	//alert("echo2");
 	// Counting the number of sons
 	var count = this.sons.length;
 	var loc=0;
 	if (count>0) {
+	
+	//alert("echo3");
 		// It's a node
 		var i = 0;
 		for (i = 0; i < count; i++) {
@@ -715,9 +719,10 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,express,modif) {
 			}
 		}
 	} else {	
+	
+	//alert("echo4");
 		// It's a leaf
 
-		//alert(colorLocal);
 		//this.text.setAttributeNS(null, "fill",colorparam);
 		
 		var i = 0;
