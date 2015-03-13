@@ -95,7 +95,7 @@ public class ReconciliationDatabaseDaemon {
 	/**
 	* The communication port
 	*/
-	static final int port=1666;
+	static int port=1666;
 
 	/**
 	* Verbose / quiet boolean
@@ -271,7 +271,14 @@ public class ReconciliationDatabaseDaemon {
 
 
 			}
-			
+						
+
+			if (args[i].equalsIgnoreCase("-port")) {
+
+				port= (new Integer(args[i+1])).intValue();
+
+
+			}
 			if (args[i].equalsIgnoreCase("-results")) {
 
 				resultDirectory= new File(args[i+1]);
