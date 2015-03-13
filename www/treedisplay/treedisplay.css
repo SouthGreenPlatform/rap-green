@@ -1,0 +1,285 @@
+/* general body style */
+body {
+	margin:0;
+	padding:0ex 0;
+	font-family: Verdana,Candara,Sans-serif;
+	font-size: 12px;
+	overflow: hidden;
+}
+/* Title banner */
+div#title {
+	display:block;
+	background:url(img/logo.png);
+	border:0px;
+	width:100%;
+	height:130px;	
+	margin:0;
+	padding:0ex 0;
+}
+
+div#popannot {
+	display:block;
+	position: absolute;
+	border:0px;
+	width:50%;
+	height:200px;	
+	margin:0;
+	padding:0ex 0;
+}
+
+
+div#legend {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	
+
+}
+
+
+
+div#treeDivId {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	
+
+}
+
+
+
+/*********************/
+/* The menu full php */
+
+table#menu div {
+	display:block;
+	position: absolute;
+	border-width: 3px;
+	border-style: groove;
+	border-color:#444444;
+	margin:0;
+	padding:4px 0px 10px 0px;
+	background: #333333;
+	color: black;
+	color: #FFFFFF;
+}
+
+table#menu div p#lienimage {
+	font-weight: 800;
+	margin:0px 0px;
+	padding:5px 20px 5px 20px;
+	opacity: 0.8;
+}
+
+table#menu div p#textual {
+	font-weight: 400;
+	margin:0px 0px;
+	padding:5px 70px 5px 15px;
+}
+
+table#menu div p#linking {
+	font-weight: 800;
+	margin:0px 0px;
+	padding:5px 70px 5px 15px;
+	opacity: 0.8;
+}
+
+
+table#menu div hr#large {
+	opacity: 0.7;
+}
+
+table#menu {
+	margin:0 0;
+	padding:0 0;
+	width:100%;
+	height:55px;
+	background: #333333;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: black;
+	border-width: 0px;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	font-family: Arial,Sans-serif;
+}
+table#menu tr#toptr {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	height: 4px;
+}
+table#menu tr#toptr td {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	background: #666666;
+}
+table#menu tr#itemtr {
+	white-space:nowrap;
+	text-align: center;
+	margin:0 0;
+	padding:0 0;
+	height: 100%;
+}
+table#menu td#itemtd {
+	margin:0 0 0 0;
+	padding:0px 20px 0px 20px;
+	font-weight: 800;
+	border-width: 0 3px 0 0;
+	border-style: groove;
+	border-color:#444444;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+	opacity: 0.8;
+}
+table#menu td#poptr {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	height: 0px;
+}
+table#menu td#poptd {
+	margin:0 0 0 0;
+	padding:0px 0px 0px 0px;
+	border-width: 0 0 0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+	background: #333333;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+}
+table#menu td#begining {
+	margin:0 0 0 0;
+	padding:0px 15px 0px 0px;
+	border-width: 0 3px 0 0;
+	border-style: groove;
+	border-color:#444444;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: #FFFFFF;
+}
+table#menu td#closing {
+	margin:0 0;
+	border-width: 0px;
+	width:100%;
+	background-image:url(img/menuback.png);
+	background-repeat:repeat;
+	color: black;
+}
+
+
+
+
+/*********************/
+
+/* The standard menu */
+table#standardmenu {
+	margin:0 0;
+	padding:0 0;
+	border:0px;
+	width:100%;
+	height:15px;
+	padding:5px 5px;
+	background: white /*#207730*/;
+	color: black;
+}
+table#standardmenu TD#title {
+	font-size:10px;
+	text-align: center;
+	background:#CCCCCC;
+	border-width: 2px; 
+	border-style: outset;
+	border-color:#000000;
+}
+
+table#standardmenu TD#field {
+	font-size:10px;
+	text-align: center;	
+	padding:2px 1px;
+	border-width: 1px;
+	border-style: outset;
+	border-color:#000000;
+}
+
+div#standard {
+	overflow: auto;
+	height:60px;
+}
+
+/* The advanced menu */
+table#advancedmenu {
+	margin:0 0;
+	padding:0 0;
+	border:0;
+	width:100%;
+	height:15px;
+	padding:5px 5px;
+	background: #999999 /*#207730*/;
+	color: white;
+}
+
+table#advancedmenu TD#desc {
+	font-weight: bold;
+	text-align: right;
+}
+
+
+
+/* configuration of the main cell */
+div#main {
+	font-weight: 100;
+	background:white;
+	margin-left:0px;
+	height: 100%;
+	width: auto;
+	padding:0ex 0;
+}
+
+/* organisation table, used to organise pages without any borders and lines */
+table#organise {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	border-collapse: collapse; 
+}
+table#organise tr {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+}
+table#organise td {
+	border:0;
+	margin:0 0;
+	padding:0 0;
+	spacing:0 0;
+	border-spacing: 0px;
+	border-padding: 0px;
+	vertical-align: center;
+	text-align: center;
+}
+
+
+
+
+
