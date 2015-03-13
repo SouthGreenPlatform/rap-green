@@ -1006,7 +1006,7 @@ public class Tree {
 // pattern example: ((THACI1,(PITOR1,THACI1)T)S,LOSS|THACI1|PITOR1)D
 		public boolean containsPattern(Tree pattern, Hashtable ind, SpeciesDictionary dic) {
 			boolean res=false;
-
+			//System.out.println("pattern:\n" + pattern + "\n\ntree:\n" + this + "\n");
 			boolean possible=true;
 			for (int i=0;possible && i<pattern.leafVector.size();i++) {
 				Tree leaf= (Tree)(pattern.leafVector.elementAt(i));
@@ -1053,7 +1053,9 @@ public class Tree {
 						}
 						System.out.println(leaf.label + " " + thisLeaf.label + " " + dic.isCompatible(thisLeaf,leaf.allowedLeft,leaf.forbiddenLeft));
 					}
-				}				
+				}			
+			} else {
+				System.out.println("possible 1");
 			}*/
 			
 			if (possible) {
@@ -1102,6 +1104,8 @@ public class Tree {
 					}
 				} else {
 					if (!isLeaf()) {
+					
+					//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("control " + pattern.rightCardinalityMax + " " + pattern.rightCardinalityMin);}
 					// if sons=null, the pattern cannot be contained
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
@@ -1110,17 +1114,17 @@ public class Tree {
 						//System.out.println("trace\n" + this);
 						if ((pattern.rightCardinalityMax==-1 || nbLeaves()<=pattern.rightCardinalityMax) && (pattern.rightCardinalityMin==-1 || nbLeaves()>=pattern.rightCardinalityMin)) {
 							if ((!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) && (!pattern.hasRightConstraint || dic.isCompatible(this,pattern.allowedRight,pattern.forbiddenRight))) {
-							//System.out.println("echo1");
+							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo1");}
 								//System.out.println("rest2 " + label + " " + pattern.label);
 								boolean neutralTransfer=false;
 								if (pattern.label.startsWith("T") && pattern.nhx.indexOf("<T>")!=-1 && (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue()==2) {
 								
-							//System.out.println("echo2");
+							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo2");}
 									neutralTransfer=true;
 								}
 								if (!neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) {
 								
-							//System.out.println("echo3");
+							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo3");}
 									Vector sens=getTransferTarget();
 								
 									int patternSens= (new Integer(pattern.nhx.substring(pattern.nhx.indexOf("<T>")+3,pattern.nhx.indexOf("</T>")))).intValue();
@@ -1144,7 +1148,7 @@ public class Tree {
 								} else {
 									if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (label.startsWith("S_") && pattern.label.startsWith("S"))) {
 									
-							//System.out.println("echo4");
+							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo4");}
 									
 										res= (sonsZero.containsPattern(patternSonsZero,ind,dic) && sonsOne.containsPattern(patternSonsOne,ind,dic) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft))) || (sonsZero.containsPattern(patternSonsOne,ind,dic) && sonsOne.containsPattern(patternSonsZero,ind,dic) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft)) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)));
 							//System.out.println(sonsZero + "---\n" + patternSonsZero + sonsZero.containsPattern(patternSonsZero,ind,dic));
@@ -1154,10 +1158,11 @@ public class Tree {
 								}
 							}
 						} else {
+							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("loose man");}
 							//System.out.println("card=" + pattern.rightCardinalityMin + " leaves=" + nbLeaves() + "\n" + this);
 						}
 						if (!res) {
-
+//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo5");}
 							if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
 								if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 									res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
@@ -1168,6 +1173,7 @@ public class Tree {
 					}
 				}
 			}
+			
 			/*if (res) {
 				coloring=true;
 			}*/
@@ -2011,6 +2017,10 @@ public class Tree {
 				
 						//System.out.print("\n");
 			}
+		} else {
+		
+				rightCardinalityMin=-1;
+				rightCardinalityMax=-1;
 		}
 
 		if (isLeaf()) {
@@ -2392,10 +2402,21 @@ public class Tree {
 			res.append(":S=");
 			//System.out.println("AAAAAAAA\n" + this.speciesMapping(speciesTree) + "\n" + "BBBBBB");
 			res.append(this.speciesMapping(speciesTree).label.replace(" ","."));
-			if (father!=null) {
+			
+			if (father!=null && label!=null && label.length()>0 && !label.equals("'DUPLICATION'")) {
 				res.append(":B=");
-				res.append(label);
+				if (!label.startsWith("'DUPLICATION")) {
+					res.append(label);
+				} else {
+					res.append(label.substring(12,label.length()-1));
+				}
 			}
+			res.append("]");
+		} else {
+			
+			res.append("[&&NHX");
+			res.append(":S=");
+			res.append(this.speciesMapping(speciesTree).label.replace(" ","."));
 			res.append("]");
 		}
 	}

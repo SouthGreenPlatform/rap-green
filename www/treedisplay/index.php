@@ -135,6 +135,9 @@ var tree= <?php
 ?>
 
 </script>
+
+
+
 <script type="text/javascript">
 addAnnot("GO",1,"popup");
 addAnnot("PO",1,"popup");
@@ -163,6 +166,11 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['d
 
 </script>
 
+<?php
+
+ include('postannotation.php');
+
+?>
 </td></tr></table>
 
 

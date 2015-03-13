@@ -429,7 +429,7 @@ public class RapGreen {
 					}
 					if (outputSpecies!=null) {
 						BufferedWriter xmlWrite= new BufferedWriter(new FileWriter(outputSpecies));
-						xmlWrite.write(reconciler.speciesTree.toPhyloXMLString(dico) + "\n");
+						xmlWrite.write(reconciler.speciesTree.getNewick() + "\n");
 						xmlWrite.flush();
 						xmlWrite.close();
 					}

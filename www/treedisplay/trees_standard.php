@@ -3,7 +3,7 @@
 var alertDebug=0;
 
 // Define primal dimensions and margins
-var width=1800;
+var width=<?php if (isSet($_REQUEST['width'])) { echo $_REQUEST['width'].';'; } else {?>1800;<?php } ?>
 var height=600;
 var margin=30;
 var annotMargin=400;
@@ -1773,7 +1773,7 @@ function fresizeTree(normalMod) {
 				this.text.setAttribute("x", this.x + 5);
 				this.text.setAttribute("y", this.y+ (fontSize/3));
 				this.text.setAttribute("font-size", fontSize);
-				this.text.setAttribute("fill", fontColor);
+				//this.text.setAttribute("fill", fontColor);
 				this.text.setAttribute("font-family", fontFamily);
 				if (this.addText==0) {
 					svg.appendChild(this.text);
@@ -2754,7 +2754,6 @@ function ftoneDown() {
 		
 	}
 }
-
 function fcolorizeSubtree(erasor) {
 	if (this.isColoringRoot==0) {
 		if (erasor==1) {
@@ -2824,6 +2823,65 @@ function fcolorizeSubtree(erasor) {
 	}
 }
 
+
+function fcolorizeStrictSubtreeWithLeaves(seqList) {
+				
+	var nbCo=0;
+	var nbId=0;
+	var first=0;
+	var last=0;
+	var count = this.sons.length;
+	if (count>0) {
+		var i=0;
+		for (i = 0; i < count; i++) {
+			var loc=this.sons[i].colorizeStrictSubtreeWithLeaves(seqList);
+			if (loc>0) {
+				nbId++;
+			}
+			nbCo+=loc;
+			if (i==0 && loc>0) {
+				first=1;
+			} 
+			if (i==count-1 && loc>0) {
+				last=1;
+			} 
+		}
+	} else {
+		if (seqList[this.taxon]!=null) {
+			if (this.text!=null) {
+				this.text.setAttribute("fill",seqList['color']);	
+			}	
+			nbCo=1;
+		
+		}
+	
+	}
+	
+	if ((count==0 && nbCo==1) || nbId>1 || (nbId==1 && nbCo<seqList['size'])) {
+		if (this.round!=null) {
+			this.round.setAttribute("stroke",seqList['color']);	
+		}	
+		if (this.line!=null) {
+			this.line.setAttribute("stroke",seqList['color']);		
+		}
+		if (this.left1!=null && first==1) {
+			this.left1.setAttribute("stroke",seqList['color']);	
+		}	
+		if (this.left2!=null && last==1) {
+			this.left2.setAttribute("stroke",seqList['color']);	
+		}	
+		if (this.poly!=null) {
+			this.poly.setAttribute("stroke",seqList['color']);		
+		}
+		if (this.nodeType!=null) {
+			this.nodeType.setAttribute("stroke",seqList['color']);		
+			this.nodeType.setAttribute("fill",seqList['color']);	
+		}
+	}
+	return nbCo;
+	
+}
+
 // ************************
 // Translate the gene tree
 function fgetNewick() {
@@ -2885,6 +2943,7 @@ Node.prototype.fillSplit=ffillSplit;
 Node.prototype.toneDownUndocumented=ftoneDownUndocumented;
 Node.prototype.toneDown=ftoneDown;
 Node.prototype.colorizeSubtree=fcolorizeSubtree;
+Node.prototype.colorizeStrictSubtreeWithLeaves=fcolorizeStrictSubtreeWithLeaves;
 Node.prototype.getNewick=fgetNewick;
 
 

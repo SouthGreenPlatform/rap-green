@@ -97,7 +97,7 @@ function annoteSpecific(id,tag) {
 
 </script>
 
-<table id="menu">
+<table id="menu" <?php if (isSet($_REQUEST['hidemenu']) && $_REQUEST['hidemenu']=='y') { ?>style="display:none;"<?php } ?>>
 <tr id="toptr"><td colspan=10></td></tr>
 <tr id="itemtr">
 
