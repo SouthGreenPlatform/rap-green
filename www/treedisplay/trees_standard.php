@@ -15,7 +15,7 @@ var taxaMargin=0;
 
 // Define the esthetic parameters of the tree displaying
 var fontFamily="Candara";
-var fontSize="14";
+var fontSize=14;
 var legendFontSize="14";
 var supportSize=11;
 var fontColor="black";
@@ -383,7 +383,8 @@ function drawAll() {
 			maxDepth=tree.maxDepth();
 		}
 		var nbLeaves= tree.nbLeaves();
-		height=nbLeaves*(parseInt(fontSize)+1)+2*margin;
+		height=<?php if (isSet($_REQUEST['height'])) { echo $_REQUEST['height'].';'; } else {?>nbLeaves*(parseFloat(fontSize)+1)+2*margin;<?php } ?>
+		<?php if (isSet($_REQUEST['height'])) { ?>fontSize=(height-2*margin)/nbLeaves-1;<?php } ?>
 		var maxTaxaString= tree.maxTaxaString();
 		taxaMargin= maxTaxaString * parseInt(fontSize) * 0.6 + annotMargin;
 
