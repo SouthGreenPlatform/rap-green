@@ -168,12 +168,14 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['d
 var focusParam="<?php echo $_REQUEST['focus']; ?>";
 var focusLeaf= indexOfleaves[focusParam];
 var focusText= focusLeaf.text;
-focusText.appendChild(document.createTextNode("    <<<"));
+//focusText.appendChild(document.createTextNode("    <<<"));
 focusText.setAttribute("font-weight","bold");
 focusText.setAttribute("text-decoration","underline");
 focusText.setAttribute("fill",tagColor);
 scrollTree(focusText.getAttribute("y")-200);
-
+focusLeaf.taxon="Focused sequence: "+focusLeaf.taxon;
+colorize(focusLeaf.taxon,tagColor);
+focusLeaf.taxon=focusLeaf.taxon.substring(18,focusLeaf.taxon.length());
 <?php
 }
 ?>
