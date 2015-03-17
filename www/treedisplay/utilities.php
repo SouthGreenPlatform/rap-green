@@ -141,7 +141,10 @@ window.onresize = function(event) {
 	if (document.getElementById("legend").style.display != "none" ) {
 		toset=  ( myHeight - 100) + "px";
 	}
-	target.style.height = toset;
+	target.style.height = toset; 
+}
+function scrollTree(yValue) {
+document.getElementsByName("treeDivId")[0].scrollTop=yValue;
 }
 
 </script>

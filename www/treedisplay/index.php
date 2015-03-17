@@ -108,7 +108,7 @@ function collapseType(val) {
 		
 		
 ?>
-<div id="treeDivId" style="overflow:scroll; width : 100% ; height : 800px ;">
+<div name="treeDivId" id="treeDivId" style="overflow:scroll; width : 100% ; height : 800px ;">
 <table id="organise"><tr><td id="treePanel" name="treePanel">
 
 
@@ -160,6 +160,20 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['d
 } else if (isSet($_REQUEST['data']) && $_REQUEST['data']=="genfam") {
 ?>
 	tree.annoteValues(6,"blue",titlesExpress,sumExpress/nbExpress*2.5,expvalues,0);
+<?php
+}
+?>
+
+<?php if (isSet($_REQUEST['focus'])) {?>
+var focusParam="<?php echo $_REQUEST['focus']; ?>";
+var focusLeaf= indexOfleaves[focusParam];
+var focusText= focusLeaf.text;
+focusText.appendChild(document.createTextNode("    <<<"));
+focusText.setAttribute("font-weight","bold");
+focusText.setAttribute("text-decoration","underline");
+focusText.setAttribute("fill",tagColor);
+scrollTree(focusText.getAttribute("y")-200);
+
 <?php
 }
 ?>

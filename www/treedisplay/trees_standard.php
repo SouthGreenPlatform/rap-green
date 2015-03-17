@@ -47,6 +47,7 @@ var operatingSteps;
 //color;
 
 var selection="";
+var indexOfleaves=new Array();
 
 function addAnnot(tag,defaultValue,defaultType) {
 	annotX=10;
@@ -592,6 +593,7 @@ function Node(newick) {
 			this.colored=1;
 
 		}
+		indexOfleaves[this.taxon]=this;
 
 		if (newick.charAt(index)==":") {
 			index++;
@@ -632,6 +634,8 @@ function Node(newick) {
 
 
 }
+
+
 // ************************
 // Print the tree in text
 function fprintTree(quote) {
