@@ -175,6 +175,7 @@ focusText.setAttribute("fill",tagColor);
 scrollTree(focusText.getAttribute("y")-200);
 focusLeaf.taxon="Focused sequence: "+focusLeaf.taxon;
 colorize(focusLeaf.taxon,tagColor);
+focusText.setAttribute("font-size",(2+parseFloat(focusText.getAttribute("font-size"))));
 focusLeaf.taxon=focusLeaf.taxon.substring(18,focusLeaf.taxon.length());
 <?php
 }
