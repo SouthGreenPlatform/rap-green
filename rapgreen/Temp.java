@@ -17,7 +17,62 @@ public class Temp {
 // ********************
 	public static void main(String[] args) {
 		try {
-			if (args.length>1 && args[1].equals("classify")) {
+			if (args.length>1 && args[1].equals("cleanAnne")) {
+				BufferedReader read2= new BufferedReader(new FileReader(new File(args[0])));
+				String s2= read2.readLine();
+				
+
+				
+				
+				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));
+				String s= read.readLine();
+				Vector ref= new Vector();
+				while (s!=null) {
+					/*if (s.indexOf("_SG")!=-1) {
+						s=s.substring(1,s.indexOf("_SG"));
+					} else {
+						s=s.substring(1,s.indexOf("_Non_LRR"));
+					}
+					
+					if (s2.indexOf(s.substring())!=-1) {
+					
+					}*/
+					try {
+					if (s.indexOf("_SG")!=-1) {
+						ref.addElement(s.substring(1,s.indexOf("_SG")));
+					
+					} else {
+						ref.addElement(s.substring(1,s.indexOf("_Non_LRR")+8));
+					}
+					} catch(Exception exp) {
+						System.out.println("error in:"+s);
+					}
+					s= read.readLine();
+				}		
+				
+				Tree tree= new Tree(s2);
+				tree.pretreatment();	
+				
+				for (int i=0;i<tree.leafVector.size();i++) {
+					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+					for (int j=0;j<ref.size();j++) {
+						String lab= (String)(ref.elementAt(j));
+						if (lab.indexOf(leaf.label)!=-1 && !lab.equalsIgnoreCase(leaf.label)) {
+							//System.out.println("Conversion:" + leaf.label + " >> " + lab);
+							leaf.label=lab;
+						}
+					}
+					if (leaf.label.endsWith("Non_LRR")) {
+						leaf.label="No_LRR_"+leaf.label.substring(0,leaf.label.indexOf("_Non_LRR"));
+					}
+					leaf.label=leaf.label.replace("ARATH1","ARATH");
+					leaf.label=leaf.label.replace("ORYSI1","ORYSI");
+					leaf.label=leaf.label.replace("ORYSJ1","ORYSJ");
+				}
+							
+				System.out.println(tree.getNewick());			
+			
+			} else if (args.length>1 && args[1].equals("classify")) {
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));
 				String s= read.readLine();
 				Hashtable kingdom= new Hashtable();
@@ -92,6 +147,63 @@ public class Temp {
 					System.out.println(localKingdom + "\t" + lTrees + "\t" + lSequences);
 					
 				}				
+				
+			} else if (args.length>1 && args[1].equals("formatGenomicus")) {
+				File[] files= (new File(args[0])).listFiles();
+				
+				BufferedReader buf= new BufferedReader(new FileReader(args[4]));
+				Hashtable duplications= new Hashtable();
+				String test= buf.readLine();
+				test= buf.readLine();
+				while (test!=null) {
+					String[] tests=test.split("	");
+					duplications.put(tests[0] + "#" + tests[2],"ok");
+					test= buf.readLine();
+				}
+				buf.close();
+				
+				
+				TreeReader treeReader= new TreeReader(new File(args[2]),TreeReader.NEWICK);
+				Tree speciesTree= treeReader.nextTree();
+				speciesTree.pretreatment();
+				for (int j=0;j<files.length;j++) {
+					try {						
+						buf= new BufferedReader(new FileReader(files[j]));
+						test= buf.readLine();
+						buf.close();
+						if (test.length()>1 && !test.startsWith(";")) {
+							Tree tree= new Tree(test);
+							tree.pretreatment();
+							for (int i=0;i<tree.leafVector.size();i++) {
+								Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+								int k=3;
+								boolean founded=false;
+								while (k+2<args.length && !founded) {
+									k+=2;
+									founded=leaf.label.startsWith(args[k]);
+								}
+								if (!founded) {
+									System.out.println("Warning: " + files[j].getName() + " " + leaf.label + " ; unknown species");
+								} else {
+									leaf.label= leaf.label.substring(args[k].length()+1,leaf.label.length()) + "_" + args[k+1];
+								}
+							}
+													
+							
+							BufferedWriter write= new BufferedWriter(new FileWriter(new File(args[3] + "/" + files[j].getName())));
+							write.write(tree.getNHXNewick(speciesTree, duplications,files[j].getName().substring(0,files[j].getName().lastIndexOf("_")) ) + "\n");
+							write.flush();
+							write.close();
+						}
+					} catch(Exception exp) {
+						System.out.println(files[j].getName());
+						exp.printStackTrace();
+					}	
+					if (j%100==0) {
+						System.out.println(j);
+					}			
+					
+				}			
 				
 			} else if (args.length>1 && args[1].equals("dico")) {
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));

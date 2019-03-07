@@ -417,7 +417,7 @@ public class RapGreen {
 							}
 						}	
 						BufferedWriter geneWriter= new BufferedWriter(new FileWriter(outputNHX));
-						geneWriter.write(copyCat.getNHXNewick(speciesTree) + "\n");	
+						geneWriter.write(copyCat.getNHXNewick(speciesTree,null,null) + "\n");	
 						geneWriter.flush();
 						geneWriter.close();				
 					}					

@@ -109,6 +109,7 @@ public class ReconciliationDatabaseDaemon {
 
    private static final String UNDERLINE  = "\u001b[4m";
 
+	private static Tree treeDebug;
 
 // *******************************************************************************
 
@@ -259,7 +260,7 @@ public class ReconciliationDatabaseDaemon {
 
 				argsFilesDico.addElement(localArgs);
 
-	        	i+=3;
+	        	i+=4;
 				if (i+6<args.length && args[i+6].equals("invert")) {
 					i++;
 				}
@@ -276,7 +277,7 @@ public class ReconciliationDatabaseDaemon {
 			if (args[i].equalsIgnoreCase("-port")) {
 
 				port= (new Integer(args[i+1])).intValue();
-
+				System.out.println("Port fixed to " + port);
 
 			}
 			if (args[i].equalsIgnoreCase("-results")) {
@@ -351,8 +352,8 @@ public class ReconciliationDatabaseDaemon {
 						tree.addSpeciations();
 					}
 					tree.taxonomicPretreatment();
-					//System.out.println(tree);
 					geneStructures.put(localId,tree);
+					treeDebug=tree;
 					lak++;
 					if (lak%1000==0)
 						System.out.println(lak);
@@ -762,6 +763,7 @@ public class ReconciliationDatabaseDaemon {
 
         try {
         	server= new ServerSocket(port);
+        	//System.out.println("DEBUGAVANT:\n" + treeDebug);
         	System.out.println("\nWaiting for clients...");
         	while (true) {
         		Socket socket=server.accept();
@@ -1058,6 +1060,7 @@ public class ReconciliationDatabaseDaemon {
 					Tree pattern= new Tree(patternString);
 					pattern.patternPretreatment(tree,dic);
 					Tree geneTree= new Tree((Tree)(trees.get(id)));
+					//System.out.println(geneTree);
 					geneTree.taxonomicPretreatment();
 					Vector colored= new Vector();
 					Hashtable stickers= new Hashtable();
@@ -1074,7 +1077,8 @@ public class ReconciliationDatabaseDaemon {
 					}
 
 					out.println(geneTree.getNewick());
-
+					
+        			//System.out.println("DEBUGAPRES:\n" + treeDebug);
 
 
 				} else if (s.equals("saveResults")) {
@@ -1142,6 +1146,8 @@ public class ReconciliationDatabaseDaemon {
 									}
 									prev=stick;*/
 									out.println(id + ";" + localTree.label + ";" + stick + ";" + count);
+							//write.write(id + ";" + localTree.label + ";" + stick + ";" + count + "\n");
+							//write.flush();									
 								}
 							}
 

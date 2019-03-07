@@ -16,7 +16,12 @@ public class TreeFilter {
 * Input tree file
 */
 	public static File treeFile;
-
+	
+/**
+* Input species tree file
+*/
+	public static File speciesFile;
+	
 /**
 * Output cluster file
 */
@@ -41,6 +46,14 @@ public class TreeFilter {
 	public static boolean clean=false;
 	
 	public static boolean newick=false;
+	
+	public static boolean newick2NHX=false;
+	
+	public static boolean replaceId=false;
+	
+	public static boolean ignoreCode=false;
+	
+	public static String key="";
 
 // ********************************************************************************************************************
 // ***     MAIN     ***
@@ -50,6 +63,8 @@ public class TreeFilter {
 		treeFile=null;
 		idList= new Vector();
 		idTable= new Hashtable();
+		int index1=0;
+		int index2=0;
 		try {
 			for (int i=0;i<args.length;i=i+2) {
 				if (args[i].equalsIgnoreCase("-input")) {
@@ -70,10 +85,118 @@ public class TreeFilter {
 					newick=true;
 					i--;
 				}
-								
+				if (args[i].equalsIgnoreCase("-key")) {
+					key= args[i+1];
+				}
+				if (args[i].equalsIgnoreCase("-newick2NHX")) {
+					newick2NHX=true;
+					speciesFile= new File(args[i+1]);
+					
+				}
+				if (args[i].equalsIgnoreCase("-replaceId")) {
+					replaceId=true;
+					speciesFile= new File(args[i+1]);
+					index1=(new Integer(args[i+2])).intValue();
+					index2=(new Integer(args[i+3])).intValue();
+					i+=2;
+					
+				}
+				if (args[i].equalsIgnoreCase("-ignoreSpeciesCode")) {
+					ignoreCode=true;
+					i--;
+				}												
+			}
+			if (replaceId) {
+				BufferedReader read= new BufferedReader(new FileReader(speciesFile));
+				String s= read.readLine();
+				Hashtable dico= new Hashtable();
+				while (s!=null) {
+				try {
+					//System.out.println("integrate: " + s);
+					String[] splited= s.split("\t");
+					dico.put(splited[index1],splited[index2]);
+					s= read.readLine();
+				} catch(Exception ex) {
+					ex.printStackTrace();
+					System.out.println("error in:" + s);
+					System.exit(0);
+				}
+				
+				}
+				read.close();
+				TreeReader treeReader= new TreeReader(treeFile,TreeReader.NEWICK);
+				Tree tree= treeReader.nextTree();
+				tree.pretreatment();
+				
+				for (int i=0;i<tree.leafVector.size();i++) {
+					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+					
+					if ((!ignoreCode && dico.containsKey(leaf.label/*.substring(0,leaf.label.lastIndexOf("_"))*/)) || (ignoreCode && dico.containsKey(leaf.label.substring(0,leaf.label.lastIndexOf("_"))))) {
+						String trans= null;
+						
+						if (ignoreCode) {
+							trans=(String)(dico.get(leaf.label.substring(0,leaf.label.lastIndexOf("_")))) + "_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1, leaf.label.length());
+						} else {
+							trans=(String)(dico.get(leaf.label/*.substring(0,leaf.label.lastIndexOf("_"))*/));
+						}
+						//String specie=leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
+						System.out.println("replacement:" + leaf.label + " with " + trans);
+						leaf.label=trans /*+ "_" + specie*/;
+						
+					} else {
+						//System.out.println("Warning: " + leaf.label);
+					}
+						
+						
+				}	
+				BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+				write.write(tree.getNewick() + "\n");		
+				write.flush();
+				write.close();
 			}
 			
-			if (clean) {
+			if (newick2NHX) {
+ 				File[] treeFiles = treeFile.listFiles();	
+
+				TreeReader read= null;
+				BufferedReader buf= new BufferedReader(new FileReader(speciesFile));
+				String test= buf.readLine();
+				buf.close();
+				if (test.endsWith(";")) {
+					read= new TreeReader(speciesFile,TreeReader.NEWICK);
+				} else {
+					read= new TreeReader(speciesFile,TreeReader.XML);
+				}
+				Tree speciesTree= read.nextTree();
+				speciesTree.pretreatment();
+			
+	        	for (int i=0;i<treeFiles.length;i++) {		
+	        		if (treeFiles[i].getName().contains(key)) {
+						read= null;
+						buf= new BufferedReader(new FileReader(treeFiles[i]));
+						test= buf.readLine();
+						buf.close();
+						if (test.endsWith(";")) {
+							read= new TreeReader(treeFiles[i],TreeReader.NEWICK);
+						} else {
+							read= new TreeReader(treeFiles[i],TreeReader.XML);
+						}
+						Tree tree= read.nextTree();
+						tree.pretreatment();
+						BufferedWriter write= new BufferedWriter(new FileWriter(new File(outputFile.getPath() + "/" + treeFiles[i].getName() + ".nhx")));
+						write.write(tree.getNHXNewick(speciesTree,null,null) + "\n");	
+						write.flush();
+						write.close();							
+						
+					}	        	
+	        	
+	        	
+	        	
+	        	}		
+			
+				System.exit(0);
+			
+			} else if (clean) {
 				TreeReader reader= new TreeReader(treeFile,TreeReader.NEWICK);
 				Tree tree= reader.nextTree();	
 				tree.pretreatment();
@@ -119,36 +242,12 @@ public class TreeFilter {
 				}
 				
 			} else {*/
-				if (tree.exclude(idList,idTable,excluded)) {
-					StringBuffer relations= new StringBuffer();
-					filterRelations(relations,excluded);
-					String phylo= tree.toPhyloXMLString(relations);
-					if (outputFile!=null) {
-						BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
-						if (newick) {
-							write.write(tree.getNewick()+"\n");
-						} else {
-							write.write(phylo+"\n");
-						}
-						write.flush();
-						write.close();
-					} else {
-						if (newick) {
-							System.out.println(tree.getNewick());
-						} else {
-							System.out.println(phylo);		
-						}		
-					}
-					
-					//System.out.println("******\n\n" + tree.getNewick());
-				} else {				
-					System.out.println("Empty tree.");
-				}
+
 			//}
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("Usage for standard tree filtering:\njava -jar TreeFilter.jar -input your_tree_file -remove taxid_to_remove [-remove taxid_to_remove] [-output your_output_file] [-newick]\n");
+			System.out.println("Usage for standard tree filtering:\njava -jar TreeFilter.jar -input your_tree_file -remove taxid_to_remove [-remove taxid_to_remove] [-output your_output_file] [-newick] [-newick2NHX] [-key]\n");
 		}
 	}
 

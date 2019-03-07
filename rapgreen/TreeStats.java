@@ -1,6 +1,7 @@
 package rapgreen;
 import java.util.*;
 import java.io.*;
+import java.util.regex.*;
 
 /**
  * @author Jean-Francois Dufayard
@@ -50,6 +51,7 @@ public class TreeStats {
 	public static boolean orthologs=false;
 	public static boolean aeluropus=false;
 	public static boolean banana=false;
+	public static boolean duplicationmatrix=false;
 	public static boolean monodic=false;
 
 
@@ -101,6 +103,8 @@ public class TreeStats {
 					System.out.println(BOLD);
 					System.out.println("-allstats" + NORMAL + " "  + UNDERLINE + "species_tree\n\t" + NORMAL + "Count the number of duplications, losses, and ancestral copies for each node of the species tree");
 					System.out.println(BOLD);
+					System.out.println("-duplicationmatrix\n\t" + NORMAL + "Compute a duplication matrix, regarding a species tree annotated by WGD and WGT. Quite confidential for GenFam Project.");
+					System.out.println(BOLD);					
 					System.out.println("OPTIONS:");
 					System.out.println(BOLD);
 					System.out.println("-key" + NORMAL + " "  + UNDERLINE + "keyword\n\t" + NORMAL + "Parse only tree files containing this keyword");
@@ -150,6 +154,9 @@ public class TreeStats {
 					i--;
 				} else if (args[i].equalsIgnoreCase("-banana")) {
 					banana= true;
+					i--;
+				} else if (args[i].equalsIgnoreCase("-duplicationmatrix")) {
+					duplicationmatrix= true;
 					i--;
 				} else if (args[i].equalsIgnoreCase("-subspecies")) {
 					Hashtable localSub= new Hashtable();
@@ -488,7 +495,106 @@ public class TreeStats {
 	        	
 	        	write.close();				
 				
-			}  else if (monodic) {
+			} else if (duplicationmatrix) {
+				BufferedReader buf= new BufferedReader(new FileReader(treeFile));
+				String test= buf.readLine();
+				buf.close();
+				Tree speciesTree= new Tree(test);
+				speciesTree.pretreatment();	
+				
+				Hashtable res= new Hashtable();
+				
+				for (int i=0;i<speciesTree.leafVector.size();i++) {
+				
+					for (int j=i;j<speciesTree.leafVector.size();j++) {
+						Tree leaf1=(Tree)(speciesTree.leafVector.elementAt(i));
+						Tree leaf2=(Tree)(speciesTree.leafVector.elementAt(j));
+						if (leaf1==leaf2) {		
+							int nb1=1;
+							if (leaf1.nhx!=null) {
+								int nbD=TreeStats.stringOccur(leaf1.nhx, "DUP");
+								int nbT=TreeStats.stringOccur(leaf1.nhx, "TRI");
+								for (int k=0;k<nbD;k++) {
+									nb1=nb1*2;
+								}
+								for (int k=0;k<nbT;k++) {
+									nb1=nb1*3;
+								}
+							}	
+							res.put(leaf1.label + ":" + leaf1.label,nb1 + ":" + nb1);						
+						} else {
+							Tree lca=speciesTree.lastCommonAncestor(leaf1,leaf2);
+							int nb1=1;
+							Tree runner=leaf1;
+							while (runner!=lca) {
+								if (runner.nhx!=null) {
+									int nbD=TreeStats.stringOccur(runner.nhx, "DUP");
+									int nbT=TreeStats.stringOccur(runner.nhx, "TRI");
+									/*if (runner.nhx!=null && runner.nhx.length()>1) {
+										System.out.println(TreeStats.stringOccur(runner.nhx, "TRI"));
+									}*/
+									for (int k=0;k<nbD;k++) {
+										nb1=nb1*2;
+									}
+									for (int k=0;k<nbT;k++) {
+										nb1=nb1*3;
+									}
+								}
+							
+								runner=runner.father;
+							}
+							int nb2=1;
+							runner=leaf2;
+							while (runner!=lca) {
+								if (runner.nhx!=null) {
+									int nbD=TreeStats.stringOccur(runner.nhx, "DUP");
+									int nbT=TreeStats.stringOccur(runner.nhx, "TRI");
+									/*if (runner.nhx!=null && runner.nhx.length()>1) {
+										System.out.println(TreeStats.stringOccur(runner.nhx, "TRI"));
+									}*/
+									for (int k=0;k<nbD;k++) {
+										nb2=nb2*2;
+									}
+									for (int k=0;k<nbT;k++) {
+										nb2=nb2*3;
+									}
+								}
+							
+								runner=runner.father;
+							}	
+							//System.out.println(leaf1.label + ":" + leaf2.label + " " + nb1 + ":" + nb2);
+							res.put(leaf1.label + ":" + leaf2.label,nb1 + ":" + nb2);	
+							res.put(leaf2.label + ":" + leaf1.label,nb2 + ":" + nb1);		
+						}			
+					}
+				
+				}
+				
+				
+	        	BufferedWriter write= new BufferedWriter(new FileWriter(outputFile));
+	        	write.write("species\t" + ((Tree)(speciesTree.leafVector.elementAt(0))).label);
+				for (int i=1;i<speciesTree.leafVector.size();i++) {		
+	        		write.write("\t" + ((Tree)(speciesTree.leafVector.elementAt(i))).label);
+				}
+				write.write("\n");
+				write.flush();
+				for (int i=0;i<speciesTree.leafVector.size();i++) {				
+	        		write.write(((Tree)(speciesTree.leafVector.elementAt(i))).label);
+					for (int j=0;j<speciesTree.leafVector.size();j++) {
+						Tree leaf1=(Tree)(speciesTree.leafVector.elementAt(i));
+						Tree leaf2=(Tree)(speciesTree.leafVector.elementAt(j));
+						String localScore=(String)(res.get(leaf1.label + ":" + leaf2.label));
+						write.write("\t" + localScore);
+					}
+					write.write("\n");
+					write.flush();
+				}	        	
+					
+				write.close();	
+			
+			
+			
+			} else if (monodic) {
 			
 	        	File[] treeFiles = treeFile.listFiles();	
 
@@ -1450,7 +1556,30 @@ public class TreeStats {
 		}
 	}
 
+	/**
+	 * Renvoie le nombre d'occurrences de la sous-chaine de caractères spécifiée dans la chaine de caractères spécifiée
+	 * @param text chaine de caractères initiale
+	 * @param string sous-chaine de caractères dont le nombre d'occurrences doit etre compté
+	 * @return le nombre d'occurrences du pattern spécifié dans la chaine de caractères spécifiée
+	 */
+	 public static final int stringOccur(String text, String string) {
+		return regexOccur(text, Pattern.quote(string));
+	}
 
+	 /**
+	 * Renvoie le nombre d'occurrences du pattern spécifié dans la chaine de caractères spécifiée
+	 * @param text chaine de caractères initiale
+	 * @param regex expression régulière dont le nombre d'occurrences doit etre compté
+	 * @return le nombre d'occurrences du pattern spécifié dans la chaine de caractères spécifiée
+	 */
+	 public static final int regexOccur(String text, String regex) {
+		Matcher matcher = Pattern.compile(regex).matcher(text);
+		int occur = 0;
+		while(matcher.find()) {
+			occur ++;
+		}
+		return occur;
+	}
 
 
 }

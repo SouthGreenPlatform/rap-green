@@ -449,8 +449,9 @@ public class TreeReconciler {
 								g.sons.addElement(removed.sons.elementAt(i));
 							}
 							} catch(Exception e) {
-								System.out.println("pan : " + removed);
+								System.out.println("epan : " + removed);
 								e.printStackTrace();
+								System.out.println("endoftransmission");
 								System.exit(0);
 							}
 						} else {
