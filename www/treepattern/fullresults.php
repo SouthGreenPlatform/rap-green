@@ -36,7 +36,7 @@ socket_write($socket, $envoi, strlen($envoi));
 $trace="";
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$families=split("\n", $reception);
+	$families=preg_split("/\n/", $reception);
 	fwrite($fp, $trace.$families[0]."\n");
 	for ($i=1;$i<count($families)-1;$i++) {
 		// if the current word is significant

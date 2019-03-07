@@ -37,7 +37,7 @@ $count=0;
 
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$families=split("\n", $reception);
+	$families=preg_split("/\n/", $reception);
 	for ($i=0;$i<count($families);$i++) {
 		// if the current word is significant
 		if (strlen($families[$i])>0) {
@@ -79,7 +79,7 @@ socket_close($socket);
 		for ($i=0;$i<count($resfiles);$i++) {
 			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>display</a>";
 			
-			if ($displayadress[$_REQUEST['databank']]!="")	{
+			if (isSet($displayadress[$_REQUEST['databank']]) && $displayadress[$_REQUEST['databank']]!="")	{
 				echo "&nbsp;&nbsp;<a href='resultsSecondaryDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
 			
 			}	

@@ -11,7 +11,11 @@ function splitOnPress(e) {
         treeSplit(document.getElementById('splittreshold').value);
     }
 }
-
+function colorTaxaOnPress(e) {
+    if (e.keyCode == 13) {
+    	tree.colorTaxaCond(document.getElementById('colorcolortaxa').value,document.getElementById('wordcolortaxa').value);
+    }
+}
 function collapseOnPress(e) {
     if (e.keyCode == 13) {
         collapseLabel(document.getElementById('wordcollapse').value);
@@ -150,15 +154,11 @@ GRAPHICAL RENDERING
 <div id="popload" id="itempop" name="popload" style="display:none;" onmouseover="changeVisibiliteOnName('popload',1)" onmouseout="changeVisibiliteOnName('popload',0)">
 <form name="changeTreeForm" method="post"  action="index.php<?php if (isSet($_REQUEST['data'])) { echo '?data='.$_REQUEST['data']; }?>">
 <p id="textual" onmouseover="changeVisibiliteOnName('popload',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popload',1)" cols="12" rows="5" name="hiddenfield" id="hiddenfield"><?php echo $_POST['hiddenfield']; ?></textarea></p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
-<?php } ?>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="document.changeTreeForm.submit();">Load tree</p>
 </form>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="saveSVG();">Save as image</p>
-<?php } ?>
 </div>
 </td>
 </tr>
@@ -172,19 +172,20 @@ GRAPHICAL RENDERING
 <p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);"><input onkeypress="return colorOnPress(event)" onmouseover="changeVisibiliteOnName('popcoloration',1)" type="text" size="8" id="wordcolor" value="Arath" />&nbsp;Word</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);"><input onkeypress="return colorOnPress(event)" onmouseover="changeVisibiliteOnName('popcoloration',1)" type="text" size="8" id="colorcolor" value="#FF0000" />&nbsp;Color</p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcoloration',1);this.style.opacity = '1.0';" onclick="colorize(document.getElementById('wordcolor').value,document.getElementById('colorcolor').value);">Validate</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popcoloration',1)">
-<?php } ?>
+
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcoloration',1);this.style.opacity = '1.0';" onclick="resetColors();">Reset colors</p>
 
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popcoloration',1)">
 
 <p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);"><input onkeypress="return splitOnPress(event)" onmouseover="changeVisibiliteOnName('popcoloration',1)" type="text" size="8" id="splittreshold" value="0.5" />&nbsp;Threshold</p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcoloration',1);this.style.opacity = '1.0';" onclick="treeSplit(document.getElementById('splittreshold').value);">Split tree</p>
 
-<?php } ?>
-
+<hr id="large" onmouseover="changeVisibiliteOnName('popcoloration',1)">
+<p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);">Color sequence names:</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);"><input onkeypress="return colorTaxaOnPress(event)" onmouseover="changeVisibiliteOnName('popcoloration',1)" type="text" size="8" id="wordcolortaxa" value="Arath" />&nbsp;Word</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popcoloration',1);"><input onkeypress="return colorTaxaOnPress(event)" onmouseover="changeVisibiliteOnName('popcoloration',1)" type="text" size="8" id="colorcolortaxa" value="#FF0000" />&nbsp;Color</p>
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcoloration',1);this.style.opacity = '1.0';" onclick="tree.colorTaxaCond(document.getElementById('colorcolortaxa').value,document.getElementById('wordcolortaxa').value);">Validate</p>
 
 
 
@@ -218,9 +219,8 @@ GRAPHICAL RENDERING
 <?php 
 if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) {
 ?>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popcollapse',1)">
-<?php } ?>
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);">Featured annotations:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);"><input name="colfet1" onmouseover="changeVisibiliteOnName('popcollapse',1);" type=checkbox onclick="annoteSpecific('colorTypeI','TypeI_');">TypeI_&nbsp;
 <input onkeypress="changeColorCustom(event,'colorTypeI');" onmouseover="changeVisibiliteOnName('popcollapse',1)" type="text" size="8" id="colorTypeI" /><br></p>
@@ -269,9 +269,9 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <td id="poptd" colspan=10>
 <div id="popdisplay" id="itempop" name="popdisplay" style="display:none;" onmouseover="changeVisibiliteOnName('popdisplay',1);" onmouseout="changeVisibiliteOnName('popdisplay',0);">
 <p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input onmouseover="changeVisibiliteOnName('popdisplay',1);" type=checkbox name="support" onclick="changeSupport();">Branch support</input></p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popdisplay',1)">  
-<?php } ?>
+
 <p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input type="radio" onclick="changeTreeType('ultra');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Ultrametric" checked>Ultrametric<br>
 <input type="radio" onclick="changeTreeType('phylogram');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Phylogram">Phylogram</p>
 </div>
@@ -285,17 +285,17 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <td id="poptd" colspan=10>
 <div id="popzoom" id="itempop" name="popzoom" style="display:none;" onmouseover="changeVisibiliteOnName('popzoom',1);" onmouseout="changeVisibiliteOnName('popzoom',0);">
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="wZoomOut();"><img width="40px" src="img/zoomin_h.png"></p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
-<?php } ?>
+
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="wZoomIn();"><img width="40px" src="img/zoomout_h.png"></p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
-<?php } ?>
+
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="hZoomOut();"><img width="40px" src="img/zoomin_v.png"></p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
-<?php } ?>
+
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="hZoomIn();"><img width="40px" src="img/zoomout_v.png"></p>
 </div>
 
@@ -312,32 +312,28 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="linewidth" value="2" />&nbsp;Line width</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="linecolor" value="#05357E" />&nbsp;Line color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="roundray" value="20" />&nbsp;Round ray</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
-<?php } ?>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Branch annotations:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="collapsesize" value="3" />&nbsp;Lines per collapse</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="collapsecolor" value="#EEEEEE" />&nbsp;Collapse color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="opacitydegree" value="0.3" />&nbsp;Opacity degree</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
 <hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
-<?php } ?>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Texts:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="textfont" value="Candara" />&nbsp;Font family</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="fontcolor" value="Black" />&nbsp;Font color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="supportsize" value="11" />&nbsp;Support size</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
-<?php } ?>
+
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Background:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="backcolor" value="white" />&nbsp;Background color</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
-<?php } ?>
+
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="displayOnClick();">Apply</p>
-<?php if ($_REQUEST['ie']!=1 && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) == FALSE ) {?>
+
 <hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
-<?php } ?>
+
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Featured configurations:</p> 
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="document.getElementById('collapsecolor').value='#EEEEEE';document.getElementById('linecolor').value='#05357E';document.getElementById('fontcolor').value='black';document.getElementById('backcolor').value='white';displayOnClick();">Standard</p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="document.getElementById('collapsecolor').value='#888888';document.getElementById('linecolor').value='white';document.getElementById('fontcolor').value='white';document.getElementById('backcolor').value='black';displayOnClick();">Blackboard</p>

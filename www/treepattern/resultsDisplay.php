@@ -22,7 +22,7 @@
 
 </script>
 
-<form name="research" action="http://gohelle.cirad.fr/phylogeny/treedisplay/index.php" method="post">
+<form name="research" action="http://phylogeny.southgreen.fr/treedisplay/index.php?data=essai" method="post">
 <input type="hidden" name="hiddenfield" value="PLOUF">
 <input type="hidden" name="complementary" value="PLOUF">
 </form>
@@ -47,12 +47,16 @@ $envoi=$_REQUEST['databank']."\n";
 socket_write($socket, $envoi, strlen($envoi));
 $envoi=$_REQUEST['id']."\n";
 socket_write($socket, $envoi, strlen($envoi));
-$envoi=$_REQUEST['pattern']."\n";
+if (isSet($_REQUEST['pattern'])) {
+	$envoi=$_REQUEST['pattern']."\n";
+} else {
+	$envoi="XXXXX:-1[<R>XXXXX</R><S>1</S>];\n";
+}
 socket_write($socket, $envoi, strlen($envoi));
 $count=0;
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$families=split("\n", $reception);
+	$families=preg_split("/\n/", $reception);
 	//echo $reception;
 
 	for ($i=0;$i<count($families);$i++) {

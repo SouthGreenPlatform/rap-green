@@ -13,4 +13,5 @@ $resdir="";
 $displayadress=Array("My base" => "My address");
 /* name of the secondary visualisator */
 $displaytag=Array("My base" => "My tag");
+
 ?>

@@ -49,7 +49,7 @@ while ($reception = socket_read($socket, 2048)) {
 
 
 }
-$species=split("\n", $rough);
+$species=preg_split("/\n/", $rough);
 
 ?>
 

@@ -5,7 +5,6 @@
 <head>
 <!-- Standard headers (CSS...) -->
 <?php
-
  include('header.php');
 
 ?>
@@ -23,15 +22,8 @@
  include('annotations.php');
 
 ?>
-<?php 
-//echo $_SERVER['HTTP_USER_AGENT'];
-if ($_REQUEST['ie']==1 || strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE' ) !== FALSE ) {
-	//deprecated include("trees_ie.php"); 
-	include("trees_standard.php");
-} else {
-	
-	include("trees_standard.php");
-}
+<?php  
+include("trees_standard.php");
 ?>
 <?php
 
@@ -159,11 +151,23 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="EIL_banana" || $_REQUEST['d
 <?php
 } else if (isSet($_REQUEST['data']) && $_REQUEST['data']=="genfam") {
 ?>
-	tree.annoteValues(6,"blue",titlesExpress,sumExpress/nbExpress*2.5,expvalues,0);
+	//alert("1");
+	createIdeven(tree,ideven);
+	tree.annoteValues(6,"blue",titlesExpress,sumExpress/nbExpress*2.5,sumNegExpress/nbNegExpress*2.5,expvalues,0);
+	linkGeneFamEvent(tree);
+	//alert("2");
 <?php
 }
 ?>
-
+<?php
+if (isSet($_REQUEST['data']) && $_REQUEST['data']=="express") {
+?>
+	//alert("1");
+	tree.annoteValues(6,"blue",titlesExpress,sumExpress/nbExpress*2.5,sumNegExpress/nbNegExpress*2.5,expvalues,0);
+	//alert("2");
+<?php
+}
+?>
 <?php if (isSet($_REQUEST['focus'])) {?>
 var focusParam="<?php echo $_REQUEST['focus']; ?>";
 var focusLeaf= indexOfleaves[focusParam];
