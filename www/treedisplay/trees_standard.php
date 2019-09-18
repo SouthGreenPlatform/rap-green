@@ -301,7 +301,7 @@ function resizeSVG() {
 			}
 		}
 	   	tree.resizeTree(1);
-		
+
 		if (splitsValues.length>0) {
 			drawSplits();
 		}
@@ -418,14 +418,14 @@ function drawAll() {
 	   	clickedTreeNodes= new Array();
 	   	tree.drawTree(taxaMargin,1,1);
 		document.getElementsByName("treePanel")[0].appendChild(svg);
-    
+
 		document.getElementById('hiddenfield').value = tree.getNewick() + ";";
-        /*var selection = window.getSelection();            
+        /*var selection = window.getSelection();
         var range = document.createRange();
         range.selectNodeContents(selection);
         selection.removeAllRanges();
         selection.addRange(range);*/
-        
+
 		//selection.focus();
 	}
 }
@@ -455,7 +455,7 @@ function Node(newick) {
 
 	// Specific coordinate to manage phylogram collapsing
 	this.upx=0.0;
-	
+
 	this.father=null;
 
 
@@ -502,17 +502,17 @@ function Node(newick) {
 
 	this.xtext= new Array();
 	this.addXtext= new Array();
-	
+
 	// Mark of coloring point for branch annotation
 	this.isColoringRoot=0;
 
 
 	// Coloration of pattern matching
 	this.colored=0;
-	
+
 	// general color
 	this.color="";
-	
+
 	// intialisation of opacity
 	this.opacity="1.0";
 
@@ -560,7 +560,7 @@ function Node(newick) {
 		if (newick.charAt(index)=="[") {
 			var ends= newick.substring(index,newick.length);
 			var ext= ends.substring(0,ends.indexOf("]"));
-			
+
 			if (ext.indexOf(":C=")!=-1) {
 				var colorLocalPrev=ext.substring(ext.indexOf(":C=")+3,ext.length);
 				var coltab= colorLocalPrev.split(".");
@@ -585,13 +585,13 @@ function Node(newick) {
 				this.opacity=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
 				//alert(this.color);
 			}
-			
+
 			while (newick.charAt(index)!="]") {
 				index++;
 			}
-			index++;	
-		
-		}	
+			index++;
+
+		}
 	} else {
 
 		// The leaf case
@@ -647,9 +647,9 @@ function Node(newick) {
 			while (newick.charAt(index)!="]") {
 				index++;
 			}
-			index++;	
-		
-		}			
+			index++;
+
+		}
 	}
 
 
@@ -753,7 +753,7 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 	var count = this.sons.length;
 	var loc=0;
 	if (count>0) {
-	
+
 	//alert("echo3");
 		// It's a node
 		var i = 0;
@@ -762,11 +762,11 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 				loc+= this.sons[i].annoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,express,modif);
 			} else {
 				loc+= this.sons[i].annoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,express,modif);
-				
+
 			}
 		}
-	} else {	
-	
+	} else {
+
 	//alert("echo4");
 		// It's a leaf
 
@@ -775,7 +775,7 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 		var i = 0;
 		for (i = 0; i < labelExpress.length; i++) {
 			var nbtags= this.tags.length;
-			/*if (legendLabels.length<size) {	
+			/*if (legendLabels.length<size) {
 				var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			//alert(width + " " + (12+width + annotX - margin - annotMargin + (nbtags*tagWidth)) + " " + legendHeight);
 				text1.setAttribute("x", (12+width + annotX - margin - annotMargin + (nbtags*tagWidth)));
@@ -806,10 +806,10 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 			this.tags[nbtags].setAttribute("legend-pop", labelExpress[i] + ":" + savedValue);
 			this.tags[nbtags].setAttribute("x", (width + annotX  - margin - annotMargin + ((initLength+labelExpress.length)*tagWidth)));
 			this.tags[nbtags].setAttribute("y", (this.y + (parseInt(fontSize))/2));
-			
+
 			this.tags[nbtags].addEventListener("mouseover", tagMouseOver, false);
 			this.tags[nbtags].addEventListener("mouseout", tagMouseOut, false);
-			
+
 			var colorValue="white";
 			if (express[this.taxon]!=null && (express[this.taxon][i]=="NA" || express[this.taxon][i]=="N/A")) {
 				colorValue="gray";
@@ -820,7 +820,7 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 				}
 				if (localValue<0 && localValue*(-1)<maxNegExpress) {
 					colorInt=(parseInt(255.0-(255/maxNegExpress*localValue*(-1)))).toString(16);
-				}			
+				}
 				if (colorInt.length==1) {
 					colorInt="0"+colorInt;
 				}
@@ -829,7 +829,7 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 					colorValue="#ff"+colorInt+colorInt;
 				} else {
 					colorValue="#"+colorInt+colorInt+"ff";
-			
+
 				}
 			}
 			//alert(localValue + " "  + colorValue);
@@ -844,7 +844,7 @@ function fannoteValues(size,colorLocal,labelExpress,maxExpress,maxNegExpress,exp
 
 
 
-	
+
 	return loc;
 }
 // ************************
@@ -861,7 +861,7 @@ function fcolorizeArbitrarly(colorparam,hide) {
 				loc+= this.sons[i].colorizeArbitrarly(colorparam,0);
 			} else {
 				loc+= this.sons[i].colorizeArbitrarly(colorparam,1);
-				
+
 			}
 		}
 	} else {
@@ -870,7 +870,7 @@ function fcolorizeArbitrarly(colorparam,hide) {
 
 		//alert(this.color);
 		//this.text.setAttributeNS(null, "fill",colorparam);
-		
+
 		var nbtags= this.tags.length;
 		this.tags[nbtags]= document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 
@@ -889,7 +889,7 @@ function fcolorizeArbitrarly(colorparam,hide) {
 
 
 
-	
+
 	return loc;
 }
 
@@ -968,7 +968,7 @@ function fcolorizeByAnnotation(wordparam,colorparam,hide,resreqarray) {
 			inInfos=1;
 		}
 
-		
+
 		if (inInfos==1 || this.taxon.toLowerCase().indexOf(wordparam.toLowerCase(),0)!=-1 || infos[this.taxon]!=null) {
 			if (inInfos==1 || this.taxon.toLowerCase().indexOf(wordparam.toLowerCase(),0)!=-1 || (infos[this.taxon]["GO"]!=null && (infos[this.taxon]["GO"]).toLowerCase().indexOf(wordparam.toLowerCase(),0)!=-1) || (infos[this.taxon]["PO"]!=null && (infos[this.taxon]["PO"]).toLowerCase().indexOf(wordparam.toLowerCase(),0)!=-1)) {
 				//alert(this.color);
@@ -1505,11 +1505,13 @@ function fresizeTree(normalMod) {
 				if (sup.length>5) {
 					sup=sup.substring(0,5);
 				}
-				this.sup.setAttribute("x", this.x - parseInt(supportSize)*sup.length/2.0 - 2);
-				this.sup.setAttribute("y", this.y - parseInt(supportSize)/3 - 4);
-				if (this.addSup==0) {
-					this.addSup=1;
-					svg.appendChild(this.sup);
+				if (parseFloat(sup)>=0.6) {
+					this.sup.setAttribute("x", this.x - parseInt(supportSize)*sup.length/2.0 - 2);
+					this.sup.setAttribute("y", this.y - parseInt(supportSize)/3 - 4);
+					if (this.addSup==0) {
+						this.addSup=1;
+						svg.appendChild(this.sup);
+					}
 				}
 			} else {
 				if (this.addSup==1) {
@@ -1644,7 +1646,7 @@ function fresizeTree(normalMod) {
 						svg.appendChild(this.nodeType);
 					}
 				}
-				
+
 				if (this.support.indexOf("T_",0)!=-1) {
 					this.nodeType.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
 					//this.nodeType.setAttribute("stroke", lineColor);
@@ -1704,7 +1706,7 @@ function fresizeTree(normalMod) {
 						if (this.sons[i].colored==1 && this.colored==1) {
 							//this.sons[i].line.setAttribute("stroke", tagColor);
 							this.sons[i].line.setAttribute("stroke-dasharray","5 5");
-							
+
 
 						} else {
 							//this.sons[i].line.setAttribute("stroke", lineColor);
@@ -1735,7 +1737,7 @@ function fresizeTree(normalMod) {
 								polyCol.setAttribute('stroke', this.sons[i].line.getAttribute("stroke"));
 							} else {
 								polyCol.setAttribute('stroke', lineColor);
-							
+
 							}
 							polyCol.setAttribute("stroke-width", lineWidth);
 							polyCol.setAttribute('fill', collapseColor);
@@ -1860,7 +1862,7 @@ function fresizeTree(normalMod) {
 				var i = 0;
 				for (i = 0; i < nbtags; i++) {
 					this.tags[i].setAttribute('points', (width + annotX - margin - annotMargin + (i*tagWidth)) + "," + (this.y - (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (i*tagWidth) + tagWidth - 1) + "," + (this.y - (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (i*tagWidth) + tagWidth - 1) + "," + (this.y + (parseInt(fontSize))/2) + " " + (width + annotX - margin - annotMargin + (i*tagWidth)) + "," + (this.y + (parseInt(fontSize))/2));
-					
+
 					this.tags[i].setAttribute("x", (width + annotX  - margin - annotMargin + ((this.tags.length)*tagWidth)));
 					this.tags[i].setAttribute("y", (this.y + (parseInt(fontSize))/2));
 					/*if (this.tags[i].getAttribute("fill")!=colorArray[i]) {
@@ -1983,7 +1985,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 		text1.appendChild(document.createTextNode(this.collapsed));
 		text1.addEventListener("mouseover", textMouseOver, false);
 		text1.addEventListener("mouseout", textMouseOut, false);
-		
+
 		text1.setAttribute("opacity", this.opacity);
 		text1.setAttribute("fill-opacity", this.opacity);
 		if (drawTheEnd==1) {
@@ -2012,7 +2014,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 
 		textSupport.setAttribute("opacity", this.opacity);
 		textSupport.setAttribute("fill-opacity", this.opacity);
-		
+
 		textSupport.appendChild(document.createTextNode(sup));
 		textSupport.addEventListener("mouseover", supportMouseOver, false);
 		textSupport.addEventListener("mouseout", supportMouseOut, false);
@@ -2043,7 +2045,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 				lineLeft.setAttribute("stroke", this.sons[0].color);
 				//lineLeft.setAttribute("stroke", lineColor);
 			} else if (this.sons[0].color!="") {
-				lineLeft.setAttribute("stroke", this.sons[0].color);			
+				lineLeft.setAttribute("stroke", this.sons[0].color);
 			} else {
 				lineLeft.setAttribute("stroke", lineColor);
 			}
@@ -2066,7 +2068,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 				lineLeft.setAttribute("stroke", this.sons[0].color);
 				//lineLeft.setAttribute("stroke", lineColor);
 			}  else if (this.sons[count-1].color!="") {
-				lineLeft.setAttribute("stroke", this.sons[count-1].color);			
+				lineLeft.setAttribute("stroke", this.sons[count-1].color);
 			} else {
 				lineLeft.setAttribute("stroke", lineColor);
 			}
@@ -2087,10 +2089,10 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			path2.setAttribute("stroke-width", lineWidth);
 			if (this.sons[0].colored == 1) {
 				path2.setAttribute("stroke-dasharray","5 5");
-				path2.setAttribute("stroke", this.sons[0].color);			
+				path2.setAttribute("stroke", this.sons[0].color);
 				//path2.setAttribute("stroke", lineColor);
 			}  else if (this.sons[0].color!="") {
-				path2.setAttribute("stroke", this.sons[0].color);			
+				path2.setAttribute("stroke", this.sons[0].color);
 			} else {
 				path2.setAttribute("stroke", lineColor);
 			}
@@ -2130,9 +2132,9 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			if (this.sons[count-1].colored == 1) {
 				path3.setAttribute("stroke-dasharray","5 5");
 				//path3.setAttribute("stroke", tagColor);
-				path3.setAttribute("stroke", this.sons[count-1].color);	
+				path3.setAttribute("stroke", this.sons[count-1].color);
 			}  else if (this.sons[count-1].color!="") {
-				path3.setAttribute("stroke", this.sons[count-1].color);			
+				path3.setAttribute("stroke", this.sons[count-1].color);
 			} else {
 				path3.setAttribute("stroke", lineColor);
 			}
@@ -2171,13 +2173,13 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-lineWidth) + "," + (this.y -lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y - lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y + lineWidth) + " " + (this.x-2*lineWidth  - lineWidth) + "," + (this.y + lineWidth));
 				if (this.color!="") {
-					polyDup.setAttribute("stroke", this.color);			
+					polyDup.setAttribute("stroke", this.color);
 				} else {
 					polyDup.setAttribute('stroke', lineColor);
 				}
 				polyDup.setAttribute("stroke-width", 0);
 				if (this.color!="") {
-					polyDup.setAttribute("fill", this.color);			
+					polyDup.setAttribute("fill", this.color);
 				} else {
 					polyDup.setAttribute('fill', lineColor);
 				}
@@ -2195,13 +2197,13 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
 				if (this.color!="") {
-					polyDup.setAttribute("stroke", this.color);			
+					polyDup.setAttribute("stroke", this.color);
 				} else {
 					polyDup.setAttribute('stroke', lineColor);
 				}
 				polyDup.setAttribute("stroke-width", 0);
 				if (this.color!="") {
-					polyDup.setAttribute("fill", this.color);			
+					polyDup.setAttribute("fill", this.color);
 				} else {
 					polyDup.setAttribute('fill', lineColor);
 				}
@@ -2255,7 +2257,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 						//lineRight.setAttribute("stroke", tagColor);
 						lineRight.setAttribute("stroke", this.sons[i].color);
 					}  else if (this.sons[i].color!="") {
-						lineRight.setAttribute("stroke", this.sons[i].color);			
+						lineRight.setAttribute("stroke", this.sons[i].color);
 					} else {
 						lineRight.setAttribute("stroke", lineColor);
 					}
@@ -2293,7 +2295,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 						polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 					}
 					if (this.sons[i].color!="") {
-						polyCol.setAttribute("stroke", this.sons[i].color);			
+						polyCol.setAttribute("stroke", this.sons[i].color);
 					} else {
 						polyCol.setAttribute('stroke', lineColor);
 					}
@@ -2366,7 +2368,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 						if (annotXArray[localTag]!=null) {
 							xtext.setAttribute ("x", width - margin - annotMargin + annotXArray[localTag]);
 						} else {
-							xtext.setAttribute ("x", width - margin - annotMargin);						
+							xtext.setAttribute ("x", width - margin - annotMargin);
 						}
 						xtext.setAttribute ("y", this.y + (fontSize/3));
 						xtext.setAttribute("font-family", fontFamily);
@@ -2466,15 +2468,15 @@ function ffillSplit(threshold,split,splitSens) {
 	if (this.collapsed!="") {
 		split[split.length]=this;
 		if (threshold>=this.maxDepth()) {
-			splitSens[splitSens.length]=0;	
+			splitSens[splitSens.length]=0;
 		} else {
-			splitSens[splitSens.length]=1;	
+			splitSens[splitSens.length]=1;
 		}
 	} else {
 		if (count>0) {
 			if (threshold>(this.sons[0].maxDepth() + this.sons[1].maxDepth())) {
 				split[split.length]=this;
-				splitSens[splitSens.length]=0;	
+				splitSens[splitSens.length]=0;
 			} else {
 				// It's a node
 				var i=0;
@@ -2485,7 +2487,7 @@ function ffillSplit(threshold,split,splitSens) {
 		} else {
 			// It's a leaf
 			split[split.length]=this;
-			splitSens[splitSens.length]=0;	
+			splitSens[splitSens.length]=0;
 		}
 	}
 
@@ -2508,8 +2510,8 @@ function ftoneDownUndocumented() {
 				father=i;
 			}
 		}
-		if (father==0 && isTone==0) {	
-			if (this.left1!=null) { 
+		if (father==0 && isTone==0) {
+			if (this.left1!=null) {
 				if (this.left1.getAttribute("opacity")==null || this.left1.getAttribute("opacity")==1.0) {
 					this.left1.setAttribute("opacity",opacitydegree);
 					this.left1.setAttribute("fill-opacity",opacitydegree);
@@ -2517,11 +2519,11 @@ function ftoneDownUndocumented() {
 					this.left1.setAttribute("opacity",1.0);
 					this.left1.setAttribute("fill-opacity",1.0);
 				}
-			}	
-		
+			}
+
 		}
-		if (father==1 && isTone==0) {	
-			if (this.left2!=null) { 
+		if (father==1 && isTone==0) {
+			if (this.left2!=null) {
 				if (this.left2.getAttribute("opacity")==null || this.left2.getAttribute("opacity")==1.0) {
 					this.left2.setAttribute("opacity",opacitydegree);
 					this.left2.setAttribute("fill-opacity",opacitydegree);
@@ -2529,207 +2531,207 @@ function ftoneDownUndocumented() {
 					this.left2.setAttribute("opacity",1.0);
 					this.left2.setAttribute("fill-opacity",1.0);
 				}
-			}	
-		
+			}
+
 		}
 		if (isTone==1) {
 			if (this.line!=null && (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0)) {
-				if (this.round!=null) { 
+				if (this.round!=null) {
 				this.round.setAttribute("opacity",opacitydegree);
 				this.round.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.line!=null) { 
+				}
+				if (this.line!=null) {
 				this.line.setAttribute("opacity",opacitydegree);
 				this.line.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.poly!=null) { 
+				}
+				if (this.poly!=null) {
 				this.poly.setAttribute("opacity",opacitydegree);
 				this.poly.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.col!=null) { 
+				}
+				if (this.col!=null) {
 				this.col.setAttribute("opacity",opacitydegree);
 				this.col.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.sup!=null) { 
+				}
+				if (this.sup!=null) {
 				this.sup.setAttribute("opacity",opacitydegree);
 				this.sup.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.text!=null) { 
+				}
+				if (this.text!=null) {
 				this.text.setAttribute("opacity",opacitydegree);
 				this.text.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.poimg!=null) { 
+				}
+				if (this.poimg!=null) {
 				this.poimg.setAttribute("opacity",opacitydegree);
 				this.poimg.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.goimg!=null) { 
+				}
+				if (this.goimg!=null) {
 				this.goimg.setAttribute("opacity",opacitydegree);
 				this.goimg.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.left1!=null) { 
+				}
+				if (this.left1!=null) {
 				this.left1.setAttribute("opacity",opacitydegree);
 				this.left1.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.left2!=null) { 
+				}
+				if (this.left2!=null) {
 				this.left2.setAttribute("opacity",opacitydegree);
 				this.left2.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.nodeType!=null) { 
+				}
+				if (this.nodeType!=null) {
 				this.nodeType.setAttribute("opacity",opacitydegree);
 				this.nodeType.setAttribute("fill-opacity",opacitydegree);
 				}
 			} else {
-				if (this.round!=null) { 
+				if (this.round!=null) {
 				this.round.setAttribute("opacity",1.0);
 				this.round.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.line!=null) { 
+				}
+				if (this.line!=null) {
 				this.line.setAttribute("opacity",1.0);
 				this.line.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.poly!=null) { 
+				}
+				if (this.poly!=null) {
 				this.poly.setAttribute("opacity",1.0);
 				this.poly.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.col!=null) { 
+				}
+				if (this.col!=null) {
 				this.col.setAttribute("opacity",1.0);
 				this.col.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.sup!=null) { 
+				}
+				if (this.sup!=null) {
 				this.sup.setAttribute("opacity",1.0);
 				this.sup.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.text!=null) { 
+				}
+				if (this.text!=null) {
 				this.text.setAttribute("opacity",1.0);
 				this.text.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.poimg!=null) { 
+				}
+				if (this.poimg!=null) {
 				this.poimg.setAttribute("opacity",1.0);
 				this.poimg.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.goimg!=null) { 
+				}
+				if (this.goimg!=null) {
 				this.goimg.setAttribute("opacity",1.0);
 				this.goimg.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.left1!=null) { 
+				}
+				if (this.left1!=null) {
 				this.left1.setAttribute("opacity",1.0);
 				this.left1.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.left2!=null) { 
+				}
+				if (this.left2!=null) {
 				this.left2.setAttribute("opacity",1.0);
 				this.left2.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.nodeType!=null) { 
+				}
+				if (this.nodeType!=null) {
 				this.nodeType.setAttribute("opacity",1.0);
 				this.nodeType.setAttribute("fill-opacity",1.0);
-				}	
-			}	
-			return 1;		
+				}
+			}
+			return 1;
 		} else {
 			return 0;
 		}
 	} else {
 		if (infos[this.taxon]==null || (infos[this.taxon]["PO"]==null && infos[this.taxon]["GO"]==null)) {
-			
+
 			if (this.line!=null && (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0)) {
-				if (this.round!=null) { 
+				if (this.round!=null) {
 				this.round.setAttribute("opacity",opacitydegree);
 				this.round.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.line!=null) { 
+				}
+				if (this.line!=null) {
 				this.line.setAttribute("opacity",opacitydegree);
 				this.line.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.poly!=null) { 
+				}
+				if (this.poly!=null) {
 				this.poly.setAttribute("opacity",opacitydegree);
 				this.poly.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.col!=null) { 
+				}
+				if (this.col!=null) {
 				this.col.setAttribute("opacity",opacitydegree);
 				this.col.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.sup!=null) { 
+				}
+				if (this.sup!=null) {
 				this.sup.setAttribute("opacity",opacitydegree);
 				this.sup.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.text!=null) { 
+				}
+				if (this.text!=null) {
 				this.text.setAttribute("opacity",opacitydegree);
 				this.text.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.poimg!=null) { 
+				}
+				if (this.poimg!=null) {
 				this.poimg.setAttribute("opacity",opacitydegree);
 				this.poimg.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.goimg!=null) { 
+				}
+				if (this.goimg!=null) {
 				this.goimg.setAttribute("opacity",opacitydegree);
 				this.goimg.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.left1!=null) { 
+				}
+				if (this.left1!=null) {
 				this.left1.setAttribute("opacity",opacitydegree);
 				this.left1.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.left2!=null) { 
+				}
+				if (this.left2!=null) {
 				this.left2.setAttribute("opacity",opacitydegree);
 				this.left2.setAttribute("fill-opacity",opacitydegree);
-				}	
-				if (this.nodeType!=null) { 
+				}
+				if (this.nodeType!=null) {
 				this.nodeType.setAttribute("opacity",opacitydegree);
 				this.nodeType.setAttribute("fill-opacity",opacitydegree);
 				}
 			} else {
-				if (this.round!=null) { 
+				if (this.round!=null) {
 				this.round.setAttribute("opacity",1.0);
 				this.round.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.line!=null) { 
+				}
+				if (this.line!=null) {
 				this.line.setAttribute("opacity",1.0);
 				this.line.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.poly!=null) { 
+				}
+				if (this.poly!=null) {
 				this.poly.setAttribute("opacity",1.0);
 				this.poly.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.col!=null) { 
+				}
+				if (this.col!=null) {
 				this.col.setAttribute("opacity",1.0);
 				this.col.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.sup!=null) { 
+				}
+				if (this.sup!=null) {
 				this.sup.setAttribute("opacity",1.0);
 				this.sup.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.text!=null) { 
+				}
+				if (this.text!=null) {
 				this.text.setAttribute("opacity",1.0);
 				this.text.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.poimg!=null) { 
+				}
+				if (this.poimg!=null) {
 				this.poimg.setAttribute("opacity",1.0);
 				this.poimg.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.goimg!=null) { 
+				}
+				if (this.goimg!=null) {
 				this.goimg.setAttribute("opacity",1.0);
 				this.goimg.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.left1!=null) { 
+				}
+				if (this.left1!=null) {
 				this.left1.setAttribute("opacity",1.0);
 				this.left1.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.left2!=null) { 
+				}
+				if (this.left2!=null) {
 				this.left2.setAttribute("opacity",1.0);
 				this.left2.setAttribute("fill-opacity",1.0);
-				}	
-				if (this.nodeType!=null) { 
+				}
+				if (this.nodeType!=null) {
 				this.nodeType.setAttribute("opacity",1.0);
 				this.nodeType.setAttribute("fill-opacity",1.0);
-				}	
-			}		
-			//alert(taxon + " " + 1);	
+				}
+			}
+			//alert(taxon + " " + 1);
 			return 1;
 		} else {
-			//alert(taxon + " " + 2);	
+			//alert(taxon + " " + 2);
 			return 0;
 		}
-		 
-		
+
+
 	}
 }
 
@@ -2737,95 +2739,95 @@ function ftoneDown() {
 	// Counting the number of sons
 	//alert(this.line.getAttribute("opacity"));
 	if (this.line.getAttribute("opacity")==null || this.line.getAttribute("opacity")==1.0) {
-		if (this.round!=null) { 
+		if (this.round!=null) {
 		this.round.setAttribute("opacity",opacitydegree);
 		this.round.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.line!=null) { 
+		}
+		if (this.line!=null) {
 		this.line.setAttribute("opacity",opacitydegree);
 		this.line.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.poly!=null) { 
+		}
+		if (this.poly!=null) {
 		this.poly.setAttribute("opacity",opacitydegree);
 		this.poly.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.col!=null) { 
+		}
+		if (this.col!=null) {
 		this.col.setAttribute("opacity",opacitydegree);
 		this.col.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.sup!=null) { 
+		}
+		if (this.sup!=null) {
 		this.sup.setAttribute("opacity",opacitydegree);
 		this.sup.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.text!=null) { 
+		}
+		if (this.text!=null) {
 		this.text.setAttribute("opacity",opacitydegree);
 		this.text.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.poimg!=null) { 
+		}
+		if (this.poimg!=null) {
 		this.poimg.setAttribute("opacity",opacitydegree);
 		this.poimg.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.goimg!=null) { 
+		}
+		if (this.goimg!=null) {
 		this.goimg.setAttribute("opacity",opacitydegree);
 		this.goimg.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.left1!=null) { 
+		}
+		if (this.left1!=null) {
 		this.left1.setAttribute("opacity",opacitydegree);
 		this.left1.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.left2!=null) { 
+		}
+		if (this.left2!=null) {
 		this.left2.setAttribute("opacity",opacitydegree);
 		this.left2.setAttribute("fill-opacity",opacitydegree);
-		}	
-		if (this.nodeType!=null) { 
+		}
+		if (this.nodeType!=null) {
 		this.nodeType.setAttribute("opacity",opacitydegree);
 		this.nodeType.setAttribute("fill-opacity",opacitydegree);
 		}
 	} else {
-		if (this.round!=null) { 
+		if (this.round!=null) {
 		this.round.setAttribute("opacity",1.0);
 		this.round.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.line!=null) { 
+		}
+		if (this.line!=null) {
 		this.line.setAttribute("opacity",1.0);
 		this.line.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.poly!=null) { 
+		}
+		if (this.poly!=null) {
 		this.poly.setAttribute("opacity",1.0);
 		this.poly.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.col!=null) { 
+		}
+		if (this.col!=null) {
 		this.col.setAttribute("opacity",1.0);
 		this.col.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.sup!=null) { 
+		}
+		if (this.sup!=null) {
 		this.sup.setAttribute("opacity",1.0);
 		this.sup.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.text!=null) { 
+		}
+		if (this.text!=null) {
 		this.text.setAttribute("opacity",1.0);
 		this.text.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.poimg!=null) { 
+		}
+		if (this.poimg!=null) {
 		this.poimg.setAttribute("opacity",1.0);
 		this.poimg.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.goimg!=null) { 
+		}
+		if (this.goimg!=null) {
 		this.goimg.setAttribute("opacity",1.0);
 		this.goimg.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.left1!=null) { 
+		}
+		if (this.left1!=null) {
 		this.left1.setAttribute("opacity",1.0);
 		this.left1.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.left2!=null) { 
+		}
+		if (this.left2!=null) {
 		this.left2.setAttribute("opacity",1.0);
 		this.left2.setAttribute("fill-opacity",1.0);
-		}	
-		if (this.nodeType!=null) { 
+		}
+		if (this.nodeType!=null) {
 		this.nodeType.setAttribute("opacity",1.0);
 		this.nodeType.setAttribute("fill-opacity",1.0);
-		}	
+		}
 	}
 	var count = this.sons.length;
 	if (count>0) {
@@ -2834,66 +2836,66 @@ function ftoneDown() {
 			this.sons[i].toneDown();
 		}
 	} else {
-		
-		
+
+
 	}
 }
 function fcolorizeSubtree(erasor) {
 	if (this.isColoringRoot==0) {
 		if (erasor==1) {
 			this.color="";
-		} else {	
+		} else {
 			this.color=colorbranchannote;
-		}	
-		if (this.round!=null) { 
-			if (erasor==1) {		
-				this.round.setAttribute("stroke",lineColor);		
+		}
+		if (this.round!=null) {
+			if (erasor==1) {
+				this.round.setAttribute("stroke",lineColor);
 			} else {
-				this.round.setAttribute("stroke",colorbranchannote);		
+				this.round.setAttribute("stroke",colorbranchannote);
 			}
-		}	
-	
-		if (this.line!=null) { 
-			if (erasor==1) {		
-				this.line.setAttribute("stroke",lineColor);		
-			} else {
-				this.line.setAttribute("stroke",colorbranchannote);		
-			}
-		}	
-	
-		if (this.left1!=null) { 
-			if (erasor==1) {		
-				this.left1.setAttribute("stroke",lineColor);		
-			} else {
-				this.left1.setAttribute("stroke",colorbranchannote);		
-			}
-		}	
-	
-		if (this.left2!=null) { 
-			if (erasor==1) {		
-				this.left2.setAttribute("stroke",lineColor);		
-			} else {
-				this.left2.setAttribute("stroke",colorbranchannote);		
-			}
-		}	
-	
-		if (this.poly!=null) { 
-			if (erasor==1) {		
-				this.poly.setAttribute("stroke",lineColor);		
-			} else {
-				this.poly.setAttribute("stroke",colorbranchannote);		
-			}
-		}	
+		}
 
-		if (this.nodeType!=null) { 
-			if (erasor==1) {		
-				this.nodeType.setAttribute("stroke",lineColor);			
-				this.nodeType.setAttribute("fill",lineColor);	
+		if (this.line!=null) {
+			if (erasor==1) {
+				this.line.setAttribute("stroke",lineColor);
 			} else {
-				this.nodeType.setAttribute("stroke",colorbranchannote);		
-				this.nodeType.setAttribute("fill",colorbranchannote);		
+				this.line.setAttribute("stroke",colorbranchannote);
 			}
-		}				
+		}
+
+		if (this.left1!=null) {
+			if (erasor==1) {
+				this.left1.setAttribute("stroke",lineColor);
+			} else {
+				this.left1.setAttribute("stroke",colorbranchannote);
+			}
+		}
+
+		if (this.left2!=null) {
+			if (erasor==1) {
+				this.left2.setAttribute("stroke",lineColor);
+			} else {
+				this.left2.setAttribute("stroke",colorbranchannote);
+			}
+		}
+
+		if (this.poly!=null) {
+			if (erasor==1) {
+				this.poly.setAttribute("stroke",lineColor);
+			} else {
+				this.poly.setAttribute("stroke",colorbranchannote);
+			}
+		}
+
+		if (this.nodeType!=null) {
+			if (erasor==1) {
+				this.nodeType.setAttribute("stroke",lineColor);
+				this.nodeType.setAttribute("fill",lineColor);
+			} else {
+				this.nodeType.setAttribute("stroke",colorbranchannote);
+				this.nodeType.setAttribute("fill",colorbranchannote);
+			}
+		}
 		var count = this.sons.length;
 		if (count>0) {
 			var i=0;
@@ -2901,15 +2903,15 @@ function fcolorizeSubtree(erasor) {
 				this.sons[i].colorizeSubtree(erasor);
 			}
 		} else {
-		
-		
+
+
 		}
 	}
 }
 
 
 function fcolorizeStrictSubtreeWithLeaves(seqList) {
-				
+
 	var nbCo=0;
 	var nbId=0;
 	var first=0;
@@ -2925,45 +2927,45 @@ function fcolorizeStrictSubtreeWithLeaves(seqList) {
 			nbCo+=loc;
 			if (i==0 && loc>0) {
 				first=1;
-			} 
+			}
 			if (i==count-1 && loc>0) {
 				last=1;
-			} 
+			}
 		}
 	} else {
 		if (seqList[this.taxon]!=null) {
 			if (this.text!=null) {
-				this.text.setAttribute("fill",seqList['color']);	
-			}	
+				this.text.setAttribute("fill",seqList['color']);
+			}
 			nbCo=1;
-		
+
 		}
-	
+
 	}
-	
+
 	if ((count==0 && nbCo==1) || nbId>1 || (nbId==1 && nbCo<seqList['size'])) {
 		if (this.round!=null) {
-			this.round.setAttribute("stroke",seqList['color']);	
-		}	
+			this.round.setAttribute("stroke",seqList['color']);
+		}
 		if (this.line!=null) {
-			this.line.setAttribute("stroke",seqList['color']);		
+			this.line.setAttribute("stroke",seqList['color']);
 		}
 		if (this.left1!=null && first==1) {
-			this.left1.setAttribute("stroke",seqList['color']);	
-		}	
+			this.left1.setAttribute("stroke",seqList['color']);
+		}
 		if (this.left2!=null && last==1) {
-			this.left2.setAttribute("stroke",seqList['color']);	
-		}	
+			this.left2.setAttribute("stroke",seqList['color']);
+		}
 		if (this.poly!=null) {
-			this.poly.setAttribute("stroke",seqList['color']);		
+			this.poly.setAttribute("stroke",seqList['color']);
 		}
 		if (this.nodeType!=null) {
-			this.nodeType.setAttribute("stroke",seqList['color']);		
-			this.nodeType.setAttribute("fill",seqList['color']);	
+			this.nodeType.setAttribute("stroke",seqList['color']);
+			this.nodeType.setAttribute("fill",seqList['color']);
 		}
 	}
 	return nbCo;
-	
+
 }
 
 // ************************
@@ -2981,7 +2983,7 @@ function fgetNewick() {
 		res=res+")";
 		res=res + this.support+":"+this.length;
 	} else {
-		
+
 		res=res + this.taxon+":"+this.length;
 	}
 
@@ -2994,7 +2996,7 @@ function fgetNewick() {
 			res=res+"L="+this.collapsed+":";
 		}
 		if (this.line!=null && (this.line.getAttribute("opacity")!=null && this.line.getAttribute("opacity")!=1.0)) {
-			res=res+"O="+this.line.getAttribute("opacity")+":";		
+			res=res+"O="+this.line.getAttribute("opacity")+":";
 		}
 
 
@@ -3041,7 +3043,7 @@ function tagMouseOver(evt) {
 	tagPopup.setAttribute("font-family", fontFamily);
 	tagPopup.setAttribute("font-size", fontSize);
 	tagPopup.setAttribute("fill", fontColor);
-	
+
 	tagPopup.appendChild(document.createTextNode(target.getAttribute("legend-pop")));
 	svg.appendChild(tagPopup);
 
@@ -3049,7 +3051,7 @@ function tagMouseOver(evt) {
 
 function tagMouseOut(evt) {
     var target = evt.target;
-    
+
 	svg.removeChild(tagPopup);
 
 }
@@ -3246,8 +3248,8 @@ function lineMouseClick(evt) {
 				clickedTreeNode.isColoringRoot=0;
 				clickedTreeNode.colorizeSubtree(1);
 			} else {
-				clickedTreeNode.colorizeSubtree(0);	
-				clickedTreeNode.isColoringRoot=1;	
+				clickedTreeNode.colorizeSubtree(0);
+				clickedTreeNode.isColoringRoot=1;
 			}
 		}
 		reinitCoordinateSVG();
@@ -3333,11 +3335,11 @@ function collapseLabel(label) {
 			clickedTreeNode.isColoringRoot=0;
 			clickedTreeNode.colorizeSubtree(1);
 		} else {
-			clickedTreeNode.colorizeSubtree(0);	
-			clickedTreeNode.isColoringRoot=1;	
-		}	
+			clickedTreeNode.colorizeSubtree(0);
+			clickedTreeNode.isColoringRoot=1;
+		}
 	} else {
-		clickedTreeNode.toneDown();	
+		clickedTreeNode.toneDown();
 	}
 	reinitCoordinateSVG();
 	//clickedTreeNode.refreshCollapse(1);
@@ -3356,11 +3358,11 @@ function treeSplit(threshold) {
 	for (i=0;i<split.length;i++) {
 		if (i%2==0) {
 			split[i].colorizeArbitrarly("#888888",0);
-		} else {			
+		} else {
 			split[i].colorizeArbitrarly("#FFFDD0",0);
 		}
 	}
-	
+
 }
 
 function reinitSplits() {
@@ -3382,7 +3384,7 @@ function drawSplits() {
 		svg.removeChild(splitsPath[i]);
 	}
 	splitsPath= new Array();
-	
+
 	i=0;
 	for (i = 0; i < splits.length; i++) {
 		var j=0;
@@ -3405,36 +3407,36 @@ function drawSplits() {
 				pathString="M";
 				pathString=pathString + (parseInt(currentX)  - 1 * split[j].splitCounter);
 				pathString=pathString + " " + parseInt(split[j].y);
-			} else {			
+			} else {
 				/*pathString=pathString + " Q";
 				if (preCurrentX<currentX) {
-					pathString=pathString + (parseInt(preCurrentX)  - 15 * split[j].splitCounter);	
+					pathString=pathString + (parseInt(preCurrentX)  - 15 * split[j].splitCounter);
 					pathString=pathString + " " + parseInt(split[j].y);
 					pathString=pathString + " " + (parseInt(currentX)  - 15 * split[j].splitCounter);
 					pathString=pathString + " " + parseInt(split[j].y) + " ";
 				} else {
-					pathString=pathString + (parseInt(currentX)  - 8 * split[j].splitCounter);	
+					pathString=pathString + (parseInt(currentX)  - 8 * split[j].splitCounter);
 					pathString=pathString + " " + parseInt(split[j-1].y);
 					pathString=pathString + " " + (parseInt(currentX)  - 15 * split[j].splitCounter);
 					pathString=pathString + " " + parseInt(split[j].y) + " ";
-					
+
 				}*/
-				
+
 				pathString=pathString + " L";
 				if (preCurrentX<currentX) {
 					pathString=pathString + (parseInt(currentX)  - 1 * split[j].splitCounter);
 					pathString=pathString + " " + parseInt(split[j].y) + " ";
 				} else {
 					pathString=pathString + (parseInt(currentX)  - 1 * split[j].splitCounter);
-					pathString=pathString + " " + parseInt(split[j].y) + " ";				
+					pathString=pathString + " " + parseInt(split[j].y) + " ";
 				}
-					
-				
-				
-			}	
-			preCurrentX=currentX;			
-		}		
-		pathSplit.setAttribute("stroke", splitColor);	
+
+
+
+			}
+			preCurrentX=currentX;
+		}
+		pathSplit.setAttribute("stroke", splitColor);
 		pathSplit.setAttribute("stroke-width", 1);
 		pathSplit.setAttribute("fill", "none");
 		pathSplit.setAttribute("d", pathString);
@@ -3442,7 +3444,7 @@ function drawSplits() {
 		svg.appendChild(pathSplit);
 		splitsPath[splitsPath.length]=pathSplit;
 	}
-	
+
 }
 
 function saveSVG() {
@@ -3455,8 +3457,8 @@ function saveSVG() {
             evObj.initEvent(etype, true, false);
             el.dispatchEvent(evObj);
         }
-    }	
-	 
+    }
+
 	var s = new XMLSerializer();
 	var json = s.serializeToString(svg);
 
@@ -3475,7 +3477,7 @@ link.href = url;
     eventFire(link, "click");
 
 //window.open(url, 'download_window', 'toolbar=0,location=no,directories=0,status=0,scrollbars=0,resizeable=0,width=1,height=1,top=0,left=0');
-//window.focus(); 
+//window.focus();
 
 */
    function eventFire(el, etype){
@@ -3487,7 +3489,7 @@ link.href = url;
             el.dispatchEvent(evObj);
         }
     }
-    
+
 var exportSVG = function(svg) {
   // first create a clone of our svg node so we don't mess the original one
   var clone = svg.cloneNode(true);
@@ -3498,7 +3500,7 @@ var exportSVG = function(svg) {
   var svgDocType = document.implementation.createDocumentType('svg', "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
   // a fresh svg document
   var svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', svgDocType);
-  // replace the documentElement with our clone 
+  // replace the documentElement with our clone
   svgDoc.replaceChild(clone, svgDoc.documentElement);
   // get the data
   var svgData = (new XMLSerializer()).serializeToString(svgDoc);
@@ -3585,4 +3587,3 @@ exportSVG(svg);
 }
 
 </script>
-
