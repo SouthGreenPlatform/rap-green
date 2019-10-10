@@ -40,7 +40,7 @@ public class ReconciliationDatabaseDaemon {
 	*/
 	static File configFile=null;
 	static Hashtable examples;
-	
+
 	/**
 	* List of species trees
 	*/
@@ -75,18 +75,19 @@ public class ReconciliationDatabaseDaemon {
 	* Table of gene tree objects, contains hashtables
 	*/
 	static Hashtable geneTreeStructures;
+	static Hashtable sequenceIndexes;
 
 	/**
 	* The socket object, modelising the server
 	*/
 	static ServerSocket server;
-	
+
 	/**
 	* Historic of researches
 	*/
 	static Hashtable historyTable;
 	static Vector historyVector;
-	
+
 	/**
 	* Path to the result directory
 	*/
@@ -180,10 +181,10 @@ public class ReconciliationDatabaseDaemon {
 				System.out.println("-directoryDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
 				System.out.println(BOLD);
 				System.out.println("-fileDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "type" + NORMAL + " " + UNDERLINE + "[invert]\n\t" + NORMAL + "Alternate version of database option: one simple file full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL). Add invert keyword if the species identifier is at the begining of sequence names in phylogenetic trees.");
-				
+
 				//System.out.println(BOLD);
 				//System.out.println("-results" + NORMAL + " " + UNDERLINE + "directory\n\t" + NORMAL + "Directory, visible from the web, to stock result files for users. Directory must exist.");
-				
+
 				System.out.println(BOLD);
 				System.out.println("-config" + NORMAL + " " + UNDERLINE + "config_file\n\t" + NORMAL + "Configuration file for this occurrence of the server.");
 
@@ -243,15 +244,15 @@ public class ReconciliationDatabaseDaemon {
 
 	        	i+=4;
 
-			}	
+			}
 			if (args[i].equalsIgnoreCase("-fileDico")) {
 				String[] localArgs= new String[5];
 				if (i+6<args.length && args[i+6].equals("invert")) {
 					localArgs= new String[6];
 					localArgs[5]= args[i+6];
 				}
-			
-			
+
+
 				localArgs[0]= args[i+1];
 				localArgs[1]= args[i+2];
 				localArgs[2]= args[i+3];
@@ -264,7 +265,7 @@ public class ReconciliationDatabaseDaemon {
 				if (i+6<args.length && args[i+6].equals("invert")) {
 					i++;
 				}
-			}			
+			}
 
 			if (args[i].equalsIgnoreCase("-config")) {
 
@@ -272,7 +273,7 @@ public class ReconciliationDatabaseDaemon {
 
 
 			}
-						
+
 
 			if (args[i].equalsIgnoreCase("-port")) {
 
@@ -312,7 +313,7 @@ public class ReconciliationDatabaseDaemon {
 				Hashtable localSpeciesIndex= new Hashtable();
 
 				TreeReader read= new TreeReader(new File(localArgs[1]),TreeReader.NEWICK);
-				
+
 				Tree speciesTree= read.nextTree();
 				//System.out.println(speciesTree);
 				speciesTree.globalPretreatment();
@@ -338,6 +339,8 @@ public class ReconciliationDatabaseDaemon {
 
 					Tree tree= new Tree(s.substring(s.indexOf(" ")+1,s.length()));
 					tree.pretreatment();
+
+
 					if (localArgs.length>5 && localArgs[5].equals("invert")) {
 						for (int i=0;i<tree.leafVector.size();i++) {
 							try {
@@ -348,6 +351,21 @@ public class ReconciliationDatabaseDaemon {
 							}
 						}
 					}
+					Hashtable sequenceIndex= new Hashtable();
+					for (int i=0;i<tree.leafVector.size();i++) {
+						try {
+							Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+							sequenceIndex.put(leaf.label,localId);
+							if (leaf.label.indexOf("_")!=-1) {
+								sequenceIndex.put(leaf.label.substring(0,leaf.label.lastIndexOf("_")),localId);
+
+							}
+						} catch(Exception exp) {
+							//System.out.println("Warning: " + localId);
+						}
+					}
+					sequenceIndexes.put(speciesTreeId,sequenceIndex);
+
 					if (specification.equals("NR")) {
 						tree.addSpeciations();
 					}
@@ -358,7 +376,7 @@ public class ReconciliationDatabaseDaemon {
 					if (lak%1000==0)
 						System.out.println(lak);
 
-			
+
 					s= geneFiles.readLine();
 
 
@@ -378,7 +396,7 @@ public class ReconciliationDatabaseDaemon {
 	        	E.printStackTrace();
 	        	System.out.println(localId);
 	        }
-		}		
+		}
 		for (int t=0;t<argsDatabases.size();t++) {
 			String[] localArgs= (String[])(argsDatabases.elementAt(t));
 			String localId="";
@@ -496,9 +514,9 @@ public class ReconciliationDatabaseDaemon {
 
 	        }
 		}
-		
-		
-		
+
+
+
 		for (int t=0;t<argsDirectories.size();t++) {
 			String[] localArgs= (String[])(argsDirectories.elementAt(t));
 			String localId="";
@@ -636,7 +654,7 @@ public class ReconciliationDatabaseDaemon {
 
 				TreeReader read= new TreeReader(new File(localArgs[1]),TreeReader.NEWICK);
 
-				
+
 
 				Tree speciesTree= read.nextTree();
 				//System.out.println(speciesTree);
@@ -722,14 +740,14 @@ public class ReconciliationDatabaseDaemon {
 
 	        }
 		}
-		
+
 		examples= new Hashtable();
 		if (configFile!=null) {
 			try {
 				BufferedReader read= new BufferedReader(new FileReader(configFile));
 				String s=read.readLine();
 				while (s!=null && !s.startsWith("EXAMPLE")) {
-					s=read.readLine();			
+					s=read.readLine();
 				}
 				if (s!=null) {
 					s=read.readLine();
@@ -744,19 +762,19 @@ public class ReconciliationDatabaseDaemon {
 							localEx.addElement(sp[1]);
 							localEx.addElement(sp[2]);
 							examples.put(sp[0],localEx);
-						
+
 						}
 						s=read.readLine();
-					
+
 					}
-				
+
 				}
-			
+
 			} catch(Exception expe) {
 				expe.printStackTrace();
-			
+
 			}
-		
+
 		}
 
         // Open the server socket, and wait for connexion
@@ -836,8 +854,8 @@ public class ReconciliationDatabaseDaemon {
 							out.println((String)(localEx.elementAt(i)));
 
 						}
-					
-					
+
+
 					} else {
 						out.println("N/A");
 					}
@@ -853,6 +871,12 @@ public class ReconciliationDatabaseDaemon {
 					String codesp=in.readLine();
 					SpeciesDictionary dico= (SpeciesDictionary)(speciesTreeDictionaries.get(databank));
 					out.println(dico.getScientificName(codesp));
+				}  else if (s.equals("searchfamily")) {
+				// case 2: clients asks for a scientific name
+					String databank=in.readLine();
+					String seqIden=in.readLine();
+					Hashtable dico= (Hashtable)(sequenceIndexes.get(databank));
+					out.println((String)(dico.get(seqIden))));
 				} if (s.equals("speciesPlus")) {
 				// case 2: clients asks for species list
 					String databank=in.readLine();
@@ -1077,7 +1101,7 @@ public class ReconciliationDatabaseDaemon {
 					}
 
 					out.println(geneTree.getNewick());
-					
+
         			//System.out.println("DEBUGAPRES:\n" + treeDebug);
 
 
@@ -1089,8 +1113,8 @@ public class ReconciliationDatabaseDaemon {
 					//System.out.println(idRandom);
 					String patternString=in.readLine();
 					//System.out.println(patternString);
-					
-					
+
+
 					Hashtable trees= (Hashtable)(geneTreeStructures.get(databank));
 					Hashtable ind= (Hashtable)(speciesTreeIndex.get(databank));
 					Tree tree= (Tree)(speciesTreeStructures.get(databank));
@@ -1115,19 +1139,19 @@ public class ReconciliationDatabaseDaemon {
 							//String prev=" ";
 							int count=1;
 							Hashtable trace= new Hashtable();
-							for (int j=0;j<colored.size();j++) {						
+							for (int j=0;j<colored.size();j++) {
 								Tree localTree= (Tree)(colored.elementAt(j));
 								trace.put(localTree," ");
 							}
 							Hashtable roots= new Hashtable();
-							for (int j=0;j<colored.size();j++) {						
+							for (int j=0;j<colored.size();j++) {
 								Tree localTree= (Tree)(colored.elementAt(j));
 								if (localTree.father==null || !trace.containsKey(localTree.father)) {
 									roots.put(localTree," ");
 									//System.out.println(localTree);
 								}
 							}
-						
+
 							for (int j=0;j<colored.size();j++) {
 								Tree localTree= (Tree)(colored.elementAt(j));
 								//System.out.println("\n" + localTree);
@@ -1147,7 +1171,7 @@ public class ReconciliationDatabaseDaemon {
 									prev=stick;*/
 									out.println(id + ";" + localTree.label + ";" + stick + ";" + count);
 							//write.write(id + ";" + localTree.label + ";" + stick + ";" + count + "\n");
-							//write.flush();									
+							//write.flush();
 								}
 							}
 
@@ -1189,7 +1213,3 @@ public class ReconciliationDatabaseDaemon {
 
 
 }
-
-
-
-
