@@ -32,6 +32,10 @@
 
 ?>
 <?php
+// Get the family name if targetgene is defined
+
+if (isSet($_REQUEST["targetgene"]))
+
 
 // Get the tree newick from the daemon
 
@@ -87,4 +91,3 @@ while ($reception = socket_read($socket, 2048)) {
 //exit;
 
 ?>
-
