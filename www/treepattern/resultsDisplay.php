@@ -22,7 +22,7 @@
 
 </script>
 
-<form name="research" action="http://phylogeny.southgreen.fr/treedisplay/index.php?data=essai" method="post">
+<form name="research" action="http://phylogeny.southgreen.fr/treedisplay/index.php?data=essai<?php if (isSet($_REQUEST["targetgene"])) echo "&focus=".$_REQUEST["targetgene"]; ?>" method="post">
 <input type="hidden" name="hiddenfield" value="PLOUF">
 <input type="hidden" name="complementary" value="PLOUF">
 </form>
@@ -34,7 +34,41 @@
 <?php
 // Get the family name if targetgene is defined
 
-if (isSet($_REQUEST["targetgene"]))
+if (isSet($_REQUEST["targetgene"])) {
+
+  $_REQUEST['id']="";
+
+  // open the socket
+  $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+  $resultat = socket_connect($socket, $server, $port);
+  // send the signal to the daemon
+  $envoi="searchfamily\n";
+  socket_write($socket, $envoi, strlen($envoi));
+  $envoi=$_REQUEST['databank']."\n";
+  socket_write($socket, $envoi, strlen($envoi));
+  $envoi=$_REQUEST["targetgene"]."\n";
+  socket_write($socket, $envoi, strlen($envoi));
+  $count=0;
+  while ($reception = socket_read($socket, 2048)) {
+  	// split the buffer
+  	$families=preg_split("/\n/", $reception);
+  	//echo $reception;
+
+  	for ($i=0;$i<count($families);$i++) {
+  		$_REQUEST['id']=$_REQUEST['id'].$families[$i];
+  	}
+
+
+  }
+
+
+
+
+
+
+
+
+}
 
 
 // Get the tree newick from the daemon
