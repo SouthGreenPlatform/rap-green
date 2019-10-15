@@ -142,6 +142,7 @@ public class ReconciliationDatabaseDaemon {
 		speciesTreeDictionaries= new Hashtable();
 		historyVector= new Vector();
 		historyTable= new Hashtable();
+		sequenceIndexes= new Hashtable();
 
 		geneTreeIds= new Hashtable();
 		geneTreeStructures= new Hashtable();
@@ -299,6 +300,7 @@ public class ReconciliationDatabaseDaemon {
 		for (int t=0;t<argsFilesDico.size();t++) {
 			String[] localArgs= (String[])(argsFilesDico.elementAt(t));
 			String localId="";
+			Hashtable sequenceIndex= new Hashtable();
 
 	        try {
 
@@ -351,7 +353,6 @@ public class ReconciliationDatabaseDaemon {
 							}
 						}
 					}
-					Hashtable sequenceIndex= new Hashtable();
 					for (int i=0;i<tree.leafVector.size();i++) {
 						try {
 							Tree leaf= (Tree)(tree.leafVector.elementAt(i));
@@ -364,7 +365,6 @@ public class ReconciliationDatabaseDaemon {
 							//System.out.println("Warning: " + localId);
 						}
 					}
-					sequenceIndexes.put(speciesTreeId,sequenceIndex);
 
 					if (specification.equals("NR")) {
 						tree.addSpeciations();
@@ -388,6 +388,7 @@ public class ReconciliationDatabaseDaemon {
 				geneTreeIds.put(speciesTreeId,geneIds);
 				geneTreeStructures.put(speciesTreeId,geneStructures);
 
+				sequenceIndexes.put(speciesTreeId,sequenceIndex);
 				if (!quiet) System.out.println("Loaded.");
 
 
@@ -876,7 +877,7 @@ public class ReconciliationDatabaseDaemon {
 					String databank=in.readLine();
 					String seqIden=in.readLine();
 					Hashtable dico= (Hashtable)(sequenceIndexes.get(databank));
-					out.println((String)(dico.get(seqIden))));
+					out.println((String)(dico.get(seqIden)));
 				} if (s.equals("speciesPlus")) {
 				// case 2: clients asks for species list
 					String databank=in.readLine();
