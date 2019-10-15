@@ -11,7 +11,11 @@
 ?>
 </head>
 <body>
+  <?php
 
+   include('config.php');
+
+  ?>
 <script type="text/javascript">
 
  function submitTree(treeString) {
@@ -22,7 +26,7 @@
 
 </script>
 
-<form name="research" action="http://phylogeny.southgreen.fr/treedisplay/index.php?data=essai<?php if (isSet($_REQUEST["targetgene"])) echo "&focus=".$_REQUEST["targetgene"]; ?>" method="post">
+<form name="research" action="<?php echo $treedisplayaddress; ?>index.php?data=essai<?php if (isSet($_REQUEST["targetgene"])) echo "&focus=".$_REQUEST["targetgene"]; ?>" method="post">
 <input type="hidden" name="hiddenfield" value="PLOUF">
 <input type="hidden" name="complementary" value="PLOUF">
 </form>
