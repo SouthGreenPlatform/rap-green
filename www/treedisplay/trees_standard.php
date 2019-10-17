@@ -1506,7 +1506,7 @@ function fresizeTree(normalMod) {
 					sup=sup.substring(0,5);
 				}
 				if (parseFloat(sup)>=0.6) {
-					alert("essai");
+					//alert("essai");
 					this.sup.setAttribute("x", this.x - parseInt(supportSize)*sup.length/2.0 - 2);
 					this.sup.setAttribute("y", this.y - parseInt(supportSize)/3 - 4);
 					if (this.addSup==0) {
