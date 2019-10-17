@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <meta http-equiv="Content-Language" content="en-gb">
 <head>
+
 <!-- Standard headers (CSS...) -->
 <?php
  include('header.php');
@@ -22,7 +23,7 @@
  include('annotations.php');
 
 ?>
-<?php  
+<?php
 include("trees_standard.php");
 ?>
 <?php
@@ -34,6 +35,9 @@ include("trees_standard.php");
 
 
 <script type="text/javascript">
+
+
+
 function collapseType(val) {
 	if(val.selectedIndex == 1)
 	{
@@ -92,14 +96,7 @@ function collapseType(val) {
 
 
 </div>
-<?php	
-	if (isSet($_POST['hiddenfield'])) {
-		//echo $_POST['hiddenfield'];
-		
-	}
-		
-		
-?>
+
 <div name="treeDivId" id="treeDivId" style="overflow:scroll; width : 100% ; height : 800px ;">
 <table id="organise"><tr><td id="treePanel" name="treePanel">
 
@@ -108,23 +105,24 @@ function collapseType(val) {
 
 
 <script type="text/javascript">
-var tree= <?php	
+var tree= <?php
 	if (isSet($_POST['hiddenfield'])) {
 		echo 'new Node("';
 
 		echo substr($_POST['hiddenfield'],0,strpos($_POST['hiddenfield'],";")+1);
-	
+
 		echo '");';
 	} else {
 		echo 'new Node("';
 
 		echo $treenewick;
-	
+
 		echo '");';
 	}
 
 
 ?>
+
 
 </script>
 
