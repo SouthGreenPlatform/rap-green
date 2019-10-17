@@ -20,14 +20,16 @@
 
  function submitTree(treeString) {
 	document.forms['research'].hiddenfield.value=treeString;
+  //alert("inpat2:"+document.forms['research'].hiddenfield.value);
 	document.forms['research'].submit();
 
  }
 
 </script>
 
-<form name="research" action="<?php echo $treedisplayaddress; ?>index.php?data=essai<?php if (isSet($_REQUEST["targetgene"])) echo "&focus=".$_REQUEST["targetgene"]; ?>" method="post">
-<input type="hidden" name="hiddenfield" value="PLOUF">
+<form name="research" action="<?php echo $treedisplayaddress; ?>index.php<?php if (isSet($_REQUEST["targetgene"])) echo "?focus=".$_REQUEST["targetgene"]; ?>" method="post">
+
+<input type="hidden" name="hiddenfield" id="hiddenfield" value="PLOUF">
 <input type="hidden" name="complementary" value="PLOUF">
 </form>
 <?php
