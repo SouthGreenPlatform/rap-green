@@ -337,6 +337,9 @@ public class ReconciliationDatabaseDaemon {
         		while (s!=null) {
 
 					localId= s.substring(0,s.indexOf(" "));
+
+			//		System.out.println(localId);
+
 					geneIds.addElement(localId);
 
 					Tree tree= new Tree(s.substring(s.indexOf(" ")+1,s.length()));
@@ -358,8 +361,12 @@ public class ReconciliationDatabaseDaemon {
 							Tree leaf= (Tree)(tree.leafVector.elementAt(i));
 							sequenceIndex.put(leaf.label,localId);
 							if (leaf.label.indexOf("_")!=-1) {
-								sequenceIndex.put(leaf.label.substring(0,leaf.label.lastIndexOf("_")),localId);
+								String shorten= leaf.label.substring(0,leaf.label.lastIndexOf("_"));
+								sequenceIndex.put(shorten,localId);
+									if (shorten.endsWith(".p")!=-1) {
+										sequenceIndex.put(shorten.substring(0,shorten.length()-2),localId);
 
+									}
 							}
 						} catch(Exception exp) {
 							//System.out.println("Warning: " + localId);
