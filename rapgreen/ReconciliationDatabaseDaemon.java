@@ -363,7 +363,7 @@ public class ReconciliationDatabaseDaemon {
 							if (leaf.label.indexOf("_")!=-1) {
 								String shorten= leaf.label.substring(0,leaf.label.lastIndexOf("_"));
 								sequenceIndex.put(shorten,localId);
-									if (shorten.endsWith(".p")!=-1) {
+									if (shorten.endsWith(".p")) {
 										sequenceIndex.put(shorten.substring(0,shorten.length()-2),localId);
 
 									}
