@@ -20,10 +20,10 @@ public class Temp {
 			if (args.length>1 && args[1].equals("cleanAnne")) {
 				BufferedReader read2= new BufferedReader(new FileReader(new File(args[0])));
 				String s2= read2.readLine();
-				
 
-				
-				
+
+
+
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));
 				String s= read.readLine();
 				Vector ref= new Vector();
@@ -33,14 +33,14 @@ public class Temp {
 					} else {
 						s=s.substring(1,s.indexOf("_Non_LRR"));
 					}
-					
+
 					if (s2.indexOf(s.substring())!=-1) {
-					
+
 					}*/
 					try {
 					if (s.indexOf("_SG")!=-1) {
 						ref.addElement(s.substring(1,s.indexOf("_SG")));
-					
+
 					} else {
 						ref.addElement(s.substring(1,s.indexOf("_Non_LRR")+8));
 					}
@@ -48,11 +48,11 @@ public class Temp {
 						System.out.println("error in:"+s);
 					}
 					s= read.readLine();
-				}		
-				
+				}
+
 				Tree tree= new Tree(s2);
-				tree.pretreatment();	
-				
+				tree.pretreatment();
+
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
 					for (int j=0;j<ref.size();j++) {
@@ -69,9 +69,9 @@ public class Temp {
 					leaf.label=leaf.label.replace("ORYSI1","ORYSI");
 					leaf.label=leaf.label.replace("ORYSJ1","ORYSJ");
 				}
-							
-				System.out.println(tree.getNewick());			
-			
+
+				System.out.println(tree.getNewick());
+
 			} else if (args.length>1 && args[1].equals("classify")) {
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));
 				String s= read.readLine();
@@ -84,14 +84,14 @@ public class Temp {
 					s= read.readLine();
 				}
 				read.close();
-				
+
 				Vector kingdomVector= new Vector();
 				Hashtable nbTreesTable= new Hashtable();
 				Hashtable nbSequencesTable= new Hashtable();
-				
+
 				File[] files= (new File(args[0])).listFiles();
 				for (int j=0;j<files.length;j++) {
-					try {						
+					try {
 						BufferedReader buf= new BufferedReader(new FileReader(files[j]));
 						String test= buf.readLine();
 						buf.close();
@@ -104,15 +104,15 @@ public class Temp {
 								if (kingdom.containsKey(leaf.label)) {
 									String l=(String)(kingdom.get(leaf.label));
 									if (localKingdom.equals("")) {
-										localKingdom=l;	
+										localKingdom=l;
 									}
 									if (!localKingdom.equals(l)) {
 										localKingdom="multi";
 									}
-									
+
 								}
 							}
-													
+
 							if (nbTreesTable.containsKey(localKingdom)) {
 								int lTrees= ((Integer)(nbTreesTable.get(localKingdom))).intValue();
 								int lSequences= ((Integer)(nbSequencesTable.get(localKingdom))).intValue();
@@ -123,7 +123,7 @@ public class Temp {
 								(new File(localKingdom)).mkdir();
 								nbTreesTable.put(localKingdom,new Integer(1));
 								nbSequencesTable.put(localKingdom,new Integer(tree.leafVector.size()));
-							}	
+							}
 							BufferedWriter write= new BufferedWriter(new FileWriter(new File(localKingdom + "/" + ((Integer)(nbTreesTable.get(localKingdom))).intValue() + ".tree")));
 							write.write(test + "\n");
 							write.flush();
@@ -132,25 +132,25 @@ public class Temp {
 					} catch(Exception exp) {
 						System.out.println(files[j].getName());
 						exp.printStackTrace();
-					}	
+					}
 					if (j%1000==0) {
 						System.out.println(j);
-					}			
-					
+					}
+
 				}
-				
+
 				System.out.println("KINGDOM\tNBTREES\tNBSEQUENCES");
 				for (int i=0;i<kingdomVector.size();i++) {
 					String localKingdom=(String)(kingdomVector.elementAt(i));
 					int lTrees= ((Integer)(nbTreesTable.get(localKingdom))).intValue();
 					int lSequences= ((Integer)(nbSequencesTable.get(localKingdom))).intValue();
 					System.out.println(localKingdom + "\t" + lTrees + "\t" + lSequences);
-					
-				}				
-				
+
+				}
+
 			} else if (args.length>1 && args[1].equals("formatGenomicus")) {
 				File[] files= (new File(args[0])).listFiles();
-				
+
 				BufferedReader buf= new BufferedReader(new FileReader(args[4]));
 				Hashtable duplications= new Hashtable();
 				String test= buf.readLine();
@@ -161,13 +161,13 @@ public class Temp {
 					test= buf.readLine();
 				}
 				buf.close();
-				
-				
+
+
 				TreeReader treeReader= new TreeReader(new File(args[2]),TreeReader.NEWICK);
 				Tree speciesTree= treeReader.nextTree();
 				speciesTree.pretreatment();
 				for (int j=0;j<files.length;j++) {
-					try {						
+					try {
 						buf= new BufferedReader(new FileReader(files[j]));
 						test= buf.readLine();
 						buf.close();
@@ -188,8 +188,8 @@ public class Temp {
 									leaf.label= leaf.label.substring(args[k].length()+1,leaf.label.length()) + "_" + args[k+1];
 								}
 							}
-													
-							
+
+
 							BufferedWriter write= new BufferedWriter(new FileWriter(new File(args[3] + "/" + files[j].getName())));
 							write.write(tree.getNHXNewick(speciesTree, duplications,files[j].getName().substring(0,files[j].getName().lastIndexOf("_")) ) + "\n");
 							write.flush();
@@ -198,13 +198,90 @@ public class Temp {
 					} catch(Exception exp) {
 						System.out.println(files[j].getName());
 						exp.printStackTrace();
-					}	
+					}
 					if (j%100==0) {
 						System.out.println(j);
-					}			
-					
-				}			
-				
+					}
+
+				}
+
+
+
+
+			} else if (args.length>1 && args[1].equals("formatSupertree")) {
+				File[] files= (new File(args[0])).listFiles();
+				int k=3;
+				Vector prefixes = new Vector();
+				while (k<args.length-1) {
+					String[] lo= new String[2];
+					lo[0]=args[k];
+					lo[1]=args[k+1];
+					prefixes.addElement(lo);
+
+					k+=2;
+				}
+
+				BufferedWriter write= new BufferedWriter(new FileWriter(new File(args[2])));
+				BufferedReader buf= null;
+				String test= null;
+				for (int j=0;j<files.length;j++) {
+					try {
+
+						buf= new BufferedReader(new FileReader(files[j]));
+						test= buf.readLine();
+						buf.close();
+						if (test.length()>1 && !test.startsWith(";")) {
+							Tree tree= new Tree(test);
+							tree.pretreatment();
+
+							Vector roots= tree.getRootedTrees();
+							double maxMidpoint=10000000.0;
+							for (int i=0;i<roots.size();i++) {
+								Tree root= (Tree)(roots.elementAt(i));
+								double localMidpoint= root.midpoint();
+								if (localMidpoint<=maxMidpoint) {
+									maxMidpoint=localMidpoint;
+									tree=root;
+								}
+
+
+							}
+
+							tree.pretreatment();
+							for (int i=0;i<tree.leafVector.size();i++) {
+								Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+								k=0;
+								while (k<prefixes.size() && !leaf.label.startsWith(((String[])(prefixes.elementAt(k)))[0])) {
+									k++;
+								}
+								if (k<prefixes.size()) {
+									leaf.label=((String[])(prefixes.elementAt(k)))[1];
+								} else {
+									System.out.println("Unknown " + leaf.label);
+								}
+							}
+
+
+							write.write(tree.getSpeciesNewick()+ "\n");
+							write.flush();
+						}
+
+					} catch(Exception exp) {
+						System.out.println(files[j].getName());
+						exp.printStackTrace();
+					}
+					if (j%100==0) {
+						//System.out.println(j);
+					}
+
+				}
+
+
+
+
+				write.close();
+
+
 			} else if (args.length>1 && args[1].equals("dico")) {
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[2])));
 				String s= read.readLine();
@@ -218,20 +295,20 @@ public class Temp {
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICK);
 				Tree tree= treeReader.nextTree();
 				tree.pretreatment();
-				
+
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
-					
+
 					if (dico.containsKey(leaf.label.substring(0,leaf.label.lastIndexOf("_")))) {
 						leaf.label=leaf.label.substring(0,leaf.label.lastIndexOf("_")+1) + (String)(dico.get(leaf.label.substring(0,leaf.label.lastIndexOf("_")))) + "LRR_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1,leaf.label.length());
-						
+
 					} else {
 						System.out.println("Warning: " + leaf.label);
 					}
-						
-						
-				}	
-				System.out.println(tree.getNewick());		
+
+
+				}
+				System.out.println(tree.getNewick());
 			} else if (args.length>1 && args[1].equals("formatsimple")) {
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICKTITLED);
 				Tree tree= treeReader.nextTree();
@@ -239,8 +316,8 @@ public class Temp {
 				while (tree!=null) {
 					tree.pretreatment();
 					for (int i=0;i<tree.leafVector.size();i++) {
-						Tree leaf= (Tree)(tree.leafVector.elementAt(i));					
-						//leaf.label= leaf.label.substring(0,leaf.label.indexOf("_"));			
+						Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+						//leaf.label= leaf.label.substring(0,leaf.label.indexOf("_"));
 					}
 					BufferedWriter write= new BufferedWriter(new FileWriter(new File(num + ".tree")));
 					write.write(tree.getNewick() + "\n");
@@ -249,11 +326,11 @@ public class Temp {
 					tree= treeReader.nextTree();
 					num++;
 					if (num%1000==0) {
-						System.out.println(num);	
-					}	
+						System.out.println(num);
+					}
 				}
-				
-						
+
+
 			}  else if (args.length>1 && args[1].equals("format")) {
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICKTITLED);
 				Tree tree= treeReader.nextTree();
@@ -261,8 +338,8 @@ public class Temp {
 				while (tree!=null) {
 					tree.pretreatment();
 					for (int i=0;i<tree.leafVector.size();i++) {
-						Tree leaf= (Tree)(tree.leafVector.elementAt(i));					
-						leaf.label= leaf.label.substring(0,leaf.label.indexOf("_"));			
+						Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+						leaf.label= leaf.label.substring(0,leaf.label.indexOf("_"));
 					}
 					BufferedWriter write= new BufferedWriter(new FileWriter(new File(num + ".tree")));
 					write.write(tree.getNewick() + "\n");
@@ -271,76 +348,76 @@ public class Temp {
 					tree= treeReader.nextTree();
 					num++;
 					if (num%1000==0) {
-						System.out.println(num);	
-					}	
+						System.out.println(num);
+					}
 				}
-				
-						
+
+
 			} else if (args.length>1 && args[1].equals("cut")) {
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICK);
 				Tree tree= treeReader.nextTree();
 				tree.pretreatment();
-				
+
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
-					
+
 					leaf.label= leaf.label.substring(0,leaf.label.indexOf("_"));
 					while (leaf.label.charAt(0)=='0') {
-						
+
 						leaf.label= leaf.label.substring(1,leaf.label.length());
 					}
-						
-						
-				}	
-				System.out.println(tree.getNewick());		
+
+
+				}
+				System.out.println(tree.getNewick());
 			} else if (args.length>2 && args[2].equals("check")) {
 				BufferedReader read= new BufferedReader(new FileReader(new File(args[1])));
 				Hashtable table= new Hashtable();
-				
+
 				String s= read.readLine();
-				
+
 				while (s!=null) {
 					table.put(s,"1");
-					
+
 					s= read.readLine();
 				}
-				
+
 				read.close();
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICK);
 				Tree tree= treeReader.nextTree();
 				tree.pretreatment();
-				
+
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
-					
+
 					if (!table.containsKey(leaf.label)) {
 						System.out.println(leaf.label);
-						
-					}				
-				}			
+
+					}
+				}
 			} else {
 				boolean prefix=false;
 				if (args.length>1 && args[1].equals("prefix")) {
 					prefix=true;
-					
+
 				}
 				BufferedReader read= new BufferedReader(new FileReader(new File("types.csv")));
 				Hashtable table= new Hashtable();
-				
+
 				String s= read.readLine();
-				
+
 				while (s!=null) {
 					String[] splited= s.split("\t");
 					table.put(splited[0].substring(0,splited[0].indexOf("_")),splited[1]);
-					
+
 					s= read.readLine();
 				}
-				
+
 				read.close();
 				TreeReader treeReader= new TreeReader(new File(args[0]),TreeReader.NEWICK);
 				Tree tree= treeReader.nextTree();
 				tree.pretreatment();
-				
+
 				for (int i=0;i<tree.leafVector.size();i++) {
 					Tree leaf= (Tree)(tree.leafVector.elementAt(i));
 					String id= null;
@@ -358,16 +435,16 @@ public class Temp {
 					if (table.containsKey(id)) {
 						leaf.label=id + trans +  "_" + table.get(id) + "_" + leaf.label.substring(leaf.label.lastIndexOf("_")+1, leaf.label.length());
 						//System.out.println("ok" + leaf.label);
-						
-					}				
+
+					}
 				}
-				
-				
+
+
 				System.out.println(tree.getNewick());
-			
+
 			}
-			
-			
+
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
