@@ -9,7 +9,7 @@ $first="";
 socket_write($socket, $envoi, strlen($envoi));
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$databanks=split("\n", $reception);
+	$databanks=explode("\n", $reception);
 	for ($i=0;$i<count($databanks);$i++) {
 		// if the current word is significant
 		if (strlen($databanks[$i])>0) {
@@ -48,7 +48,7 @@ socket_write($socket, $envoi, strlen($envoi));
 $spec="";
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$databanks=split("\n", $reception);
+	$databanks=explode("\n", $reception);
 	for ($i=0;$i<count($databanks);$i++) {
 		// if the current word is significant
 		if (strlen($databanks[$i])>0) {
@@ -77,7 +77,7 @@ $envoi=$_REQUEST['databank']."\n";
 socket_write($socket, $envoi, strlen($envoi));
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$examplesString=split("\n", $reception);
+	$examplesString=explode("\n", $reception);
 	for ($i=0;$i<count($examplesString);$i++) {
 		// if the current word is significant
 		if (strlen($examplesString[$i])>0) {
@@ -166,16 +166,16 @@ HELP
 <?php
 
 	if ($examples[0]!="N/A") {
-	
+
 ?>
-<hr id="large" onmouseover="changeVisibiliteOnName('popfile',1)"> 	
+<hr id="large" onmouseover="changeVisibiliteOnName('popfile',1)">
 <p id="textual" onmouseover="changeVisibiliteOnName('popfile',1);">Featured examples ready to load:</p>
-<?php	
+<?php
 		for ($i=0;$i<count($examples);$i+=2) {
-		
-		
-		
-			?>		
+
+
+
+			?>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node('<?php echo $examples[$i];?>');refreshAll();"><?php echo $examples[$i+1];?></p>
 
 
@@ -183,7 +183,7 @@ HELP
 
 
 
-	
+
 		}
 	}
 ?>
