@@ -1,0 +1,10 @@
+
+jar_daemon.sh
+jar_rapgreen.sh
+jar_temp.sh
+rapgreen/BuildSpeciesTree.class
+*.class
+*.txt
+*.jar
+*.class
+rapgreen/ReconciliationDatabaseDaemon.class
