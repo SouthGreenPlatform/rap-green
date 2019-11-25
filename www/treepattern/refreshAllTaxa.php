@@ -37,14 +37,14 @@ while ($reception = socket_read($socket, 2048)) {
 
 	// split the buffer
 
-	
+
 
 	$rough=$rough.$reception;
 
 
 
 }
-$species=split("\n", $rough);
+$species=explode("\n", $rough);
 
 ?>
 
@@ -61,7 +61,7 @@ for ($i=0;$i<count($species);$i++) {
 
 	if (strlen($species[$i])>0) {
 		$posi= strpos($species[$i],"|");
-		
+
 
 		echo 'reverseDico["';
 		echo substr($species[$i], $posi+1, strlen($species[$i]));
