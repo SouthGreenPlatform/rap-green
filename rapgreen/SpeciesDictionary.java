@@ -244,7 +244,7 @@ public class SpeciesDictionary {
 		boolean founded=false;
 		String taxon= taxonParam.substring(taxonParam.lastIndexOf("_")+1,taxonParam.length());
 		//System.out.println(taxon);
-		
+
 		Tree runner= (Tree)(speciesTree.leafHashtable.get(taxon));
 		//System.out.println(runner);
 		//System.out.println(allowedConstraints.containsKey(runner.label) + " " + forbiddenConstraints.containsKey(runner.label));
@@ -274,7 +274,7 @@ public class SpeciesDictionary {
 */
 	public boolean isCompatible(Tree treeParam,Hashtable allowedConstraints,Hashtable forbiddenConstraints) {
 		boolean finalRes=true;
-		
+
 			//System.out.println(treeParam.leafVector.size());
 		for (int i=0;i<treeParam.leafVector.size() && finalRes;i++) {
 
@@ -319,28 +319,42 @@ public class SpeciesDictionary {
 	public void setSpeciesTree(Tree speciesTree) {
 		this.speciesTree=speciesTree;
 	}
-	
+
 // ********************************************************************************************************************
 /**
-* Parse a dico file to fill this dictionary 
+* Parse a dico file to fill this dictionary, parse the species tree if null
 * @param the species dictionary
 */
 	public void parseSpeciesDico(File speciesFile) {
 		try {
-			BufferedReader read= new BufferedReader(new FileReader(speciesFile));
-			String s= read.readLine();
-			while (s!=null) {
-				String[] sp= s.split("\t");
-				//System.out.println(sp[0] + " " + sp[2] + " " + sp[1]);
-				addSpecies(sp[0],sp[2],sp[1]);
-				s= read.readLine();
+			if (speciesFile==null) {
+					Vector v= speciesTree.leafVector;
+					for (int i=0;i<v.size();i++) {
+							Tree n= (Tree)(v.elementAt(i));
+							addSpecies(n.label,n.label,n.label);
+
+					}
+
+			} else {
+
+
+					BufferedReader read= new BufferedReader(new FileReader(speciesFile));
+					String s= read.readLine();
+					while (s!=null) {
+						String[] sp= s.split("\t");
+						//System.out.println(sp[0] + " " + sp[2] + " " + sp[1]);
+						addSpecies(sp[0],sp[2],sp[1]);
+						s= read.readLine();
+					}
+					read.close();
+
+
 			}
-			read.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-		
+
 // ********************************************************************************************************************
 /**
 * Get the next species in the iterator
