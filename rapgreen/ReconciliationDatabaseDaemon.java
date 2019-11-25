@@ -1176,6 +1176,7 @@ public class ReconciliationDatabaseDaemon {
 					pattern.patternPretreatment(tree,dic);
 					Tree geneTree= new Tree((Tree)(trees.get(id)));
 					geneTree.taxonomicPretreatment();
+
 					Vector colored= new Vector();
 					Hashtable stickers= new Hashtable();
 					geneTree.colorPattern(pattern,pattern,ind,dic,colored,stickers);

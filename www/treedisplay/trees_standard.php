@@ -3263,7 +3263,7 @@ function lineMouseClick(evt) {
 function leafLink(evt) {
     var target = evt.target;
 	var clickedTreeNode= clickedTreeNodes[target.getAttribute("indexNode")];
-	var link= "http://grass-genome-hub.southgreen.fr/feature/" + clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
+	var link= "<?php echo $displayadress; ?>" + clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
 	top.location.href = link;
 }
 

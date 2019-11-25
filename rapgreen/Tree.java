@@ -1912,7 +1912,7 @@ public class Tree {
 			if (this.nhx!=null && this.nhx.indexOf("S=")!=-1) {
 					String cut1= this.nhx.substring(this.nhx.indexOf("S=")+2, this.nhx.length());
 					String spec= cut1.substring(0,cut1.indexOf(":"));
-					if (!this.label.endsWith("_" + spec)) {
+					if (!this.label.endsWith(spec)) {
 						this.label=this.label + "_" + spec;
 					}
 			}
