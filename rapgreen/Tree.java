@@ -1909,6 +1909,15 @@ public class Tree {
 			leafVector.addElement(this);
 			//System.out.println(label);
 			//System.out.println(label.substring(label.lastIndexOf("_")+1,label.length()));
+			if (this.nhx!=null && this.nhx.indexOf("S=")!=-1) {
+					String cut1= this.nhx.substring(this.nhx.indexOf("S=")+2, this.nhx.length());
+					String spec= cut1.substring(0,cut1.indexOf(":"));
+					this.label=this.label + "_" + spec;
+			}
+
+
+
+
 			leafHashtable.put(label.substring(label.lastIndexOf("_")+1,label.length()),this);
 			if (length==-1.0) {
 				maxDepth=1.0;
@@ -1917,6 +1926,14 @@ public class Tree {
 			}
 		} else {
 			//The node case ; for each son
+			if (this.nhx!=null && this.nhx.indexOf("D=Y")!=-1) {
+				this.label="D_" + this.label;
+			}
+			if (this.nhx!=null && this.nhx.indexOf("D=N")!=-1) {
+				this.label="S_" + this.label;
+			}
+
+
 			maxDepth=0.0;
 			for (int i=0;i<sons.size();i++) {
 				//Pretreat the son recursivly
@@ -2082,6 +2099,8 @@ public class Tree {
 		if (isLeaf()) {
 			//The leaf case, put this into the fields
 			leafVector.addElement(this);
+			if (label.indexOf('|')!=-1)
+				label=label.substring(0,label.indexOf('|'));
 			leafHashtable.put(label,this);
 			if (length==-1.0) {
 				maxDepth=1.0;
@@ -2105,6 +2124,8 @@ public class Tree {
 				}
 
 			}
+			if (label.indexOf('|')!=-1)
+				label=label.substring(0,label.indexOf('|'));
 			leafHashtable.put(this.label,this);
 			leafVector.addElement(this);
 			/*if (father==null) {
@@ -2500,6 +2521,36 @@ public class Tree {
 			res.append(label);
 		}
 	}
+	// ********************************************************************************************************************
+	/**
+	* Return the species (nothing but the 5 letter code) newick representation of this node
+	* @return The newick standard representation of this node
+	*/
+		public String getSpeciesNewick() {
+			StringBuffer res= new StringBuffer();
+			getSpeciesNewick(res);
+			res.append(';');
+			return(res.toString());
+		}
+
+	// ******************************
+	/**
+	* Standard string conversion method
+	* @param lengthParam	The buffer used to store the result
+	*/
+		private void getSpeciesNewick(StringBuffer res) {
+			if (!isLeaf()) {
+				res.append('(');
+				((Tree)(sons.elementAt(0))).getSpeciesNewick(res);
+				for (int i=1;i<sons.size();i++) {
+					res.append(',');
+					((Tree)(sons.elementAt(i))).getSpeciesNewick(res);
+				}
+				res.append(')');
+			} else {
+				res.append(label.substring(label.lastIndexOf("_")+1,label.length()));
+			}
+		}
 
 // ********************************************************************************************************************
 /**
