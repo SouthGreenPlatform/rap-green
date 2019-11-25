@@ -511,7 +511,7 @@ function Node(newick) {
 	this.colored=0;
 
 	// general color
-	this.color="";
+	this.color=lineColor;
 
 	// intialisation of opacity
 	this.opacity="1.0";

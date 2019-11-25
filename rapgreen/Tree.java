@@ -1912,7 +1912,9 @@ public class Tree {
 			if (this.nhx!=null && this.nhx.indexOf("S=")!=-1) {
 					String cut1= this.nhx.substring(this.nhx.indexOf("S=")+2, this.nhx.length());
 					String spec= cut1.substring(0,cut1.indexOf(":"));
-					this.label=this.label + "_" + spec;
+					if (!this.label.endsWith("_" + spec)) {
+						this.label=this.label + "_" + spec;
+					}
 			}
 
 
@@ -1924,6 +1926,7 @@ public class Tree {
 			} else {
 				maxDepth=length;
 			}
+			//System.out.println(label);
 		} else {
 			//The node case ; for each son
 			if (this.nhx!=null && this.nhx.indexOf("D=Y")!=-1) {
