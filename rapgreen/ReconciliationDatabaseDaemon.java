@@ -316,32 +316,37 @@ public class ReconciliationDatabaseDaemon {
 		}
 
 
+
+
+
+
+
 		for (int t=0;t<argsGenomicusDico.size();t++) {
 			String[] localArgs= (String[])(argsGenomicusDico.elementAt(t));
 			String localId="";
 			Hashtable sequenceIndex= new Hashtable();
 
-	        try {
+	    try {
 
 
         		String speciesTreeId= localArgs[0];
         		speciesTreeIds.addElement(speciesTreeId);
         		specifications.put(speciesTreeId,"DTL");
-				if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
+						if (!quiet) System.out.print("Databank: " + speciesTreeId + "... ");
 
-				SpeciesDictionary dico= new SpeciesDictionary();
-				Hashtable localSpeciesIndex= new Hashtable();
+						SpeciesDictionary dico= new SpeciesDictionary();
+						Hashtable localSpeciesIndex= new Hashtable();
 
-				TreeReader read= new TreeReader(new File(localArgs[1]),TreeReader.NEWICK);
+						TreeReader read= new TreeReader(new File(localArgs[1]),TreeReader.NEWICK);
 
-				Tree speciesTree= read.nextTree();
+						Tree speciesTree= read.nextTree();
 				//System.out.println(speciesTree);
-				speciesTree.globalPretreatment();
-				dico.setSpeciesTree(speciesTree);
-				dico.parseSpeciesDico(null);
-				speciesTreeStructures.put(speciesTreeId,speciesTree);
-				speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
-				speciesTreeDictionaries.put(speciesTreeId,dico);
+						speciesTree.globalPretreatment();
+						dico.setSpeciesTree(speciesTree);
+						dico.parseSpeciesDico(null);
+						speciesTreeStructures.put(speciesTreeId,speciesTree);
+						speciesTreeIndex.put(speciesTreeId,localSpeciesIndex);
+						speciesTreeDictionaries.put(speciesTreeId,dico);
 
 				//System.out.println(dico.getScientificName("N5"));
 
@@ -351,47 +356,48 @@ public class ReconciliationDatabaseDaemon {
         		BufferedReader geneFiles = new BufferedReader(new FileReader(new File(localArgs[2])));
         		//BufferedReader read2=null;
         		int lak=1;
-				String s= geneFiles.readLine();
+						String s= geneFiles.readLine();
         		while (s!=null) {
 
-					localId= s.substring(s.lastIndexOf(")")+1,s.lastIndexOf("["));
+								localId= s.substring(s.lastIndexOf(")")+1,s.lastIndexOf("["));
 
 			//		System.out.println(localId);
 
-					geneIds.addElement(localId);
+								geneIds.addElement(localId);
 
-					Tree tree= new Tree(s);
-					tree.pretreatment();
+								Tree tree= new Tree(s);
+								tree.pretreatment();
 
 
 
-					for (int i=0;i<tree.leafVector.size();i++) {
-						try {
-							Tree leaf= (Tree)(tree.leafVector.elementAt(i));
-							sequenceIndex.put(leaf.label,localId);
-							if (leaf.label.indexOf("_")!=-1) {
-								String shorten= leaf.label.substring(0,leaf.label.lastIndexOf("_"));
-								sequenceIndex.put(shorten,localId);
-									if (shorten.endsWith(".p")) {
-										sequenceIndex.put(shorten.substring(0,shorten.length()-2),localId);
+								for (int i=0;i<tree.leafVector.size();i++) {
+									try {
+										Tree leaf= (Tree)(tree.leafVector.elementAt(i));
+										sequenceIndex.put(leaf.label,localId);
+										if (leaf.label.indexOf("_")!=-1) {
+											String shorten= leaf.label.substring(0,leaf.label.lastIndexOf("_"));
+											sequenceIndex.put(shorten,localId);
+												if (shorten.endsWith(".p")) {
+													sequenceIndex.put(shorten.substring(0,shorten.length()-2),localId);
 
+												}
+										}
+									} catch(Exception exp) {
+										//System.out.println("Warning: " + localId);
 									}
-							}
-						} catch(Exception exp) {
-							//System.out.println("Warning: " + localId);
-						}
-					}
+								}
 
 
-					tree.taxonomicPretreatment();
-					geneStructures.put(localId,tree);
-					treeDebug=tree;
-					lak++;
-					if (lak%1000==0)
-						System.out.println(lak);
+								tree.taxonomicPretreatment();
+								geneStructures.put(localId,tree);
+								//System.out.println(tree);
+								treeDebug=tree;
+								lak++;
+								if (lak%1000==0)
+									System.out.println(lak);
 
 
-					s= geneFiles.readLine();
+								s= geneFiles.readLine();
 
 
         		}
@@ -412,6 +418,13 @@ public class ReconciliationDatabaseDaemon {
 	        	System.out.println(localId);
 	        }
 		}
+
+
+
+
+
+
+
 
 
 
