@@ -21,13 +21,13 @@ $count=0;
 
 while ($reception = socket_read($socket, 2048)) {
 	// split the buffer
-	$families=split("\n", $reception);
+	$families=explode("\n", $reception);
 	for ($i=0;$i<count($families);$i++) {
 		// if the current word is significant
 		if (strlen($families[$i])>0) {
 
 
-	
+
 			$res[$count]=$families[$i];
 			$count++;
 		}
@@ -58,18 +58,17 @@ while ($reception = socket_read($socket, 2048)) {
 		if ($i!=0)
 			echo ";";
 		echo $res[$i];
-		
-	}		
+
+	}
 }*/
 
 socket_close($socket);
 
 
 ?>">
-<input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $res[0]; ?>"><input type="hidden" name="size" value="<?php echo $res[1]; ?>"></form> 
+<input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $res[0]; ?>"><input type="hidden" name="size" value="<?php echo $res[1]; ?>"></form>
 
 
 <script type="text/javascript">
 	refreshList();
 </script>
-
