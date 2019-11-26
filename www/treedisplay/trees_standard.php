@@ -3263,7 +3263,6 @@ function lineMouseClick(evt) {
 function leafLink(evt) {
     var target = evt.target;
 	var clickedTreeNode= clickedTreeNodes[target.getAttribute("indexNode")];
-	alert("displayadress=<?php echo $displayadress; ?>");
 	var link= "<?php echo $displayadress; ?>" + clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
 	top.location.href = link;
 }
@@ -3271,7 +3270,7 @@ function leafLink(evt) {
 function supMouseClick(evt) {
     var target = evt.target;
 	var clickedTreeNode= clickedTreeNodes[target.getAttribute("indexNode")];
-	alert(clickedTreeNode.support + " " + clickedTreeNode.length);
+	//alert(clickedTreeNode.support + " " + clickedTreeNode.length);
 	removeAll();
 	drawAll();
 }
