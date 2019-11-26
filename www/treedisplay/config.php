@@ -1,6 +1,6 @@
 <?php
 
-$displayadress=Array("BFF" => "https://grass-genome-hub.southgreen.fr/protein/");
+$displayadress= "https://grass-genome-hub.southgreen.fr/protein/";
 
 ?>
 
