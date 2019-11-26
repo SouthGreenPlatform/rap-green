@@ -20,6 +20,11 @@
 ?>
 <?php
 
+ include('config.php');
+
+?>
+<?php
+
  include('annotations.php');
 
 ?>
