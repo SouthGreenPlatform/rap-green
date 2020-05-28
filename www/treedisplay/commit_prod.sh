@@ -1,1 +1,1 @@
-scp -r * dufayard@gohelle:/apps/www/phylogeny/prod/treedisplay/
+scp -r * dufayard@salanque:/opt/www/phylogeny.southgreen.fr/prod/treedisplay/

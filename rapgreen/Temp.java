@@ -208,6 +208,45 @@ public class Temp {
 
 
 
+			} else if (args.length>1 && args[1].equals("formatGreenphyl")) {
+				File[] files= (new File(args[0])).listFiles();
+
+			
+
+
+				TreeReader treeReader= new TreeReader(new File(args[2]),TreeReader.NEWICK);
+				Tree speciesTree= treeReader.nextTree();
+				speciesTree.pretreatment();
+				String test=null;
+				BufferedWriter write= new BufferedWriter(new FileWriter(new File(args[3])));
+				for (int j=0;j<files.length;j++) {
+					try {
+						BufferedReader buf= new BufferedReader(new FileReader(files[j]));
+						test= buf.readLine();
+						buf.close();
+						if (test.length()>1 && !test.startsWith(";")) {
+							Tree tree= new Tree(test);
+							tree.pretreatment();
+			
+
+
+							write.write(files[j].getName().substring(0,files[j].getName().indexOf("_")) + " " + tree.getNHXNewick(speciesTree, null,"x" ) + "\n");
+							write.flush();
+							
+						}
+					} catch(Exception exp) {
+						System.out.println(files[j].getName());
+						exp.printStackTrace();
+					}
+					if (j%100==0) {
+						System.out.println(j);
+					}
+
+				}
+
+				write.close();
+
+
 			} else if (args.length>1 && args[1].equals("formatSupertree")) {
 				File[] files= (new File(args[0])).listFiles();
 				int k=3;

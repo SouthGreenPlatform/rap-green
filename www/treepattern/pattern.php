@@ -1706,8 +1706,14 @@ function step1() {
 
 function step2() {
 	var position = "popresults";
-	window.open("wait.php?database=" + database + "&pattern=" + tree.getNewick() + ";");
-	changeVisibilite2("popresults",0);
+	
+	document.getElementById("hiddenpattern").value=tree.getNewick() + ";";
+	//alert(document.getElementById("hiddenpattern").value);
+	
+	document.getElementById("submitPatternForm").submit();
+	
+	//window.open("wait.php  + "&pattern=" + tree.getNewick() + ";");
+	//changeVisibilite2("popresults",0);
 	return 1;
 }
 

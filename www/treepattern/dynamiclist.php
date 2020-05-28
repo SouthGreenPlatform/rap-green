@@ -64,7 +64,7 @@ socket_close($socket);
 
 		echo "<tr><td colspan=2 id='lefted'><p><b>".$count." matching trees.</b></p></td></tr>";
 		
-		echo "<tr><td colspan=4 id='lefted'><p>Compute <a target='_blank' href='wait2.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$_POST['id']."'>full results</a>  in CSV format<br>(A new window will pop, and it could take a few minutes for the file to be generated).</p></td></tr>";
+		echo "<tr><td colspan=4 id='lefted'><p>Compute <a target='_blank' href='wait2.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$_POST['id']."'>full results</a>  in CSV format<br>(A new window will pop, and it could take a few minutes for the file to be generated).</p></td></tr>";
 		echo "</table><table id='organise'>";
 		echo "<tr><td id='lefted'><b>Results ".($_POST['start']+1)." to ".($_POST['start']+$range).":</b>&nbsp;&nbsp;&nbsp;</td><td id='lefted'>";
 		if ($_POST['start']>0) {
@@ -77,10 +77,10 @@ socket_close($socket);
 		echo "</td></tr>";
 
 		for ($i=0;$i<count($resfiles);$i++) {
-			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>display</a>";
+			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>display</a>";
 			
 			if (isSet($displayadress[$_REQUEST['databank']]) && $displayadress[$_REQUEST['databank']]!="")	{
-				echo "&nbsp;&nbsp;<a href='resultsSecondaryDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_REQUEST["pattern"]."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
+				echo "&nbsp;&nbsp;<a href='resultsSecondaryDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
 			
 			}	
 			

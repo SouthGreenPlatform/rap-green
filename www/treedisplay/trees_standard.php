@@ -28,7 +28,7 @@ var splitColor="#000000"
 var roundray=20;
 var collapseWidth=3.0;
 var tagWidth=15;
-var opacitydegree=0.3;
+var opacitydegree=0.7;
 
 //Static annotation graphic elements
 var annotationFrame;
@@ -1129,6 +1129,28 @@ function fmaxDepth() {
 		// It's a leaf
 		this.depth=parseFloat(this.length);
 		return parseFloat(this.length);
+		//return 1.0;
+	}
+}
+// ************************
+// Return the maximum depth
+function fleafLabelList() {
+	// Counting the number of sons
+	var count = this.sons.length;
+	if (count>0) {
+		var res="";
+		// It's a node
+		var i=0;
+		for (i = 0; i < count; i++) {
+			// Compute the max depth of the sons
+			var localres=this.sons[i].leafLabelList();
+			res=res+localres;
+		}
+		return res;
+		//return max+ 1.0;
+	} else {
+		// It's a leaf
+		return this.taxon + "\n";
 		//return 1.0;
 	}
 }
@@ -2349,6 +2371,11 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			//if (infos[this.taxon]!=null) {
 			text1.addEventListener("mousedown", leafLink , false);
 			//}
+			var codesps= this.taxon.substring(this.taxon.lastIndexOf("_")+1,this.taxon.length);
+			if (displayadress[codesps]==null) {		
+				text1.setAttribute("opacity", opacitydegree);
+				text1.setAttribute("fill-opacity", opacitydegree);
+			}
 			this.text=text1;
 			if (drawTheEnd==1) {
 					this.addText=1;
@@ -3018,6 +3045,7 @@ Node.prototype.resetAnnotationColors=fresetAnnotationColors;
 Node.prototype.fillInternalTags=ffillInternalTags;
 Node.prototype.resetSplitCounters=fresetSplitCounters;
 Node.prototype.maxDepth = fmaxDepth;
+Node.prototype.leafLabelList = fleafLabelList;
 Node.prototype.maxUltraDepth = fmaxUltraDepth;
 Node.prototype.nbLeaves = fnbLeaves;
 Node.prototype.fullNbLeaves = ffullNbLeaves;
@@ -3263,8 +3291,13 @@ function lineMouseClick(evt) {
 function leafLink(evt) {
     var target = evt.target;
 	var clickedTreeNode= clickedTreeNodes[target.getAttribute("indexNode")];
-	var link= "<?php echo $displayadress; ?>" + clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
-	top.location.href = link;
+	var codesps= clickedTreeNode.taxon.substring(clickedTreeNode.taxon.lastIndexOf("_")+1,clickedTreeNode.taxon.length);
+	var seqid= clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
+	//alert(displayadress[codesps] + "/" + seqid);
+	if (displayadress[codesps]!=null) {
+		var link= displayadress[codesps] + seqid;
+		top.location.href = link;
+	}
 }
 
 function supMouseClick(evt) {

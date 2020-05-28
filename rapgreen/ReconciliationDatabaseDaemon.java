@@ -200,11 +200,7 @@ public class ReconciliationDatabaseDaemon {
 
 				System.exit(0);
 
-			}
-
-
-
-			if (args[i].equalsIgnoreCase("-database")) {
+			} else if (args[i].equalsIgnoreCase("-database")) {
 
 				String[] localArgs= new String[5];
 				localArgs[0]= args[i+1];
@@ -218,11 +214,7 @@ public class ReconciliationDatabaseDaemon {
 
 	        	i+=3;
 
-			}
-
-
-
-			if (args[i].equalsIgnoreCase("-directory")) {
+			} else if (args[i].equalsIgnoreCase("-directory")) {
 				//System.out.println("echo1");
 				String[] localArgs= new String[4];
 				localArgs[0]= args[i+1];
@@ -235,8 +227,7 @@ public class ReconciliationDatabaseDaemon {
 
 	        	i+=3;
 
-			}
-			if (args[i].equalsIgnoreCase("-directoryDico")) {
+			} else if (args[i].equalsIgnoreCase("-directoryDico")) {
 
 				String[] localArgs= new String[5];
 				localArgs[0]= args[i+1];
@@ -250,8 +241,7 @@ public class ReconciliationDatabaseDaemon {
 
 	        	i+=4;
 
-			}
-			if (args[i].equalsIgnoreCase("-genomicus")) {
+			} else if (args[i].equalsIgnoreCase("-genomicus")) {
 				String[] localArgs= new String[3];
 
 				localArgs[0]= args[i+1];
@@ -262,8 +252,7 @@ public class ReconciliationDatabaseDaemon {
 
 	      i+=2;
 
-			}
-			if (args[i].equalsIgnoreCase("-fileDico")) {
+			} else if (args[i].equalsIgnoreCase("-fileDico")) {
 				String[] localArgs= new String[5];
 				if (i+6<args.length && args[i+6].equals("invert")) {
 					localArgs= new String[6];
@@ -279,33 +268,26 @@ public class ReconciliationDatabaseDaemon {
 
 				argsFilesDico.addElement(localArgs);
 
-	        	i+=4;
 				if (i+6<args.length && args[i+6].equals("invert")) {
-					i++;
+					i++; 
 				}
-			}
-
-			if (args[i].equalsIgnoreCase("-config")) {
+	        	i+=4;
+			} else if (args[i].equalsIgnoreCase("-config")) {
 
 				configFile= new File(args[i+1]);
 
 
-			}
-
-
-			if (args[i].equalsIgnoreCase("-port")) {
+			} else if (args[i].equalsIgnoreCase("-port")) {
 
 				port= (new Integer(args[i+1])).intValue();
 				System.out.println("Port fixed to " + port);
 
-			}
-			if (args[i].equalsIgnoreCase("-results")) {
+			} else if (args[i].equalsIgnoreCase("-results")) {
 
 				resultDirectory= new File(args[i+1]);
 
 
-			}
-			if (args[i].equalsIgnoreCase("-quiet")) {
+			} else if (args[i].equalsIgnoreCase("-quiet")) {
 
 				quiet=true;
 
@@ -1092,8 +1074,9 @@ public class ReconciliationDatabaseDaemon {
 					Vector treeIds= (Vector)(geneTreeIds.get(databank));
 					Hashtable trees= (Hashtable)(geneTreeStructures.get(databank));
 					//Hashtable refTrees= (Hashtable)(referenceTreeStructures.get(databank));
-
-					Tree pattern= new Tree(in.readLine());
+					String pats=in.readLine();
+					// System.out.println(pats);
+					Tree pattern= new Tree(pats);
 					pattern.patternPretreatment(tree,dic);
 					//System.out.println("test:" + pattern.leafVector.size());
 

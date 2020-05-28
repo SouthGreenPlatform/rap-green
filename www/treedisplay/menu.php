@@ -159,6 +159,11 @@ GRAPHICAL RENDERING
 </form>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="saveSVG();">Save as image</p>
+<hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
+<p id="textual" onmouseover="changeVisibiliteOnName('popload',1);">Leaf list:</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popload',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popload',1)" cols="12" rows="5" name="seqlistfield" id="seqlistfield"></textarea></p>
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="document.getElementById('seqlistfield').value=tree.leafLabelList();">Load sequence list</p>
+
 </div>
 </td>
 </tr>
