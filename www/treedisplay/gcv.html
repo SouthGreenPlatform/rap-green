@@ -1,0 +1,98 @@
+ 
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:html="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ 
+<head>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <script src="http://dev.grass-genome-hub.cirad.fr/d3_v5.js?<?php echo time();?>"></script>
+    <script src="http://dev.grass-genome-hub.cirad.fr/gcv.js?<?php echo time();?>"></script>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js?<?php echo time();?>"></script>
+    <script src="http://dev.grass-genome-hub.cirad.fr/js/jquery.min.js?<?php echo time();?>"></script>
+    
+    
+    <link href="http://dev.grass-genome-hub.cirad.fr/css/jquery-ui.css" rel="stylesheet">
+    <link href="http://dev.grass-genome-hub.cirad.fr/css/multiple-select.css" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    
+    
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <style>
+   table {
+border: medium solid #000000;
+
+}
+td, tr {
+border: thin solid #6495ed;
+}
+    </style>
+    
+</head> 
+<body>
+  <form>
+    <p>
+        Gene Name: <input type="text" id="gene_name" />
+        Nombre de voisin: <input type="text" id="nbNeigbors" />
+        <input type="submit" id="submit" value="Search" />
+    </p>
+    </form>
+   <button name="button" id="zoom">Zoom-</button>
+   <button name="button" id="dezoomer">Zoom+</button>
+   </br> </br> 
+
+<div id="myid"></div>
+<script type="text/javascript">
+//console.log(indexOfleaves[0]);
+  var neighborsRef;
+  var gene;
+  
+  var stn;var nbNeighbors;
+  
+ function extractUrlParams () {
+    var t = location.search.substring(1).split('&');
+	var f = [];
+	for (var i=0; i<t.length; i++){
+		var x = t[ i ].split('=');
+		f[x[0]]=x[1];
+	}
+	return f;
+  }
+
+ function requette(gene_name, nb_Neighbor){
+          
+          $.post(
+              'http://dev.phylogeny.southgreen.fr/treedisplay/gcvBDconfig.php', 
+              {
+                  geneName : gene_name, 
+                  nbNeighbors:nb_Neighbor
+              },
+            
+              function(data){
+                   gene = data.gene;neighborsRef=data.neighborsRef; nbNeighbors = nb_Neighbor;
+                    var familleRefArray = Object.keys(gene);
+                     //alert(nb_Neighbor);
+                   stn = new Syntenie("#myid",(nb_Neighbor*2+10)*25,(familleRefArray.length+1)*35,"blue",fill="none");
+                   stn.drawAll(gene,neighborsRef,nb_Neighbor);    
+                  
+              },
+              'json'
+           );
+ }      
+
+ var parameters= extractUrlParams ();
+  if (parameters.hasOwnProperty("geneName")){
+      requette(parameters["geneName"], parameters["nbNeighbors"]);
+  }
+      
+  $(document).ready(function(){
+      $("#submit").click(function(e){
+          e.preventDefault();
+          requette($("#gene_name").val(),$("#nbNeigbors").val());
+      });
+      $("#zoom").click(function(){stn.zoom();});
+      $("#dezoomer").click(function(){stn.dezoomer();});
+  });
+</script> 
+  </body>
+</html>
