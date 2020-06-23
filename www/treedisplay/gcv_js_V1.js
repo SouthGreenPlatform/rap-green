@@ -7,7 +7,7 @@ var familleRefArray;
 var widthGene=25;
 var heigthGene=1;//redimensionnement des genes
 
-var lien="http://dev.phylogeny.southgreen.fr/treepattern/resultsDisplay.php?databank=viridiplantae_27_V2.1&targetgene="; //lien d'indexation de la BD nécessaire pour le double clic et le changement de gène de reference
+var lien="http://phylogeny.southgreen.fr/patterngeco/resultsDisplay.php?databank=viridiplantae_27_V2.1&targetgene="; //lien d'indexation de la BD nécessaire pour le double clic et le changement de gène de reference
 
 //distance entre l'élement du haut et le debut de la représentation du contexte
 var distanceHaut=10;

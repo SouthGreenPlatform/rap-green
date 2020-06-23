@@ -2,33 +2,7 @@
 
 var alertDebug=0;
 
-// Define primal dimensions and margins
-var width=<?php if (isSet($_REQUEST['width'])) { echo $_REQUEST['width'].';'; } else {?>1800;<?php } ?>
-var height=600;
-var margin=30;
-var annotMargin=600;
-var annotX=0;
-var legendHeight=80;
-var legendX=0;
-// Computed regarding data
-var taxaMargin=0;
 
-// Define the esthetic parameters of the tree displaying
-var fontFamily="Candara";
-var fontSize=14;
-var legendFontSize="14";
-var supportSize=11;
-var fontColor="black";
-var backColor="white";
-var lineWidth= 2;
-var lineColor= "#05357E";
-var collapseColor="#EEEEEE";
-var tagColor="#FF0000";
-var splitColor="#000000"
-var roundray=20;
-var collapseWidth=3.0;
-var tagWidth=15;
-var opacitydegree=0.7;
 
 //Static annotation graphic elements
 var annotationFrame;
@@ -328,6 +302,14 @@ function hZoomIn() {
 	fontSize=parseInt(fontSize)+1;
 	reinitCoordinateSVG();
 	resizeSVG();
+	
+	
+	<?php if ($activategeco=="true") { ?>
+	//GCV
+	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves); 
+	<?php } ?>
+	
 }
 
 function hZoomOut() {
@@ -344,6 +326,12 @@ function hZoomOut() {
 	fontSize=parseInt(fontSize)-1;
 		reinitCoordinateSVG();
 	resizeSVG();
+
+	<?php if ($activategeco=="true") { ?>
+	//GCV
+	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves,20,0.8); 	
+	<?php } ?>
 }
 function wZoomIn() {
 	annotX=10;
@@ -359,6 +347,12 @@ function wZoomIn() {
 	width+=100;
 	reinitCoordinateSVG();
 	resizeSVG();
+	
+	<?php if ($activategeco=="true") { ?>
+	//GCV
+	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves); 
+	<?php } ?>	
 }
 
 function wZoomOut() {
@@ -375,6 +369,12 @@ function wZoomOut() {
 	width-=100;
 	reinitCoordinateSVG();
 	resizeSVG();
+	
+	<?php if ($activategeco=="true") { ?>
+	//GCV
+	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves,20,0.8);
+	<?php } ?>
 }
 function drawAll() {
 	if (tree!="undef") {
