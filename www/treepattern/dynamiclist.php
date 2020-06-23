@@ -102,13 +102,14 @@ socket_close($socket);
  	} else {
  		document.forms['resultForm'].start.value='<?php echo ($_POST["start"]+$range); ?>';
  	}
+	document.getElementById("hiddenpatternwait").value="<?php echo $_POST['hiddenpatternwait']; ?>";
 	document.forms['resultForm'].submit();
 
  }
 
 </script>
 
-<form name="resultForm" action="dynamiclist.php?start=0&databank=<?php echo $_REQUEST['databank']; ?>&pattern=<?php echo $_REQUEST['pattern']; ?>" method="post">
+<form name="resultForm" action="dynamiclist.php?start=0&databank=<?php echo $_REQUEST['databank']; ?>" method="post">
 <input type="hidden" name="hiddenlist" value="<?php
 
 /*if ($count==0) {
@@ -124,7 +125,7 @@ socket_close($socket);
 
 
 ?>">
-<input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"><input type="hidden" name="size" value="<?php echo $_POST['size']; ?>"></form> 
+<input type="hidden" name="hiddenpatternwait" id="hiddenpatternwait" /><input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"><input type="hidden" name="size" value="<?php echo $_POST['size']; ?>"></form> 
 
 
 </body>

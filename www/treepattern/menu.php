@@ -135,11 +135,11 @@ function refreshPattern(param) {
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',1);changeVisibiliteOnName('popdatabase',0);">
 LOAD/SAVE
 </td>
-
+<?php if ($displaydatabases=="true") { ?>
 <td name="databaseTd" id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',0);changeVisibiliteOnName('popdatabase',1);">
 DATABASE: <?php if ($_REQUEST['databank']=="") {echo "No database available";} else {echo $_REQUEST['databank'];} ?>
 </td>
-
+<?php } ?>
 <td name="searchTd" id="itemtd" onmouseout="this.style.opacity = opac;" onclick="displayResults();" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popfile',0);changeVisibiliteOnName('popdatabase',0);">
 SEARCH PATTERN
 </td>

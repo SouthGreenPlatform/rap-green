@@ -13,6 +13,7 @@ error_reporting(0);
 <body>
 <?php
 
+ $displaydatabases="true";
  include('config.php');
 
 ?>
