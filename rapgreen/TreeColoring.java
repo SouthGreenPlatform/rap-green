@@ -51,6 +51,7 @@ public class TreeColoring {
 		boolean uniqueid=false;
 		boolean nexml2newick=false;
 		boolean formatdb=false;
+		boolean colordb=false;
 		boolean formatorthofinderdb=false;
 		Hashtable taxaTranslationTable= new Hashtable();
 		Vector taxaTranslationVector= new Vector();
@@ -67,7 +68,9 @@ public class TreeColoring {
 					System.out.println(NORMAL);
 					System.out.println("\tjava -jar TreeColoring.jar [command args]");
 					System.out.println(BOLD);
-					System.out.println("OPTIONS:");
+					System.out.println("OPTIONS:");					
+					System.out.println(BOLD);
+					System.out.println("-colordb" + NORMAL + " " + UNDERLINE + "tree_file\n\t" + NORMAL + "The input multi-newick tree file that needs to be colored");
 					System.out.println(BOLD);
 					System.out.println("-formatdb" + NORMAL + " " + UNDERLINE + "tree_directory\n\t" + NORMAL + "The input newick tree directory to convert into databank");
 					System.out.println(BOLD);
@@ -86,6 +89,10 @@ public class TreeColoring {
 					
 					System.out.println("-species" + NORMAL + " "  + UNDERLINE + "species_tree_file\n\t" + NORMAL + "The input file containing colored extended-newick tree\n\n");
 					System.exit(0);
+				}
+				if (args[i].equalsIgnoreCase("-colordb")) {
+					input= new File(args[i+1]);
+					colordb=true;
 				}				
 				if (args[i].equalsIgnoreCase("-newick")) {
 					input= new File(args[i+1]);
@@ -122,7 +129,34 @@ public class TreeColoring {
 				}
 			}
 
-			if (formatdb) {
+			if (colordb) {
+				BufferedReader read= new BufferedReader(new FileReader(input));	
+				BufferedWriter write= new BufferedWriter(new FileWriter(output));
+				s=read.readLine();
+				TreeReader reader= new TreeReader(species,TreeReader.NEWICK);
+				Tree speciesTree= reader.nextTree();
+				speciesTree.pretreatment();
+				while (s!=null) {
+					String localname= s.substring(0,s.indexOf(" "));
+					String localnewick= s.substring(s.indexOf(" ")+1,s.length());
+					System.out.print("Coloring " + localname + " file... ");	
+			
+					Tree tree= new Tree(localnewick);
+					tree.pretreatment();
+			
+					color(tree,speciesTree);			
+			
+					write.write(localname + " " + tree.getNewick() + "\n");
+					write.flush();
+					System.out.println("Done.");				
+					s=read.readLine();
+				
+				}
+				
+				read.close();
+				write.close();
+				System.exit(0);
+			} else if (formatdb) {
 				File[] entries= input.listFiles();	
 				BufferedWriter write= new BufferedWriter(new FileWriter(output));
 				TreeReader reader= new TreeReader(species,TreeReader.NEWICK);
@@ -509,7 +543,7 @@ public class TreeColoring {
 					}
 				}*/
 				if (g.nhx!=null)
-					g.nhx=g.nhx+";"+sNode.nhx.substring(6,sNode.nhx.length());
+					g.nhx=g.nhx+":"+sNode.nhx.substring(6,sNode.nhx.length());
 				else
 					g.nhx=sNode.nhx;
 				//System.out.println(g.nhx);

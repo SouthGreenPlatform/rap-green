@@ -1911,9 +1911,17 @@ public class Tree {
 			//System.out.println(label.substring(label.lastIndexOf("_")+1,label.length()));
 			if (this.nhx!=null && this.nhx.indexOf("S=")!=-1) {
 					String cut1= this.nhx.substring(this.nhx.indexOf("S=")+2, this.nhx.length());
-					String spec= cut1.substring(0,cut1.indexOf(":"));
+					String spec= null;
+					try {
+					if (cut1.indexOf(":")!=-1)
+						spec=cut1.substring(0,cut1.indexOf(":"));
+					else 
+						spec=cut1.substring(0,cut1.length());					
 					if (!this.label.endsWith(spec)) {
 						this.label=this.label + "_" + spec;
+					}
+					}catch(Exception ccc) {
+						System.out.println(this.nhx);
 					}
 			}
 
