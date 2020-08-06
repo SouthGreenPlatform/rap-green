@@ -43,7 +43,7 @@ while ($reception = socket_read($socket, 2048)) {
 		if (strlen($families[$i])>0) {
 
 
-	
+
 			$resfiles[$count]=$families[$i];
 			$count++;
 		}
@@ -63,7 +63,7 @@ socket_close($socket);
 	} else {
 
 		echo "<tr><td colspan=2 id='lefted'><p><b>".$count." matching trees.</b></p></td></tr>";
-		
+
 		echo "<tr><td colspan=4 id='lefted'><p>Compute <a target='_blank' href='wait2.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$_POST['id']."'>full results</a>  in CSV format<br>(A new window will pop, and it could take a few minutes for the file to be generated).</p></td></tr>";
 		echo "</table><table id='organise'>";
 		echo "<tr><td id='lefted'><b>Results ".($_POST['start']+1)." to ".($_POST['start']+$range).":</b>&nbsp;&nbsp;&nbsp;</td><td id='lefted'>";
@@ -78,15 +78,15 @@ socket_close($socket);
 
 		for ($i=0;$i<count($resfiles);$i++) {
 			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>display</a>";
-			
+
 			if (isSet($displayadress[$_REQUEST['databank']]) && $displayadress[$_REQUEST['databank']]!="")	{
-				echo "&nbsp;&nbsp;<a href='resultsSecondaryDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
-			
-			}	
-			
+				echo "&nbsp;&nbsp;<a href='resultDisplay2.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
+
+			}
+
 			echo "</td></tr>";
 		}
-		
+
 	}
 	echo "</table></blockquote>";
 
@@ -97,7 +97,7 @@ socket_close($socket);
 
  function refreshList(e) {
  	if (e==0) {
- 		
+
  		document.forms['resultForm'].start.value='<?php echo ($_POST["start"]-$range); ?>';
  	} else {
  		document.forms['resultForm'].start.value='<?php echo ($_POST["start"]+$range); ?>';
@@ -119,13 +119,13 @@ socket_close($socket);
 		if ($i!=0)
 			echo ";";
 		echo $resfiles[$i];
-		
-	}		
+
+	}
 }*/
 
 
 ?>">
-<input type="hidden" name="hiddenpatternwait" id="hiddenpatternwait" /><input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"><input type="hidden" name="size" value="<?php echo $_POST['size']; ?>"></form> 
+<input type="hidden" name="hiddenpatternwait" id="hiddenpatternwait" /><input type="hidden" name="start" value="0"><input type="hidden" name="id" value="<?php echo $_POST['id']; ?>"><input type="hidden" name="size" value="<?php echo $_POST['size']; ?>"></form>
 
 
 </body>
