@@ -17,7 +17,7 @@ import java.util.UUID;
 
 * Executable program to manage reconciliation database (add trees ...)
 
-* @author	Dufayard Jean-François
+* @author	Dufayard Jean-Francois
 
 * @version	1.0
 
