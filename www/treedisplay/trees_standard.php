@@ -302,14 +302,14 @@ function hZoomIn() {
 	fontSize=parseInt(fontSize)+1;
 	reinitCoordinateSVG();
 	resizeSVG();
-	
-	
+
+
 	<?php if ($activategeco=="true") { ?>
 	//GCV
 	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
-    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves); 
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves);
 	<?php } ?>
-	
+
 }
 
 function hZoomOut() {
@@ -330,7 +330,7 @@ function hZoomOut() {
 	<?php if ($activategeco=="true") { ?>
 	//GCV
 	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
-    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves,20,0.8); 	
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves,20,0.8);
 	<?php } ?>
 }
 function wZoomIn() {
@@ -347,12 +347,12 @@ function wZoomIn() {
 	width+=100;
 	reinitCoordinateSVG();
 	resizeSVG();
-	
+
 	<?php if ($activategeco=="true") { ?>
 	//GCV
 	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
-    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves); 
-	<?php } ?>	
+    stn.drawAll(gene,neighborsRef,nbNeighbors,listLeaves);
+	<?php } ?>
 }
 
 function wZoomOut() {
@@ -369,7 +369,7 @@ function wZoomOut() {
 	width-=100;
 	reinitCoordinateSVG();
 	resizeSVG();
-	
+
 	<?php if ($activategeco=="true") { ?>
 	//GCV
 	stn = new gcv("#myidGCV",(nbNeighbors*5)*25,height,"blue",fill="none");
@@ -2372,7 +2372,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			text1.addEventListener("mousedown", leafLink , false);
 			//}
 			var codesps= this.taxon.substring(this.taxon.lastIndexOf("_")+1,this.taxon.length);
-			if (displayadress[codesps]==null) {		
+			if (displayadress["all"]==null && displayadress[codesps]==null) {
 				text1.setAttribute("opacity", opacitydegree);
 				text1.setAttribute("fill-opacity", opacitydegree);
 			}
@@ -3294,7 +3294,10 @@ function leafLink(evt) {
 	var codesps= clickedTreeNode.taxon.substring(clickedTreeNode.taxon.lastIndexOf("_")+1,clickedTreeNode.taxon.length);
 	var seqid= clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
 	//alert(displayadress[codesps] + "/" + seqid);
-	if (displayadress[codesps]!=null) {
+	if (displayadress["all"]!=null) {
+		var link= displayadress["all"] + seqid;
+		top.location.href = link;
+	} else if (displayadress[codesps]!=null) {
 		var link= displayadress[codesps] + seqid;
 		top.location.href = link;
 	}
