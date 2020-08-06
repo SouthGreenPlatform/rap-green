@@ -27,7 +27,7 @@
 
 </script>
 
-<form name="research" action="<?php echo $displayadress[$_REQUEST['databank']];if (isSet($_REQUEST["id"])) echo "?focus=".$_REQUEST["id"]; ?>" method="post">
+<form name="research" action="<?php echo $displayadress[$_REQUEST['databank']];if (isSet($_REQUEST["id"])) echo $_REQUEST["id"]; ?>" method="post">
 <input type="hidden" name="hiddenfield" id="hiddenfield" value="PLOUF">
 <input type="hidden" name="complementary" value="PLOUF">
 </form>
