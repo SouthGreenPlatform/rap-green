@@ -17,7 +17,7 @@ import java.util.UUID;
 
 * Executable program to manage reconciliation database (add trees ...)
 
-* @author	Dufayard Jean-François
+* @author	Dufayard Jean-Francois
 
 * @version	1.0
 
@@ -283,7 +283,7 @@ public class ReconciliationDatabaseDaemon {
 				argsFilesDico.addElement(localArgs);
 
 				if (i+6<args.length && args[i+6].equals("invert")) {
-					i++; 
+					i++;
 				}
 	        	i+=4;
 			} else if (args[i].equalsIgnoreCase("-config")) {
@@ -374,7 +374,7 @@ public class ReconciliationDatabaseDaemon {
 									} catch(Exception exp) {
 										//System.out.println("Warning: " + localId);
 									}
-								}								
+								}
 								tree.taxonomicPretreatment();
 								geneStructures.put(localId,tree);
 								//System.out.println(tree);
@@ -405,12 +405,12 @@ public class ReconciliationDatabaseDaemon {
 	        	System.out.println(localId);
 	        }
 		}
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 
 
 
