@@ -3296,7 +3296,7 @@ function leafLink(evt) {
 	//alert(displayadress[codesps] + "/" + seqid);
 	if (displayadress["all"]!=null) {
 		var link= displayadress["all"] + seqid;
-		top.location.href = link;
+		window.open(link, '_blank');
 	} else if (displayadress[codesps]!=null) {
 		var link= displayadress[codesps] + seqid;
 		top.location.href = link;
