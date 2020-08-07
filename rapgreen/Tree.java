@@ -1081,7 +1081,7 @@ public class Tree {
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						if ((pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 							res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
 						}
 					}
@@ -1098,7 +1098,7 @@ public class Tree {
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 
 						if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
-							if ((pattern.length!=4.0 || !!label.startsWith("T_") && !label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+							if ((pattern.length!=4.0 || !!label.startsWith("T_") && (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==4.0 || pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 						//System.out.println("inter");
 								res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
 							}
@@ -1149,7 +1149,7 @@ public class Tree {
 									res= (target.containsPattern(patternTarget,ind,dic) && source.containsPattern(patternSource,ind,dic) && (!patternTarget.hasLeftConstraint || dic.isCompatible(target,patternTarget.allowedLeft,patternTarget.forbiddenLeft)) && (!patternSource.hasLeftConstraint || dic.isCompatible(source,patternSource.allowedLeft,patternSource.forbiddenLeft)));
 									//System.out.println(res);
 								} else {
-									if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (!label.startsWith("T_") && !label.startsWith("D_") && pattern.label.startsWith("S"))) {
+									if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || ((label.startsWith("D_") || (nhx!=null && nhx.indexOf(":D=Y")!=-1)) && pattern.label.startsWith("D")) || (!label.startsWith("T_") && (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1)) && pattern.label.startsWith("S"))) {
 
 							//if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo4");}
 
@@ -1167,7 +1167,7 @@ public class Tree {
 						if (!res) {
 //if (pattern.nbLeaves()==2 && this.nbLeaves()==2) {System.out.println("echo5");}
 							if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
-								if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+								if ((pattern.length!=4.0 || (label.startsWith("D_") || (nhx!=null && nhx.indexOf(":D=Y")!=-1))) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 									res= sonsZero.containsPattern(pattern,ind,dic) || sonsOne.containsPattern(pattern,ind,dic);
 								}
 							}
@@ -1251,7 +1251,7 @@ public class Tree {
 					} else {
 						Tree sonsZero= (Tree)(sons.elementAt(0));
 						Tree sonsOne= (Tree)(sons.elementAt(1));
-						if ((pattern.length!=4.0 || !!label.startsWith("T_") && !label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+						if ((pattern.length!=4.0 || !!label.startsWith("T_") && (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==4.0 || pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 							Vector localColored= new Vector();
 							res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored,stickers);
 							if (res) {
@@ -1291,7 +1291,7 @@ public class Tree {
 						Tree sonsOne= (Tree)(sons.elementAt(1));
 						if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
 							//System.out.println(this + "\n" + pattern+ "\n" + pattern.hasLeftConstraint + "\n" + dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft) + "\n+++++++");
-							if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+							if ((pattern.length!=4.0 || (label.startsWith("D_") || (nhx!=null && nhx.indexOf(":D=Y")!=-1))   ) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 								Vector localColored= new Vector();
 								res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored,stickers);
 								if (res) {
@@ -1353,7 +1353,7 @@ public class Tree {
 										}
 									}
 								} else {
-									if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || (label.startsWith("D_") && pattern.label.startsWith("D")) || (!label.startsWith("T_") && !label.startsWith("D_") && pattern.label.startsWith("S"))) {
+									if ((neutralTransfer && label.startsWith("T_") && pattern.label.startsWith("T")) || ((label.startsWith("D_") || (nhx!=null && nhx.indexOf(":D=Y")!=-1)) && pattern.label.startsWith("D")) || (!label.startsWith("T_") && (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1)) && pattern.label.startsWith("S"))) {
 										Vector localColored= new Vector();
 										res= sonsZero.colorPattern(patternSonsZero,rootPattern,ind,dic,localColored,stickers) && sonsOne.colorPattern(patternSonsOne,rootPattern,ind,dic,localColored,stickers) && (!patternSonsZero.hasLeftConstraint || dic.isCompatible(sonsZero,patternSonsZero.allowedLeft,patternSonsZero.forbiddenLeft)) && (!patternSonsOne.hasLeftConstraint || dic.isCompatible(sonsOne,patternSonsOne.allowedLeft,patternSonsOne.forbiddenLeft));
 										if (res) {
@@ -1381,7 +1381,7 @@ public class Tree {
 						if (!res) {
 
 							if (!pattern.hasLeftConstraint || dic.isCompatible(this,pattern.allowedLeft,pattern.forbiddenLeft)) {
-								if ((pattern.length!=4.0 || label.startsWith("D_")) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || !label.startsWith("D_")) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
+								if ((pattern.length!=4.0 || (label.startsWith("D_") || (nhx!=null && nhx.indexOf(":D=Y")!=-1))) && (pattern.length==4.0 || pattern.length==2.0 || pattern.length==-1.0 || (!label.startsWith("D_") && (nhx==null || nhx.indexOf(":D=Y")==-1))) && (pattern.length==1.0 || pattern.length==-1.0 || !label.startsWith("T_"))) {
 									Vector localColored= new Vector();
 									res= sonsZero.colorPattern(pattern,rootPattern,ind,dic,localColored,stickers);
 									if (res) {
@@ -1915,8 +1915,8 @@ public class Tree {
 					try {
 					if (cut1.indexOf(":")!=-1)
 						spec=cut1.substring(0,cut1.indexOf(":"));
-					else 
-						spec=cut1.substring(0,cut1.length());					
+					else
+						spec=cut1.substring(0,cut1.length());
 					if (!this.label.endsWith(spec)) {
 						this.label=this.label + "_" + spec;
 					}
@@ -1937,12 +1937,12 @@ public class Tree {
 			//System.out.println(label);
 		} else {
 			//The node case ; for each son
-			if (this.nhx!=null && this.nhx.indexOf("D=Y")!=-1) {
+			/*if (this.nhx!=null && this.nhx.indexOf("D=Y")!=-1) {
 				this.label="D_" + this.label;
 			}
 			if (this.nhx!=null && this.nhx.indexOf("D=N")!=-1) {
 				this.label="S_" + this.label;
-			}
+			}*/
 
 
 			maxDepth=0.0;
