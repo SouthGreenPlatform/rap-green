@@ -823,9 +823,9 @@ public class ReconciliationDatabaseDaemon {
 						}
 					}
 
-					if (specification.equals("NR")) {
+					/*if (specification.equals("NR")) {
 						tree.addSpeciations();
-					}
+					}*/
 					tree.taxonomicPretreatment();
 					geneStructures.put(localId,tree);
 					treeDebug=tree;
