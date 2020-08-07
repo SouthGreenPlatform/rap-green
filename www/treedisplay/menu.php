@@ -83,7 +83,7 @@ function annoteAll() {
 		check('colfet1');check('colfet2');check('colfet3');check('colfet4');check('colfet5');check('colfet6');check('colfet7');collapseLabel('TypeI_');collapseLabel('TypeII_');collapseLabel('TypeIII_');collapseLabel('TypeIV_');collapseLabel('TypeV_');collapseLabel('TypeVI_');collapseLabel('TypeVIII_');
 	} else if (annotebranchestool=="color") {
 		var oldcolor=colorbranchannote;
-		check('colfet1');check('colfet2');check('colfet3');check('colfet4');check('colfet5');check('colfet6');check('colfet7');colorbranchannote=colorCustom["colorTypeI"];collapseLabel('TypeI_');colorbranchannote=colorCustom["colorTypeII"];collapseLabel('TypeII_');colorbranchannote=colorCustom["colorTypeIII"];collapseLabel('TypeIII_');colorbranchannote=colorCustom["colorTypeIV"];collapseLabel('TypeIV_');colorbranchannote=colorCustom["colorTypeV"];collapseLabel('TypeV_');colorbranchannote=colorCustom["colorTypeVI"];collapseLabel('TypeVI_');colorbranchannote=colorCustom["colorTypeVIII"];collapseLabel('TypeVIII_');	
+		check('colfet1');check('colfet2');check('colfet3');check('colfet4');check('colfet5');check('colfet6');check('colfet7');colorbranchannote=colorCustom["colorTypeI"];collapseLabel('TypeI_');colorbranchannote=colorCustom["colorTypeII"];collapseLabel('TypeII_');colorbranchannote=colorCustom["colorTypeIII"];collapseLabel('TypeIII_');colorbranchannote=colorCustom["colorTypeIV"];collapseLabel('TypeIV_');colorbranchannote=colorCustom["colorTypeV"];collapseLabel('TypeV_');colorbranchannote=colorCustom["colorTypeVI"];collapseLabel('TypeVI_');colorbranchannote=colorCustom["colorTypeVIII"];collapseLabel('TypeVIII_');
 		colorbranchannote=oldcolor;
 	}
 }
@@ -120,7 +120,7 @@ ANNOTE LEAVES
 ANNOTE BRANCHES
 </td>
 
-<?php 
+<?php
 if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) {
 ?>
 <td id="itemtd" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popload',0);changeVisibiliteOnName('popadv',0);changeVisibiliteOnName('popcollapse',0);changeVisibiliteOnName('popzoom',0);changeVisibiliteOnName('popcoloration',0);changeVisibiliteOnName('popdata',1);changeVisibiliteOnName('popdisplay',0);">
@@ -208,6 +208,10 @@ GRAPHICAL RENDERING
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);">Choose a tool:</p>
 
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);">
+
+<input type="radio" id="branchlinktool" name="collapsetool" value="Display" onclick="annotebranchestool='link';" style="display:none;"><br>
+
+
 <input type="radio" name="collapsetool" value="collapse" onclick="annotebranchestool='collapse';" checked>&nbsp;Collapse<br>
 <input type="radio" name="collapsetool" value="color" onclick="annotebranchestool='color';">&nbsp;Color&nbsp;
 <input onkeypress="changeColorAnnote(event);" onmouseover="changeVisibiliteOnName('popcollapse',1)" type="text" size="8" id="colorbranchannote" value="Red" /><br>
@@ -221,7 +225,7 @@ GRAPHICAL RENDERING
 
 
 
-<?php 
+<?php
 if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQUEST['data']=="msdmind")) {
 ?>
 
@@ -241,12 +245,12 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <input onkeypress="changeColorCustom(event,'colorTypeVI');" onmouseover="changeVisibiliteOnName('popcollapse',1)" type="text" size="8" id="colorTypeVI" /><br></p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popcollapse',1);"><input name="colfet7" onmouseover="changeVisibiliteOnName('popcollapse',1);" type=checkbox onclick="annoteSpecific('colorTypeVIII','TypeVIII_');">TypeVIII_&nbsp;
 <input onkeypress="changeColorCustom(event,'colorTypeVIII');" onmouseover="changeVisibiliteOnName('popcollapse',1)" type="text" size="8" id="colorTypeVIII" /><br></p>
-<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="annoteAll();">Annote all types</p> 
-<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="tree.toneDownUndocumented();resizeSVG();">Tone down undocumented proteins</p> 
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="annoteAll();">Annote all types</p>
+<p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popcollapse',1);this.style.opacity = '1.0';" onclick="tree.toneDownUndocumented();resizeSVG();">Tone down undocumented proteins</p>
 
 
 
-<?php 
+<?php
 }
 ?>
 </div>
@@ -259,10 +263,10 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 </td>
 <td id="poptd" colspan=10>
 <div id="popdata" id="itempop" name="popdata" style="display:none;" onmouseover="changeVisibiliteOnName('popdata',1);" onmouseout="changeVisibiliteOnName('popdata',0);">
-<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="GO" onclick="hideShow('GO');" checked>GO</input></p> 
-<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="PO" onclick="hideShow('PO');" checked>PO</input></p> 
-<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="Polypeptidename" onclick="hideShow('nameMSDMin');">Polypeptide name</input></p> 
-<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="Typename" onclick="hideShow('primTypeN');">Typed full name</input></p> 
+<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="GO" onclick="hideShow('GO');" checked>GO</input></p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="PO" onclick="hideShow('PO');" checked>PO</input></p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="Polypeptidename" onclick="hideShow('nameMSDMin');">Polypeptide name</input></p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popdata',1);"><input onmouseover="changeVisibiliteOnName('popdata',1);" type=checkbox name="Typename" onclick="hideShow('primTypeN');">Typed full name</input></p>
 </div>
 
 </td>
@@ -275,7 +279,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <div id="popdisplay" id="itempop" name="popdisplay" style="display:none;" onmouseover="changeVisibiliteOnName('popdisplay',1);" onmouseout="changeVisibiliteOnName('popdisplay',0);">
 <p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input onmouseover="changeVisibiliteOnName('popdisplay',1);" type=checkbox name="support" onclick="changeSupport();">Branch support</input></p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popdisplay',1)">  
+<hr id="large" onmouseover="changeVisibiliteOnName('popdisplay',1)">
 
 <p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input type="radio" onclick="changeTreeType('ultra');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Ultrametric" checked>Ultrametric<br>
 <input type="radio" onclick="changeTreeType('phylogram');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Phylogram">Phylogram</p>
@@ -291,15 +295,15 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <div id="popzoom" id="itempop" name="popzoom" style="display:none;" onmouseover="changeVisibiliteOnName('popzoom',1);" onmouseout="changeVisibiliteOnName('popzoom',0);">
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="wZoomOut();"><img width="40px" src="img/zoomin_h.png"></p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)">
 
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="wZoomIn();"><img width="40px" src="img/zoomout_h.png"></p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)">
 
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="hZoomOut();"><img width="40px" src="img/zoomin_v.png"></p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popzoom',1)">
 
 <p id="lienimage" onmouseout="this.style.opacity = opac;" onmouseover="this.style.opacity = '1.0';changeVisibiliteOnName('popzoom',1);" onclick="hZoomIn();"><img width="40px" src="img/zoomout_v.png"></p>
 </div>
@@ -317,29 +321,29 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="linewidth" value="2" />&nbsp;Line width</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="linecolor" value="#05357E" />&nbsp;Line color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="roundray" value="20" />&nbsp;Round ray</p>
-<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)">
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Branch annotations:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="collapsesize" value="3" />&nbsp;Lines per collapse</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="collapsecolor" value="#EEEEEE" />&nbsp;Collapse color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="opacitydegree" value="0.3" />&nbsp;Opacity degree</p>
-<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)">
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Texts:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="textfont" value="Candara" />&nbsp;Font family</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="fontcolor" value="Black" />&nbsp;Font color</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="supportsize" value="11" />&nbsp;Support size</p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)">
 
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Background:</p>
 <p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);"><input onkeypress="return displayOnPress(event)" onmouseover="changeVisibiliteOnName('popadv',1)" type="text" size="8" id="backcolor" value="white" />&nbsp;Background color</p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)">
 
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="displayOnClick();">Apply</p>
 
-<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)"> 
+<hr id="large" onmouseover="changeVisibiliteOnName('popadv',1)">
 
-<p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Featured configurations:</p> 
+<p id="textual" onmouseover="changeVisibiliteOnName('popadv',1);">Featured configurations:</p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="document.getElementById('collapsecolor').value='#EEEEEE';document.getElementById('linecolor').value='#05357E';document.getElementById('fontcolor').value='black';document.getElementById('backcolor').value='white';displayOnClick();">Standard</p>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popadv',1);this.style.opacity = '1.0';" onclick="document.getElementById('collapsecolor').value='#888888';document.getElementById('linecolor').value='white';document.getElementById('fontcolor').value='white';document.getElementById('backcolor').value='black';displayOnClick();">Blackboard</p>
 </div>
@@ -348,3 +352,13 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 </tr>
 
 </table>
+
+<script type="text/javascript">
+if (branchdisplayaddress!=null) {
+  annotebranchestool='link';
+  document.getElementById("branchlinktool").style.display = "" ;
+  document.getElementById("branchlinktool").style.zIndex = 100;
+  document.getElementById("branchlinktool").checked = true;
+  document.getElementsByName("collapsetool")[1].checked = false;
+}
+</script>
