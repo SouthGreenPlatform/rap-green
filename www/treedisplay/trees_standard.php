@@ -500,6 +500,8 @@ function Node(newick) {
 	this.tagsOut= new Array();
 	this.tagsIn= new Array();
 
+	this.nhx=null;
+
 	this.xtext= new Array();
 	this.addXtext= new Array();
 
@@ -625,6 +627,7 @@ function Node(newick) {
 		if (newick.charAt(index)=="[") {
 			var ends= newick.substring(index,newick.length);
 			var ext= ends.substring(0,ends.indexOf("]"));
+			this.nhx=ext;
 			if (ext.indexOf(":C=")!=-1) {
 				var colorLocalPrev=ext.substring(ext.indexOf(":C=")+3,ext.length);
 				var coltab= colorLocalPrev.split(".");
@@ -2372,7 +2375,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			text1.addEventListener("mousedown", leafLink , false);
 			//}
 			var codesps= this.taxon.substring(this.taxon.lastIndexOf("_")+1,this.taxon.length);
-			if (displayadress["all"]==null && displayadress[codesps]==null) {
+			if (displayaddress["all"]==null && displayaddress[codesps]==null) {
 				text1.setAttribute("opacity", opacitydegree);
 				text1.setAttribute("fill-opacity", opacitydegree);
 			}
@@ -3250,7 +3253,10 @@ function lineMouseClick(evt) {
 	}
 	//alert(clickedTreeNode.nbLeaves());
 	if (clickedTreeNode.sons.length > 0) {
-		if (annotebranchestool=="collapse") {
+		if (annotebranchestool=="link") {
+				var link= branchdisplayaddress + clickedTreeNode.support;
+				window.open(link, '_blank');
+		} else if (annotebranchestool=="collapse") {
 			if (clickedTreeNode.collapsed=="") {
 				clickedTreeNode.collapsed=clickedTreeNode.fullNbLeaves() + " LEAVES";
 				if (clickedTreeNode.sons.length>0) {
@@ -3293,12 +3299,12 @@ function leafLink(evt) {
 	var clickedTreeNode= clickedTreeNodes[target.getAttribute("indexNode")];
 	var codesps= clickedTreeNode.taxon.substring(clickedTreeNode.taxon.lastIndexOf("_")+1,clickedTreeNode.taxon.length);
 	var seqid= clickedTreeNode.taxon.substring(0,clickedTreeNode.taxon.lastIndexOf("_"));
-	//alert(displayadress[codesps] + "/" + seqid);
-	if (displayadress["all"]!=null) {
-		var link= displayadress["all"] + seqid;
+	//alert(displayaddress[codesps] + "/" + seqid);
+	if (displayaddress["all"]!=null) {
+		var link= displayaddress["all"] + seqid;
 		window.open(link, '_blank');
-	} else if (displayadress[codesps]!=null) {
-		var link= displayadress[codesps] + seqid;
+	} else if (displayaddress[codesps]!=null) {
+		var link= displayaddress[codesps] + seqid;
 		top.location.href = link;
 	}
 }
