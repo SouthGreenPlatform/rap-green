@@ -1663,7 +1663,7 @@ function fresizeTree(normalMod) {
 
 				}
 
-				if (this.support.indexOf("D_",0)!=-1) {
+				if (this.support.indexOf("D_",0)!=-1 || (this.nhx!=null && this.nhx.indexOf(":D=Y")!=-1)) {
 					this.nodeType.setAttribute('points', (this.x -2*lineWidth-lineWidth) + "," + (this.y -lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y - lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y + lineWidth) + " " + (this.x-2*lineWidth  - lineWidth) + "," + (this.y + lineWidth));
 					//this.nodeType.setAttribute("stroke", lineColor);
 					//this.nodeType.setAttribute("fill", lineColor);
@@ -1673,7 +1673,7 @@ function fresizeTree(normalMod) {
 					}
 				}
 
-				if (this.support.indexOf("T_",0)!=-1) {
+				if (this.support.indexOf("T_",0)!=-1  || (this.nhx!=null && this.nhx.indexOf(":T=Y")!=-1)) {
 					this.nodeType.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
 					//this.nodeType.setAttribute("stroke", lineColor);
 					//this.nodeType.setAttribute("fill", lineColor);
@@ -2195,16 +2195,20 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			}
 
 			// display duplication case
-			if (this.support.indexOf("D_",0)!=-1) {
+			if (this.support.indexOf("D_",0)!=-1  || (this.nhx!=null && this.nhx.indexOf(":D=Y")!=-1)) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-lineWidth) + "," + (this.y -lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y - lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y + lineWidth) + " " + (this.x-2*lineWidth  - lineWidth) + "," + (this.y + lineWidth));
-				if (this.color!="") {
+				if (duplicationColor!=null && (this.color==null || this.color==lineColor)) {
+					polyDup.setAttribute("stroke", duplicationColor);
+				} else if (this.color!="") {
 					polyDup.setAttribute("stroke", this.color);
 				} else {
 					polyDup.setAttribute('stroke', lineColor);
 				}
 				polyDup.setAttribute("stroke-width", 0);
-				if (this.color!="") {
+				if (duplicationColor!=null && (this.color==null || this.color==lineColor)) {
+				 polyDup.setAttribute("fill", duplicationColor);
+			  } else if (this.color!="") {
 					polyDup.setAttribute("fill", this.color);
 				} else {
 					polyDup.setAttribute('fill', lineColor);
@@ -2219,7 +2223,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 			}
 
 			// display transfert case
-			if (this.support.indexOf("T_",0)!=-1) {
+			if (this.support.indexOf("T_",0)!=-1  || (this.nhx!=null && this.nhx.indexOf(":T=Y")!=-1)) {
 				var polyDup = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 				polyDup.setAttribute('points', (this.x -2*lineWidth-2*lineWidth) + "," + (this.y -2*lineWidth) + " " + (this.x-2*lineWidth+lineWidth) + "," + (this.y) + " " + (this.x-2*lineWidth-2*lineWidth) + "," + (this.y + 2*lineWidth));
 				if (this.color!="") {
@@ -3253,7 +3257,7 @@ function lineMouseClick(evt) {
 	}
 	//alert(clickedTreeNode.nbLeaves());
 	if (clickedTreeNode.sons.length > 0) {
-		if (annotebranchestool=="link") {
+		if (annotebranchestool=="link" && branchdisplayaddress!=null) {
 				var link= branchdisplayaddress + clickedTreeNode.support;
 				window.open(link, '_blank');
 		} else if (annotebranchestool=="collapse") {
