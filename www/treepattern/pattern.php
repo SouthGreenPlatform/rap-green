@@ -5,10 +5,7 @@
 
 var alertDebug=0;
 
-// Define primal dimensions and margins
-var width=900;
-var height=400;
-var margin=40;
+
 // Computed regarding data
 var taxaMargin=0;
 
@@ -82,7 +79,7 @@ function refreshAll() {
 	// Initialize the coordinates of each node and leaf of the tree
 	tree.fillStickers(1);
 	tree.initCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
-	
+
 	// Fill the saving area
 	document.getElementById('hiddenfield').value = tree.getNewick() + ";";
 
@@ -102,7 +99,7 @@ function refreshAll() {
    			}
    		}
    	}
-   	
+
 	//alert("end refresh");
 }
 
@@ -125,17 +122,17 @@ function Node(newick) {
 
 	// Initialize the taxon string
 	this.label="";
-	
+
 	// Initialize the leaf sticker
-	this.sticker="1";	
-	
+	this.sticker="1";
+
 	// Transfer type
 	this.transfer=2;
-	
+
 	// Taxonomical informations
 	this.leftConstraint= new Array();
 	this.rightConstraint= new Array();
-	
+
 	// Cardinality informations
 	this.minLeft=-1;
 	this.minRight=-1;
@@ -195,16 +192,16 @@ function Node(newick) {
 			this.label = this.label + newick.charAt(index);
 			index++;
 		}
-		
+
 		if (this.label=="D") {
 			this.label="duplication";
 		} else if (this.label=="S") {
 			this.label="speciation";
 		} else if (this.label=="T") {
 			this.label="transfert";
-			
+
 		}
-		
+
 		//alert(this.label);
 		if (newick.charAt(index)==":") {
 			index++;
@@ -216,10 +213,10 @@ function Node(newick) {
 			this.length=parseFloat(localLength);
 			//echo this.length;
 		}
-		
-		
-		
-		
+
+
+
+
 		if (newick.charAt(index)=="[") {
 			index++;
 			while (newick.charAt(index)!="]") {
@@ -236,7 +233,7 @@ function Node(newick) {
 	} else {
 		//document.writeln("B1");
 		//alert(this.label);
-	
+
 		// The leaf case
 		while (index<newick.length && newick.charAt(index)!="[" && newick.charAt(index)!=":" && newick.charAt(index)!="," && newick.charAt(index)!=")" && newick.charAt(index)!="(" && newick.charAt(index)!=";") {
 			this.label = this.label + newick.charAt(index);
@@ -261,7 +258,7 @@ function Node(newick) {
 			index++;
 			//echo this.length;
 		}
-		
+
 	}
 	if (this.nhx.length>1) {
 		if (this.nhx.indexOf("<AR>")!=-1) {
@@ -474,7 +471,7 @@ function fdeleteSubparts() {
 	if (this.rightCardLabel!="") {
 		this.rightCardLabel.remove();
 		this.rightCardLabel="";
-	
+
 	}
 
 	this.label="";
@@ -645,7 +642,7 @@ function fdrawTree(taxaMargin,isRoot) {
 		} else if (this.length==3.0) {
 			this.branchConstraint.attr({"fill": specColor});
 		}
-		
+
 		lineRight.attr({"stroke-width":constraintLine});
 	}
 	lineRight.attr({"stroke":lineColor});
@@ -797,10 +794,10 @@ function fdrawTree(taxaMargin,isRoot) {
 		}
 		path3.attr({"fill": "none"});
 		path3.attr({"stroke": lineColor});
-		
-		
+
+
 		/*if (this.minLeft!=-1 || this.maxLeft!=-1) {
-		
+
 		} else {
 			if (this.leftCardLabel!="") {
 				this.leftCardLabel.hide();
@@ -815,15 +812,15 @@ function fdrawTree(taxaMargin,isRoot) {
 			if (this.maxRight!=-1) {
 				constraintLabel= constraintLabel + " \u2264 " + this.maxRight;
 			}
-			if (this.rightCardLabel=="") { 
-				
+			if (this.rightCardLabel=="") {
+
 				if (this.father!="" && this.father.sons[1]==this) {
 					text1= svg.text(this.x  - spotRadius -5 - constraintLabel.length*5 ,this.y  - spotRadius -5,constraintLabel);
 				} else {
 					text1= svg.text(this.x  - spotRadius -5 - constraintLabel.length*5 ,this.y  + spotRadius +5,constraintLabel);
-				} 
+				}
 				this.rightCardLabel=text1;
-			
+
 			} else {
 				text1= this.rightCardLabel;
 				if (this.father!="" && this.father.sons[1]==this) {
@@ -835,13 +832,13 @@ function fdrawTree(taxaMargin,isRoot) {
 			text1.attr({"font-size": fontSize,"font-family": fontFamily, 'text-anchor': 'start'});
 			text1.attr({"fill": fontColor});
 			this.rightCardLabel.show();
-		
+
 		} else {
 			if (this.rightCardLabel!="") {
 				this.rightCardLabel.hide();
 			}
-		}		
-		
+		}
+
 		// right constraints
 		if (this.rightConstraint.length>0) {
 			// *******Taxon
@@ -1064,9 +1061,9 @@ function fdrawTree(taxaMargin,isRoot) {
 			if (this.transfer==0) {
 				undefinedLeaf.attr({"path":"M" + (this.x) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y + spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z"});
 			} else if (this.transfer==1) {
-				undefinedLeaf.attr({"path":"M" + (this.x) + " " + (this.y + spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y - spotRadius) + "z"});		
+				undefinedLeaf.attr({"path":"M" + (this.x) + " " + (this.y + spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y - spotRadius) + "z"});
 			} else {
-				undefinedLeaf.attr({"path":"M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z"});		
+				undefinedLeaf.attr({"path":"M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z"});
 			}
 			undefinedLeaf.toFront();
 		} else {
@@ -1076,9 +1073,9 @@ function fdrawTree(taxaMargin,isRoot) {
 			if (this.transfer==0) {
 				undefinedLeaf= svg.path("M" + (this.x) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y + spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");
 			} else if (this.transfer==1) {
-				undefinedLeaf= svg.path("M" + (this.x) + " " + (this.y + spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y - spotRadius) + "z");		
+				undefinedLeaf= svg.path("M" + (this.x) + " " + (this.y + spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x - spotRadius) + " " + (this.y - spotRadius) + "z");
 			} else {
-				undefinedLeaf= svg.path("M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");		
+				undefinedLeaf= svg.path("M" + (this.x - spotRadius) + " " + (this.y - spotRadius) + " L" + (this.x + spotRadius) + " " + (this.y) + " L" + (this.x - spotRadius) + " " + (this.y + spotRadius) + "z");
 			}
 			var clickedIndex=clickedTreeNodes.length;
 			clickedTreeNodes[clickedIndex]=this;
@@ -1166,13 +1163,13 @@ function fdrawTree(taxaMargin,isRoot) {
 		if (this.textLabel!="" && this.rightConstraint.length>0) {
 			this.textLabel.hide();
 		}
-		
 
-		
-		
-		
+
+
+
+
 	}
-	
+
 			// sticker
 		if (this.textSticker=="") {
 			this.textSticker= svg.text(this.x-15,this.y+10,this.sticker);
@@ -1181,7 +1178,7 @@ function fdrawTree(taxaMargin,isRoot) {
 		}
 		//alert(this.x + " " + this.label);
 		this.textSticker.attr({"font-size": fontSize,"font-family": fontFamily, 'text-anchor': 'start'});
-		this.textSticker.attr({"fill": fontColor});	
+		this.textSticker.attr({"fill": fontColor});
 		if (count>0) {
 			this.textSticker.hide();
 		} else {
@@ -1463,9 +1460,9 @@ function nodeMouseClick(evt) {
 
 		var count = clickedTreeNode.sons.length;
 		if (count==0) {
-		
+
 			clickedTreeNode.sons[0]= new Node(";");
-			
+
 			clickedTreeNode.sons[0].father=clickedTreeNode;
 			clickedTreeNode.sons[1]= new Node(";");
 			clickedTreeNode.sons[1].father=clickedTreeNode;
@@ -1486,15 +1483,15 @@ function nodeMouseClick(evt) {
 			if (clickedTreeNode.transfer==0) {
 				clickedTreeNode.transfer=1;
 			} else if (clickedTreeNode.transfer==1) {
-				clickedTreeNode.transfer=2;				
+				clickedTreeNode.transfer=2;
 			} else {
 				clickedTreeNode.transfer=0;
 			}
 			//alert("change");
-			
+
 		} else {
 			clickedTreeNode.label="transfert";
-	
+
 			var count = clickedTreeNode.sons.length;
 			if (count==0) {
 				clickedTreeNode.sons[0]= new Node(";");
@@ -1502,7 +1499,7 @@ function nodeMouseClick(evt) {
 				clickedTreeNode.sons[1]= new Node(";");
 				clickedTreeNode.sons[1].father=clickedTreeNode;
 			}
-			
+
 		}
 
 	} else if (tool=="delete") {
@@ -1526,7 +1523,7 @@ function nodeMouseClick(evt) {
 			changeVisibilite2("popcard",0);
 		} else {
 			changeVisibilite2("popcard",1);
-		
+
 		}
 
 
@@ -1599,7 +1596,7 @@ function removeAllTaxon() {
 }
 
 function commitCardinality(tagMin,tagMax) {
-	
+
 	if (rightSelection==1) {
 		if (tagMin!="") {
 			selectedNode.minRight= parseInt(tagMin);
@@ -1622,7 +1619,7 @@ function commitCardinality(tagMin,tagMax) {
 		} else {
 			selectedNode.maxLeft=-1;
 		}
-	
+
 	}
 
 	refreshAll();
@@ -1706,12 +1703,12 @@ function step1() {
 
 function step2() {
 	var position = "popresults";
-	
+
 	document.getElementById("hiddenpattern").value=tree.getNewick() + ";";
 	//alert(document.getElementById("hiddenpattern").value);
-	
+
 	document.getElementById("submitPatternForm").submit();
-	
+
 	//window.open("wait.php  + "&pattern=" + tree.getNewick() + ";");
 	//changeVisibilite2("popresults",0);
 	return 1;
@@ -1748,4 +1745,3 @@ function eraseTarget() {
 }
 
 </script>
-
