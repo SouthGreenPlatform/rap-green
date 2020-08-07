@@ -37,14 +37,17 @@ var collapseWidth=3.0;
 var tagWidth=15;
 var opacitydegree=0.7;
 
+/* if not null, add a display address clicking on a branch, and an adapted tool option in the branch menu */
+var branchdisplayaddress = null;
 
-
-
-var displayadress= new Array();
-displayadress['ORYSJ']="https://grass-genome-hub.southgreen.fr/mRNA/";
-displayadress['ZEAMA']="https://grass-genome-hub.southgreen.fr/protein/";
-displayadress['SORBI']="https://grass-genome-hub.southgreen.fr/protein/";
-displayadress['SETIT']="https://grass-genome-hub.southgreen.fr/protein/";
-displayadress['MISSI']="https://grass-genome-hub.southgreen.fr/protein/";
-displayadress['ARATH']="https://grass-genome-hub.southgreen.fr/mRNA/";
+var displayaddress= new Array();
+/* for a generic leaf link display address */
+displayaddress['all']=null;
+/* for a suffix specific leaf link display address */
+displayaddress['ORYSJ']="https://grass-genome-hub.southgreen.fr/mRNA/";
+displayaddress['ZEAMA']="https://grass-genome-hub.southgreen.fr/protein/";
+displayaddress['SORBI']="https://grass-genome-hub.southgreen.fr/protein/";
+displayaddress['SETIT']="https://grass-genome-hub.southgreen.fr/protein/";
+displayaddress['MISSI']="https://grass-genome-hub.southgreen.fr/protein/";
+displayaddress['ARATH']="https://grass-genome-hub.southgreen.fr/mRNA/";
 </script>
