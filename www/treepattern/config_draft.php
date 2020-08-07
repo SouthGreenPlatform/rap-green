@@ -13,5 +13,7 @@ $resdir="";
 $displayadress=Array("My base" => "My address");
 /* name of the secondary visualisator */
 $displaytag=Array("My base" => "My tag");
+/* public web address of the main treedisplay interface */
+$treedisplayaddress="https://phylogeny.southgreen.fr/treedisplay/";
 
 ?>
