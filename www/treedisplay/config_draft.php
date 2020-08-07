@@ -32,6 +32,7 @@ var lineColor= "#05357E";
 var collapseColor="#EEEEEE";
 var tagColor="#FF0000";
 var splitColor="#000000"
+var duplicationColor="red"
 var roundray=20;
 var collapseWidth=3.0;
 var tagWidth=15;
