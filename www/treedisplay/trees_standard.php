@@ -562,6 +562,7 @@ function Node(newick) {
 		if (newick.charAt(index)=="[") {
 			var ends= newick.substring(index,newick.length);
 			var ext= ends.substring(0,ends.indexOf("]"));
+			this.nhx=ext;
 
 			if (ext.indexOf(":C=")!=-1) {
 				var colorLocalPrev=ext.substring(ext.indexOf(":C=")+3,ext.length);
