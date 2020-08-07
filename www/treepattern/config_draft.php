@@ -1,3 +1,11 @@
+
+<script type="text/javascript">
+// Define primal dimensions and margins
+var width=900;
+var height=400;
+var margin=40;
+</script>
+
 <?php
 /* *************************************************************** */
 /* To install the service, you must rename this file in config.php */
