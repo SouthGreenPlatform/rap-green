@@ -175,7 +175,6 @@ HELP
 
 			?>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node('<?php echo $examples[$i];?>');refreshAll();"><?php echo $examples[$i+1];?></p>
-<script type="text/javascript">alert('<?php echo $examples[$i+1];?>');</script>
 
 <?php
 
