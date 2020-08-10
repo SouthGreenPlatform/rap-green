@@ -1307,9 +1307,11 @@ public class ReconciliationDatabaseDaemon {
 				// case 1: clients asks for pattern example list for this databank
 					String databank=in.readLine();
 					if (examples!=null && examples.containsKey(databank)) {
+						System.out.println("contact to collect examples");
 						Vector localEx= (Vector)(examples.get(databank));
 						for (int i=0;i<localEx.size();i++) {
 							out.println((String)(localEx.elementAt(i)));
+								System.out.println((String)(localEx.elementAt(i)));
 
 						}
 
