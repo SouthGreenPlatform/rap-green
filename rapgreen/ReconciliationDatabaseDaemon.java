@@ -1218,6 +1218,9 @@ public class ReconciliationDatabaseDaemon {
 							Vector localEx= (Vector)(examples.get(sp[0]));
 							localEx.addElement(sp[1]);
 							localEx.addElement(sp[2]);
+
+											System.out.println(sp[1]);
+											System.out.println(sp[2]);
 						} else {
 							Vector localEx= new Vector();
 							localEx.addElement(sp[1]);
@@ -1308,8 +1311,9 @@ public class ReconciliationDatabaseDaemon {
 					}
 				} if (s.equalsIgnoreCase("examples")) {
 				// case 1: clients asks for pattern example list for this databank
-					System.out.println("contact to collect examples");
+					System.out.print("contact to collect examples");
 					String databank=in.readLine();
+						System.out.println(" from "+databank);
 					if (examples!=null && examples.containsKey(databank)) {
 						Vector localEx= (Vector)(examples.get(databank));
 						for (int i=0;i<localEx.size();i++) {
@@ -1320,6 +1324,7 @@ public class ReconciliationDatabaseDaemon {
 
 
 					} else {
+						System.out.println("no example founded");
 						out.println("N/A");
 					}
 				} else if (s.equalsIgnoreCase("specification")) {
