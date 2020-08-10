@@ -82,11 +82,9 @@ while ($reception = socket_read($socket, 2048)) {
 		// if the current word is significant
 		if (strlen($examplesString[$i])>0) {
 			$examples[$count]=$examplesString[$i];
-
 			$count++;
 		}
 	}
-
 }
 // select the default database if not already defined
 if (!isSet($_REQUEST['databank'])) {
@@ -177,7 +175,7 @@ HELP
 
 			?>
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popfile',1);this.style.opacity = '1.0';" onclick="index=0;tree.deleteSubparts();tree = new Node('<?php echo $examples[$i];?>');refreshAll();"><?php echo $examples[$i+1];?></p>
-alert("<?php echo $examples[$i+1];?>");
+<script type="text/javascript">alert('<?php echo $examples[$i+1];?>');</script>
 
 <?php
 
