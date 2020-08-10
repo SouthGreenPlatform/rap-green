@@ -1199,8 +1199,11 @@ public class ReconciliationDatabaseDaemon {
 	        }
 		}
 
+			System.out.println("reading examples from file");
 		examples= new Hashtable();
 		if (configFile!=null) {
+
+				System.out.println("starting to read");
 			try {
 				BufferedReader read= new BufferedReader(new FileReader(configFile));
 				String s=read.readLine();
@@ -1305,9 +1308,9 @@ public class ReconciliationDatabaseDaemon {
 					}
 				} if (s.equalsIgnoreCase("examples")) {
 				// case 1: clients asks for pattern example list for this databank
+					System.out.println("contact to collect examples");
 					String databank=in.readLine();
 					if (examples!=null && examples.containsKey(databank)) {
-						System.out.println("contact to collect examples");
 						Vector localEx= (Vector)(examples.get(databank));
 						for (int i=0;i<localEx.size();i++) {
 							out.println((String)(localEx.elementAt(i)));
