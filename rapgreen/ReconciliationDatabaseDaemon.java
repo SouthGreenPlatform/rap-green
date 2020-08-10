@@ -1219,13 +1219,13 @@ public class ReconciliationDatabaseDaemon {
 							localEx.addElement(sp[1]);
 							localEx.addElement(sp[2]);
 
-											System.out.println(sp[1]);
-											System.out.println(sp[2]);
 						} else {
 							Vector localEx= new Vector();
 							localEx.addElement(sp[1]);
 							localEx.addElement(sp[2]);
 							examples.put(sp[0],localEx);
+																		System.out.println(sp[1]);
+																		System.out.println(sp[2]);
 
 						}
 						s=read.readLine();
