@@ -38,8 +38,28 @@ var collapseWidth=3.0;
 var tagWidth=15;
 var opacitydegree=0.7;
 
+
+
 /* if not null, add a display address clicking on a branch, and an adapted tool option in the branch menu */
 var branchdisplayaddress = null;
+/* tag in the NHX section used to complement the address of destination, clicking on a branch */
+var branchdisplayaddresstag= null; /* F for genomicus */
+
+/* if setted to 1, display NHX information when the mouse is over a branch. Null to desactivate. */
+var displayNHXonbranches= null;
+
+// display type (ultrametric, phylogram )
+var displaytype="ultra";
+
+// tool switcher
+var annotebranchestool="collapse";
+var colorbranchannote="Red";
+
+// display or not branch support
+var displaySupport=0;
+
+
+
 
 var displayaddress= new Array();
 /* for a generic leaf link display address */
