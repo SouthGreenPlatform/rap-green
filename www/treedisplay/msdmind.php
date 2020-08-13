@@ -89,8 +89,3 @@ infos["<?php echo $row[0]; ?>"]["GO"]="1";
 ?>
 
 </script>
-
-
-
-
-
