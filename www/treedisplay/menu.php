@@ -281,8 +281,18 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 
 <hr id="large" onmouseover="changeVisibiliteOnName('popdisplay',1)">
 
-<p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input type="radio" onclick="changeTreeType('ultra');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Ultrametric" checked>Ultrametric<br>
-<input type="radio" onclick="changeTreeType('phylogram');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Phylogram">Phylogram</p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input type="radio" onclick="changeTreeType('ultrametric');" onmouseover="changeVisibiliteOnName('popdisplay',1)" name="typetree" value="Ultrametric" checked>Ultrametric<br>
+
+<input type="radio" onclick="changeTreeType('phylogram');" onmouseover="changeVisibiliteOnName('popdisplay',1)" id="radiophylogram" name="typetree" value="Phylogram">Phylogram</p>
+
+<script type="text/javascript">
+if (displaytype!="ultrametric") {
+
+document.getElementById('radiophylogram').checked = true;
+
+}
+</script>
+
 </div>
 
 </td>
