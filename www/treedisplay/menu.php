@@ -277,7 +277,7 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 </td>
 <td id="poptd" colspan=10>
 <div id="popdisplay" id="itempop" name="popdisplay" style="display:none;" onmouseover="changeVisibiliteOnName('popdisplay',1);" onmouseout="changeVisibiliteOnName('popdisplay',0);">
-<p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input onmouseover="changeVisibiliteOnName('popdisplay',1);" type=checkbox name="support" onclick="changeSupport();">Branch support</input></p>
+<p id="textual" onmouseover="changeVisibiliteOnName('popdisplay',1);"><input id="supportcheckbox" onmouseover="changeVisibiliteOnName('popdisplay',1);" type=checkbox name="support" onclick="changeSupport();">Branch support</input></p>
 
 <hr id="large" onmouseover="changeVisibiliteOnName('popdisplay',1)">
 
@@ -289,6 +289,11 @@ if (isSet($_REQUEST['data']) && ($_REQUEST['data']=="msdmind_structure" || $_REQ
 if (displaytype!="ultrametric") {
 
 document.getElementById('radiophylogram').checked = true;
+
+}
+if (displaySupport==1) {
+
+document.getElementById('supportcheckbox').checked = true;
 
 }
 </script>
