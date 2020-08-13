@@ -45,8 +45,14 @@ var branchdisplayaddress = null;
 /* tag in the NHX section used to complement the address of destination, clicking on a branch */
 var branchdisplayaddresstag= null; /* F for genomicus */
 
-/* if setted to 1, display NHX information when the mouse is over a branch. Null to desactivate. */
-var displayNHXonbranches= null;
+/* Display NHX information when the mouse is over a branch. NULL to desactivate. Replace the NHX code with the verbose information */
+<?php
+$displayNHXonbranch = array (
+    "S" => "Species",
+    "D" => "Duplication",
+    "C" => "Color"
+);
+?>
 
 // display type (ultrametric, phylogram )
 var displaytype="ultrametric";
