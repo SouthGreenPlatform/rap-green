@@ -49,7 +49,7 @@ var branchdisplayaddresstag= null; /* F for genomicus */
 var displayNHXonbranches= null;
 
 // display type (ultrametric, phylogram )
-var displaytype="ultra";
+var displaytype="ultrametric";
 
 // tool switcher
 var annotebranchestool="collapse";
