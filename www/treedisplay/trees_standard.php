@@ -232,7 +232,7 @@ function colorize(word,color) {
 function reinitCoordinateSVG() {
 	// Compute the private parameters, from the primal dimensions and the tree
 	var maxDepth=0.0;
-	if (displaytype=="ultra") {
+	if (displaytype=="ultrametric") {
 		maxDepth=tree.maxUltraDepth();
 	} else {
 		maxDepth=tree.maxDepth();
@@ -246,7 +246,7 @@ function reinitCoordinateSVG() {
 	//alert("re " + taxaMargin);
 
 	// Initialize the coordinates of each node and leaf of the tree
-	if (displaytype=="ultra") {
+	if (displaytype=="ultrametric") {
 		tree.initUltraCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
 	} else {
 		tree.initCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
@@ -372,7 +372,7 @@ function drawAll() {
 	if (tree!="undef") {
 		// Compute the private parameters, from the primal dimensions and the tree
 		var maxDepth=0.0;
-		if (displaytype=="ultra") {
+		if (displaytype=="ultrametric") {
 			maxDepth=tree.maxUltraDepth();
 		} else {
 			maxDepth=tree.maxDepth();
@@ -386,7 +386,7 @@ function drawAll() {
 		//alert("init " + taxaMargin);
 
 		// Initialize the coordinates of each node and leaf of the tree
-		if (displaytype=="ultra") {
+		if (displaytype=="ultrametric") {
 			tree.initUltraCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
 		} else {
 			tree.initCoordinates(0.0,taxaMargin,maxDepth,nbLeaves,0);
@@ -1457,7 +1457,7 @@ function fresizeTree(normalMod) {
 			if (this.addCol==0) {
 				// collapse text
 				var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
-				if (displaytype=="ultra") {
+				if (displaytype=="ultrametric") {
 					text1.setAttribute("x", width-margin-taxaMargin + 5);
 				} else {
 					text1.setAttribute("x", this.upx + 5);
@@ -1502,7 +1502,7 @@ function fresizeTree(normalMod) {
 				}
 			} else {
 				// The collapse case
-				if (displaytype=="ultra") {
+				if (displaytype=="ultrametric") {
 					this.col.setAttribute("x", width-margin-taxaMargin + 5);
 				} else {
 					this.col.setAttribute("x", this.upx + 5);
@@ -1747,7 +1747,7 @@ function fresizeTree(normalMod) {
 							// collapse polygon
 							var polyCol = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 
-							if (displaytype=="ultra") {
+							if (displaytype=="ultrametric") {
 								polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 							} else {
 								polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
@@ -1816,7 +1816,7 @@ function fresizeTree(normalMod) {
 
 						} else {
 
-							if (displaytype=="ultra") {
+							if (displaytype=="ultrametric") {
 								this.sons[i].poly.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 							} else {
 								this.sons[i].poly.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
@@ -1989,7 +1989,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 	if (this.collapsed!="") {
 		// The collapse case
 		var text1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		if (displaytype=="ultra") {
+		if (displaytype=="ultrametric") {
 			text1.setAttribute("x", width-margin-taxaMargin + 5);
 		} else {
 			text1.setAttribute("x", this.upx + 5);
@@ -2312,7 +2312,7 @@ function fdrawTree(taxaMargin,isRoot,drawTheEnd) {
 					//collapse polygon
 					var polyCol = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
 
-					if (displaytype=="ultra") {
+					if (displaytype=="ultrametric") {
 						polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (width-margin-taxaMargin) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
 					} else {
 						polyCol.setAttribute('points', (this.sons[i].x) + "," + (this.sons[i].y) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y - collapseWidth / 2.0 * (parseInt(fontSize)))) + " " + (this.sons[i].upx) + "," + ((this.sons[i].y + collapseWidth / 2.0 * (parseInt(fontSize)))));
@@ -3436,7 +3436,7 @@ function drawSplits() {
 		for (j = 0; j < split.length; j++) {
 			var currentX=split[j].x;
 			if (splitSens[j]==1) {
-				if (displaytype=="ultra") {
+				if (displaytype=="ultrametric") {
 					currentX=width-margin-taxaMargin + 5;
 				} else {
 					currentX=split[j].upx;
