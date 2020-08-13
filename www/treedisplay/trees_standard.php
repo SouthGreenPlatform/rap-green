@@ -3095,6 +3095,38 @@ function lineMouseOver(evt) {
     	clickedTreeNode.line.setAttributeNS(null, "stroke-width", (clickedTreeNode.line.getAttribute("stroke-width")*2));
 	if (clickedTreeNode.round!=null)
     	clickedTreeNode.round.setAttributeNS(null, "stroke-width", (clickedTreeNode.round.getAttribute("stroke-width")*2));
+
+<?php if (isSet($displayNHXonbranch) && $displayNHXonbranch!=NULL) { ?>
+				var xhr_object = null;
+				var position = "popannot";
+				   if(window.XMLHttpRequest)  xhr_object = new XMLHttpRequest();
+				  else
+				    if (window.ActiveXObject)  xhr_object = new ActiveXObject("Microsoft.XMLHTTP");
+
+				// On ouvre la requete vers la page désirée
+				xhr_object.open("GET", "popupNHX.php?nhx=" + clickedTreeNode.nhx.substring(clickedTreeNode.nhx.indexOf(":")+1,clickedTreeNode.nhx.length), true);
+				//alert("popupmsdmind.php?id=" + clickedTreeNode.taxon + "&tag=" + tag);
+				xhr_object.onreadystatechange = function(){
+				if ( xhr_object.readyState == 4 )
+				{
+						//alert(xhr_object.responseText);
+					// j'affiche dans la DIV spécifiées le contenu retourné par le fichier
+					document.getElementById(position).innerHTML = xhr_object.responseText;
+				}
+				}
+
+				// dans le cas du get
+				xhr_object.send(null);
+
+				changeVisibilite2("popannot",1);
+
+
+
+
+				<?php }  ?>
+
+
+
 }
 
 function lineMouseOut(evt) {
@@ -3109,7 +3141,13 @@ function lineMouseOut(evt) {
 	if (clickedTreeNode.round!=null && clickedTreeNode.round.getAttribute("stroke-width")!=lineWidth) {
 	   	clickedTreeNode.round.setAttributeNS(null, "stroke-width", lineWidth);
 	}
+<?php if (isSet($displayNHXonbranch) && $displayNHXonbranch!=NULL) { ?>
 
+		changeVisibilite2("popannot",0);
+
+
+
+<?php } ?>
 }
 
 function textMouseOver(evt) {
