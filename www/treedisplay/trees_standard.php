@@ -69,15 +69,7 @@ function hideShow(tag) {
 
 }
 
-// display type
-var displaytype="ultra";
 
-// tool switcher
-var annotebranchestool="collapse";
-var colorbranchannote="Red";
-
-// display or not branch support
-var displaySupport=0;
 
 // Reference clickable objects
 var clickedTreeNodes;
