@@ -23,11 +23,13 @@ $nhxtab= explode(":", $_REQUEST['nhx']);
 echo "<table id=standardmenu><tr>";
 for ($i = 0; $i<sizeof($nhxtab); $i++) {
 	$arreq = explode("=", $nhxtab[$i]);
-    echo "<td id=title>";
-    if (isSet($displayNHXonbranch[$arreq[0]]) && $displayNHXonbranch[$arreq[0]]!=NULL) {
-      echo $displayNHXonbranch[$arreq[0]];
-    } else {
-      echo $arreq[0];
+    if (!isSet($displayNHXonbranch[$arreq[0]]) || $displayNHXonbranch[$arreq[0]]!="HIDE") {
+      echo "<td id=title>";
+      if (isSet($displayNHXonbranch[$arreq[0]]) && $displayNHXonbranch[$arreq[0]]!=NULL) {
+        echo $displayNHXonbranch[$arreq[0]];
+      } else {
+        echo $arreq[0];
+      }
     }
     echo "</td>";
 }
@@ -35,7 +37,9 @@ for ($i = 0; $i<sizeof($nhxtab); $i++) {
 echo "</tr><tr>";
 for ($i = 0; $i<sizeof($nhxtab); $i++) {
 	$arreq = explode("=", $nhxtab[$i]);
+  if (!isSet($displayNHXonbranch[$arreq[0]]) || $displayNHXonbranch[$arreq[0]]!="HIDE") {
     echo "<td id=field>".$arreq[1]."</td>";
+  }
 }
 
 echo "</tr></table>";
