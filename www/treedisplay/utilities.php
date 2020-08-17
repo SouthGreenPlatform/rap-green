@@ -24,7 +24,7 @@ function changeVisibilite2(thingId,order){
 	} else {
 		targetElement.style.display = "none" ;
 	}
-}
+} 
 
 function check(thingName){
 	targetElement = document.getElementsByName(thingName)[0] ;
