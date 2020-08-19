@@ -3,6 +3,8 @@
 var alertDebug=0;
 
 
+// tool switcher
+var annotebranchestool="collapse";
 
 //Static annotation graphic elements
 var annotationFrame;
