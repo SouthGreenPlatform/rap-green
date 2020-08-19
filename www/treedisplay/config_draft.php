@@ -57,8 +57,6 @@ $displayNHXonbranch = array (
 // display type (ultrametric, phylogram )
 var displaytype="ultrametric";
 
-// tool switcher
-var annotebranchestool="collapse";
 var colorbranchannote="Red";
 
 // display or not branch support
