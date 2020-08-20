@@ -173,36 +173,47 @@ public class ReconciliationDatabaseDaemon {
 
 				System.out.println(BOLD);
 
-				System.out.println("OPTIONS:");
+				System.out.println("MAIN OPTIONS:");
 
 				System.out.println(BOLD);
-				System.out.println("-standard" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The identifier of the database, the species tree file, the file containing all gene trees in NHX format.");
+				System.out.println("-standard" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + "\n\tThe identifier of the database, the species tree file, the file containing all gene trees in NHX format.");
 
 				System.out.println(BOLD);
-				System.out.println("-database" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "gene_tree_file\n\t" + NORMAL + "The identifier of the database, the species tree file, the directory containing all gene tree files, and the tree file name eventually containing 'INPUT' marker for directory name.");
+				System.out.println("-quiet" + NORMAL + "\n\tActivate this option to turn off the default verbose mode.");
 
 				System.out.println(BOLD);
-				System.out.println("-directory" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees. Arguments are: the identifier of the database, the species tree file, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
+				System.out.println("-config" + NORMAL + " " + UNDERLINE + "config_file" + NORMAL + "\n\tConfiguration file for this occurrence of the server.");
 
 				System.out.println(BOLD);
-				System.out.println("-directoryDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type\n\t" + NORMAL + "Alternate version of database option: one simple directory full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
-				System.out.println(BOLD);
-				System.out.println("-fileDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "type" + NORMAL + " " + UNDERLINE + "[invert]\n\t" + NORMAL + "Alternate version of database option: one simple file full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL). Add invert keyword if the species identifier is at the begining of sequence names in phylogenetic trees.");
-				System.out.println(BOLD);
-				System.out.println("-genomicus" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file\n\t" + NORMAL + " Alternate version to load a Genomicus tree file and the corresponding species tree file");
+				System.out.println("-port" + NORMAL + " " + UNDERLINE + "port" + NORMAL + "\n\tThe logical port that must be open, and will serve as communication network link for the web interface (default 1666).");
+
 
 				System.out.println(BOLD);
-				System.out.println("-instantGenomicusPatternSearch" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "pattern" + NORMAL + " " + UNDERLINE + "outputCSV\n\t" + NORMAL + " Alternate version to load a Genomicus tree file and the corresponding species tree file, then search the pattern locally, produce the output CSV and close de program.");
+				System.out.println("CONFIDENTIAL OPTIONS:");
+
+
+				System.out.println(BOLD);
+				System.out.println("-database" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + "\n\tThe identifier of the database, the species tree file, the directory containing all gene tree files, and the tree file name eventually containing 'INPUT' marker for directory name.");
+
+				System.out.println(BOLD);
+				System.out.println("-directory" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type" + NORMAL + "\n\tAlternate version of database option: one simple directory full of gene trees. Arguments are: the identifier of the database, the species tree file, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
+
+				System.out.println(BOLD);
+				System.out.println("-directoryDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_directory" + NORMAL + " " + UNDERLINE + "type" + NORMAL + "\n\tAlternate version of database option: one simple directory full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL).");
+				System.out.println(BOLD);
+				System.out.println("-fileDico" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "species_dictionary" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "type" + NORMAL + " " + UNDERLINE + "[invert]" + NORMAL + "\n\tAlternate version of database option: one simple file full of gene trees, and using a species dictionary. Arguments are: the identifier of the database, the species tree file , the species dictionary, the directory containing all gene tree files, and the type of the database (NR, DL or DTL). Add invert keyword if the species identifier is at the begining of sequence names in phylogenetic trees.");
+				System.out.println(BOLD);
+				System.out.println("-genomicus" + NORMAL + " " + UNDERLINE + "database_id" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + "\n\t Alternate version to load a Genomicus tree file and the corresponding species tree file");
+
+				System.out.println(BOLD);
+				System.out.println("-instantGenomicusPatternSearch" + NORMAL  + " " + UNDERLINE + "species_tree_file" + NORMAL + " " + UNDERLINE + "gene_tree_file" + NORMAL + " " + UNDERLINE + "pattern" + NORMAL + " " + UNDERLINE + "outputCSV" + NORMAL + "\n\t Alternate version to load a Genomicus tree file and the corresponding species tree file, then search the pattern locally, produce the output CSV and close de program.\n\n");
 
 				//System.out.println(BOLD);
-				//System.out.println("-results" + NORMAL + " " + UNDERLINE + "directory\n\t" + NORMAL + "Directory, visible from the web, to stock result files for users. Directory must exist.");
+				//System.out.println("-results" + NORMAL + " " + UNDERLINE + "directory" + NORMAL + "\n\tDirectory, visible from the web, to stock result files for users. Directory must exist.");
 
-				System.out.println(BOLD);
-				System.out.println("-config" + NORMAL + " " + UNDERLINE + "config_file\n\t" + NORMAL + "Configuration file for this occurrence of the server.");
 
-				System.out.println(BOLD);
 
-				System.out.println("-quiet\n\t" + NORMAL + "Activate this option to turn off\n\n");
+
 
 				System.exit(0);
 
