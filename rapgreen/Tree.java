@@ -712,24 +712,39 @@ public class Tree {
 /**
 * The subtree of a species tree, from this tree and a species list.
 * @param species	the species table
+* @param isSpeciesTree	true if the species is directly the entire label, false if it is in the S NHX parameter
 * @return		the newly created subtree
 */
-	public Tree subtree(Hashtable species) {
+	public Tree subtree(Hashtable species, boolean isSpeciesTree) {
 		Tree res=null;
 		if (isLeaf()) {
-			if (species.containsKey(label)) {
+			if (isSpeciesTree && species.containsKey(label)) {
 				res=new Tree(this);
+			} else {
+				if (!isSpeciesTree) {
+					String spenhx= nhx.substring(nhx.indexOf(":S=")+3,nhx.length());
+					String spenhx2=null;
+					if (spenhx.indexOf(":")!=-1)
+						spenhx2=spenhx.substring(0,nhx.indexOf(":"));
+					else
+						spenhx2=spenhx.substring(0,nhx.indexOf("]"));
+
+						//System.out.println(spenhx2 + " " + species.containsKey(spenhx2));
+						if (!species.containsKey(spenhx2))
+							res=new Tree(this);
+				}
 			}
 		} else {
 			Vector subSons= new Vector();
 			for (int i=0;i<sons.size();i++) {
-				Tree localNode= ((Tree)(sons.elementAt(i))).subtree(species);
+				Tree localNode= ((Tree)(sons.elementAt(i))).subtree(species,isSpeciesTree);
 				if (localNode!=null) {
 					subSons.addElement(localNode);
 				}
 			}
 			if (subSons.size()==1) {
 				res=(Tree)(subSons.elementAt(0));
+				res.length=res.length+this.length;
 			} else if (subSons.size()>1) {
 				res=new Tree(subSons,label,length,nhx);
 			}
