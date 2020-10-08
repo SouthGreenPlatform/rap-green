@@ -1397,7 +1397,7 @@ public class ReconciliationDatabaseDaemon {
 
 					//System.out.println(s);
 					}
-					out.println(tree.subtree(speciesList).getSimpleNewick());
+					out.println(tree.subtree(speciesList,true).getSimpleNewick());
 					//System.out.println(tree.subtree(speciesList));
 				} else if (s.equals("resultSplit")) {
 				//System.out.println("echo1");
