@@ -1,4 +1,4 @@
-Example files comes from the GreenPhyl5 database:
+Example files come from the GreenPhyl5 database:
 https://www.greenphyl.org/cgi-bin/index.cgi
 
 
