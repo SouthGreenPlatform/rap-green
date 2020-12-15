@@ -19,6 +19,8 @@ RapGreen is used by several systems and platforms. Some examples are available [
 
 ## Please cite:
 
+**More recent version soon available**
+
 **Tree pattern matching in phylogenetic trees: automatic search for orthologs or paralogs in homologous gene sequence databases** 
 _Jean-François Dufayard, Laurent Duret, Simon Penel, Manolo Gouy, François Rechenmann, Guy Perrière_
 Bioinformatics, Volume 21, Issue 11, , Pages 2596–2603, https://doi.org/10.1093/bioinformatics/bti325
