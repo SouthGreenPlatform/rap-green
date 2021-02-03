@@ -57,7 +57,7 @@ socket_close($socket);
 
 
 ?><blockquote>
-<p>Your results are available <a href="out/<?php echo $_REQUEST['id']; ?>.csv">here</a>, as a downloadable CSV file.<br>We cannot guarantee that your file will be available for long, so download it as soon as possible.</p>
+<p>Your results are available <a href="<?php echo $resdir; ?>/<?php echo $_REQUEST['id']; ?>.csv">here</a>, as a downloadable CSV file.<br>We cannot guarantee that your file will be available for long, so download it as soon as possible.</p>
 </blockquote>
 </body>
 </html>
