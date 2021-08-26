@@ -156,7 +156,6 @@ GRAPHICAL RENDERING
 <p id="textual" onmouseover="changeVisibiliteOnName('popload',1);"><textarea onkeypress="" onmouseover="changeVisibiliteOnName('popload',1)" cols="12" rows="5" name="hiddenfield" id="hiddenfield"><?php echo $_POST['hiddenfield']; ?></textarea></p>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="document.changeTreeForm.submit();">Load tree</p>
-<hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
 <p id="linking" onmouseout="this.style.opacity = opac" onmouseover="changeVisibiliteOnName('popload',1);this.style.opacity = '1.0';" onclick="document.getElementById('hiddenfield').value='';">Clear</p>
 </form>
 <hr id="large" onmouseover="changeVisibiliteOnName('popload',1)">
