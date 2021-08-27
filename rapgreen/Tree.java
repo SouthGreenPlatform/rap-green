@@ -143,7 +143,7 @@ public class Tree {
 		this.sons=sons;
 		this.label=label;
 		this.length=length;
-		this.nhx=nhx;
+		this.nhx=nhx; 
 	}
 
 // ********************************************************************************************************************
@@ -159,6 +159,7 @@ public class Tree {
 		this.length=length;
 		this.stringLength=stringLength;
 		this.nhx=nhx;
+		
 	}
 
 // ********************************************************************************************************************
