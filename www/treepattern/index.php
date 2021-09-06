@@ -73,7 +73,7 @@ drawAll();
 
 <div id="poptaxa" style="display:none;">
 Enter a taxa scientific name:<br>
-<input id="speciesfield" type="text" size="40" value="" onkeyup="changeVisibiliteOnName('poplist',1);return refreshTaxaList(event,this.value)" autocomplete="off"><input type="button" value="Allow" onclick="addTaxon(document.getElementById('speciesfield').value,0)"><input type="button" value="Forbid" onclick="addTaxon(document.getElementById('speciesfield').value,1)">
+<input id="speciesfield" type="text" size="<?php if (isSet($speciesfieldsize)) { echo $speciesfieldsize; } else { echo "40";} ?>" value="" onkeyup="changeVisibiliteOnName('poplist',1);return refreshTaxaList(event,this.value)" autocomplete="off"><input type="button" value="Allow" onclick="addTaxon(document.getElementById('speciesfield').value,0)"><input type="button" value="Forbid" onclick="addTaxon(document.getElementById('speciesfield').value,1)">
 <br>
 <div name="poplist" id="poplist" style="position: absolute;">
 
