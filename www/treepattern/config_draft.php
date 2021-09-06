@@ -25,5 +25,9 @@ $displaytag=Array("My base" => "My tag");
 $treedisplayaddress="https://phylogeny.southgreen.fr/treedisplay/";
 /* set to false if you don't want to allow user to choose between several databases */
 $displaydatabases="true";
+/* the size of the species field in the taxa cardinality tool, in number of character*/
+$speciesfieldsize=40;
+/* the size of the species selector in the taxa cardinality tool, in pixel */
+$speciesselectsize=350;
 
 ?>

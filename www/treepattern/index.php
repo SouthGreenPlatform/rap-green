@@ -78,7 +78,7 @@ Enter a taxa scientific name:<br>
 <div name="poplist" id="poplist" style="position: absolute;">
 
 </div><br>
-<select width="300" style="width: 350px" id="speciesselector" multiple size="10">
+<select style="width: <?php if (isSet($speciesselectsize)) { echo $speciesselectsize; } else { echo "350";} ?>px" id="speciesselector" multiple size="10">
 </select>
 <br>
 <input type="button" value="Delete all" onclick="removeAllTaxon()">
