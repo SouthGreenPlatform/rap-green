@@ -77,10 +77,10 @@ socket_close($socket);
 		echo "</td></tr>";
 
 		for ($i=0;$i<count($resfiles);$i++) {
-			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>display</a>";
+			echo "<tr><td id='lefted'>".$resfiles[$i]."&nbsp;&nbsp;&nbsp;</td><td id='lefted'><a target='_blank' href='resultsDisplay.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>display</a>";
 
 			if (isSet($displayadress[$_REQUEST['databank']]) && $displayadress[$_REQUEST['databank']]!="")	{
-				echo "&nbsp;&nbsp;<a href='resultDisplay2.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
+				echo "&nbsp;&nbsp;<a target='_blank' href='resultDisplay2.php?databank=".$_REQUEST["databank"]."&pattern=".$_POST['hiddenpatternwait']."&id=".$resfiles[$i]."'>".$displaytag[$_REQUEST['databank']]."</a>";
 
 			}
 
