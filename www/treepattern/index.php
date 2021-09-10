@@ -52,7 +52,7 @@ var reverseDico= new Array();
 
 ?>
 
-<form name="submitPatternForm" id="submitPatternForm" method="post"  target="popresults" action="wait.php?database=<?php echo $_REQUEST['databank']; ?>">
+<form name="submitPatternForm" id="submitPatternForm" method="post"  target="_blank" action="wait.php?database=<?php echo $_REQUEST['databank']; ?>">
 <input type="hidden" name="hiddenpattern" id="hiddenpattern" />
 </form>
 
