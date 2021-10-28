@@ -28,6 +28,7 @@ $displaydatabases="true";
 /* the size of the species field in the taxa cardinality tool, in number of character*/
 $speciesfieldsize=40;
 /* the size of the species selector in the taxa cardinality tool, in pixel */
-$speciesselectsize=350;
+$speciesselectsize=350; 
+
 
 ?>
