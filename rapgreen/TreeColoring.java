@@ -97,7 +97,7 @@ public class TreeColoring {
 				if (args[i].equalsIgnoreCase("-newick")) {
 					input= new File(args[i+1]);
 				}					
-				if (args[i].equalsIgnoreCase("-formatdb")) {
+				if (args[i].equalsIgnoreCase("-formatdb")) { 
 					input= new File(args[i+1]);
 					formatdb=true;
 				}				
