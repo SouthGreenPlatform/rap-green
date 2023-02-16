@@ -1666,12 +1666,14 @@ public class ReconciliationDatabaseDaemon {
 
 
    			} catch (Exception e) {
-   				e.printStackTrace();
+   				System.out.println("sortie stable 1");
+				e.printStackTrace();
 				try {
 					in.close();
 					out.close();
 					socket.close();
 				} catch (Exception ex) {
+					System.out.println("sortie stable 2");
 					ex.printStackTrace();
 				}
    			}
