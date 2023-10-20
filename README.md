@@ -3,7 +3,82 @@
 [<img alt="singularity_rapgreen" src="https://img.shields.io/badge/container-Singularity-orange">](https://quay.io/repository/biocontainers/rapgreen)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/rapgreen/badges/license.svg)](https://anaconda.org/bioconda/rapgreen)
 
-## Welcome to the rap-green project !
+RapGreen
+=========================================
+
+Manipulate and annotate phylogenetic trees  
+
+---------------------------
+
+## Table of Contents
+
+   * [Installation](#installation)
+       * [Using Docker](#using-docker)
+       * [Using Singularity](#using-singularity)
+       * [Using Bioconda](#using-bioconda)
+   * [Documentation](#documentation)
+   * [How to cite?](#how-to-cite)
+
+## Installation
+
+### Using Docker
+   <details>
+      <summary>See details</summary>
+      
+First you must have [Docker](https://docs.docker.com/get-docker/) installed and running.  
+Secondly have look at the availabe rapgreen biocontainers at [quay.io](https://quay.io/repository/biocontainers/rapgreen?tab=tags).
+
+Then:
+  ```
+# get the chosen rapgreen container version
+docker pull quay.io/biocontainers/rapgreen:1.0--hdfd78af_0
+# use an rapgreen
+docker run quay.io/biocontainers/rapgreen:1.0--hdfd78af_0 rapgreen --help
+  ```
+   </details>
+ 
+### Using Singularity
+   <details>
+      <summary>See details</summary>
+      
+First you must have [Singularity](https://sylabs.io/guides/3.5/user-guide/quick_start.html) installed and running.  
+Secondly have look at the availabe rapgreen biocontainers at [quay.io](https://quay.io/repository/biocontainers/rapgreen?tab=tags).
+
+Then:
+```
+# get the chosen rapgreen container version
+singularity pull docker://quay.io/biocontainers/rapgreen:1.0--hdfd78af_0
+# run the container
+singularity run rapgreen:1.0--hdfd78af_0
+```
+
+You are now in the container. You can use an RapGreen.
+  </details>
+
+### Using Bioconda
+   <details>
+      <summary>See details</summary>
+      
+#### Install rapgreen
+
+  ```
+  conda install -c bioconda rapgreen
+  ```
+
+#### Update rapgreen
+
+  ```
+  conda update rapgreen
+  ```
+
+#### Uninstall rapgreen
+  ```
+  conda uninstall rapgreen  
+  ```
+
+   </details>
+
+## Documentation
 
 For a full documentation, please visit the RapGreen wiki:
 https://github.com/SouthGreenPlatform/rap-green/wiki
@@ -22,7 +97,7 @@ The general API Java documentation of the RapGreen package is available [here](h
 
 RapGreen is used by several systems and platforms. Some examples are available [here](https://github.com/SouthGreenPlatform/rap-green/wiki/Examples-of-installed-services).
 
-## Please cite:
+# How to cite
 
 **More recent version soon available**
 
