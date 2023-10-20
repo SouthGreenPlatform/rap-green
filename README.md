@@ -1,4 +1,4 @@
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/rapgreen/README.html)
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](https://anaconda.org/bioconda/rapgreen)
 [<img alt="docker_rapgreen" src="https://img.shields.io/badge/container-Docker-blue">](https://quay.io/repository/biocontainers/rapgreen)
 [<img alt="singularity_rapgreen" src="https://img.shields.io/badge/container-Singularity-orange">](https://quay.io/repository/biocontainers/rapgreen)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/rapgreen/badges/license.svg)](https://anaconda.org/bioconda/rapgreen)
