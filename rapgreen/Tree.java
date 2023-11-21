@@ -2463,19 +2463,19 @@ public class Tree {
 				} else {
 					//System.out.println("B");
 					if (label.indexOf("_")==-1) {
-						res.append(label.substring(label.indexOf("0")+1,label.length()-1));
+						res.append(label.substring(label.indexOf("0"),label.length()-1));
 					} else {
 						res.append(label.substring(label.lastIndexOf("_")+1,label.length()-1));
 					}
 				}
 			}
-			res.append("]");
+			res.append(":]");
 		} else {
 
 			res.append("[&&NHX");
 			res.append(":S=");
 			res.append(this.speciesMapping(speciesTree).label.replace(" ","."));
-			res.append("]");
+			res.append(":]");
 		}
 	}
 
