@@ -577,6 +577,10 @@ function Node(newick) {
 				this.collapsed=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
 				//alert(this.color);
 			}
+			if (ext.indexOf(":B=")!=-1) {
+				var collapseLocalPrev=ext.substring(ext.indexOf(":B=")+3,ext.length);
+				this.support=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
+			}
 			if (ext.indexOf(":O=")!=-1) {
 				var collapseLocalPrev=ext.substring(ext.indexOf(":O=")+3,ext.length);
 				this.opacity=collapseLocalPrev.substring(0,collapseLocalPrev.indexOf(":"));
