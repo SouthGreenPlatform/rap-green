@@ -2,6 +2,7 @@
 [<img alt="docker_rapgreen" src="https://img.shields.io/badge/container-Docker-blue">](https://quay.io/repository/biocontainers/rapgreen)
 [<img alt="singularity_rapgreen" src="https://img.shields.io/badge/container-Singularity-orange">](https://quay.io/repository/biocontainers/rapgreen)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/rapgreen/badges/license.svg)](https://anaconda.org/bioconda/rapgreen)
+[![Anaconda-Server Badge](https://anaconda.org/bioconda/rapgreen/badges/downloads.svg)](https://anaconda.org/bioconda/rapgreen)
 
 RapGreen
 =========================================
