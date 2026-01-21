@@ -100,4 +100,4 @@ RapGreen is used by several systems and platforms. Some examples are available [
 
 # How to cite
 
-https://doi.org/10.1093/bioinformatics/bti325
+[https://doi.org/10.1093/bioinformatics/bti325](https://doi.org/10.1093/nargab/lqab088)
